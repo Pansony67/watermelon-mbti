@@ -15,6 +15,7 @@ import type { CSSProperties } from "react";
 import Link from "next/link";
 import InView from "@/components/InView";
 import Reveal from "@/components/Reveal";
+import SeedField from "@/components/SeedField";
 import { countResponses } from "@/lib/db";
 import SiteFooter from "@/components/SiteFooter";
 import SiteNav from "@/components/SiteNav";
@@ -241,8 +242,13 @@ export default async function Home() {
           <CaretDown size={14} className="scroll-caret" aria-hidden />
         </a>
 
-        <section id="why" className="relative mx-auto w-full max-w-7xl px-5 py-28 sm:px-8 sm:py-40">
-          <InView className="mx-auto max-w-2xl text-center">
+        <section id="why" className="relative w-full overflow-hidden px-5 py-28 sm:px-8 sm:py-40">
+          <SeedField />
+          <div
+            aria-hidden
+            className="stage-light pointer-events-none absolute top-1/2 left-1/2 aspect-square w-[min(90vw,720px)] -translate-x-1/2 -translate-y-1/2 opacity-70"
+          />
+          <InView className="relative mx-auto max-w-2xl text-center">
             <h2 className="font-display text-3xl leading-tight font-semibold text-balance sm:text-5xl">
               Why does this exist?
             </h2>
