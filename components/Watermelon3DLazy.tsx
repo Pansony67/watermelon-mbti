@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 
 /**
@@ -27,15 +28,26 @@ const Watermelon3D = dynamic(() => import("./Watermelon3D"), {
   loading: () => <WatermelonPlaceholder />,
 });
 
+/** Let the hero copy finish its entrance before WebGL setup takes the main thread. */
+const MOUNT_DELAY_MS = 900;
+
 /**
  * Reserves a fixed 5:4 stage up front, then fills it with the 3D scene once
- * the chunk arrives. The stage mask fades the rendered floor into the page
- * so the canvas never reads as a rectangle.
+ * the hero has landed and the chunk has arrived. The stage mask fades the
+ * rendered floor into the page so the canvas never reads as a rectangle.
  */
+
 export default function Watermelon3DLazy() {
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const id = setTimeout(() => setReady(true), MOUNT_DELAY_MS);
+    return () => clearTimeout(id);
+  }, []);
+
   return (
     <div className="stage-mask relative aspect-[5/4] w-full">
-      <Watermelon3D />
+      {ready ? <Watermelon3D /> : <WatermelonPlaceholder />}
     </div>
   );
 }

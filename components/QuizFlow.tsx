@@ -276,7 +276,7 @@ export default function QuizFlow() {
           </div>
         </section>
 
-        <footer className="relative mx-auto hidden w-full max-w-7xl items-end justify-between px-5 pb-6 text-[10px] tracking-[0.22em] text-cream/60 uppercase sm:px-8 md:flex">
+        <footer className="relative mx-auto flex w-full max-w-7xl flex-col gap-3 px-5 pb-6 text-[10px] tracking-[0.22em] text-cream/60 uppercase sm:px-8 md:flex-row md:items-end md:justify-between">
           <p className="leading-relaxed">
             WatermelonMBTI
             <br />
@@ -293,7 +293,7 @@ export default function QuizFlow() {
             <span className="mx-2 text-cream/35" aria-hidden>&middot;</span>
             <Link href="/terms" className="pointer-events-auto normal-case tracking-normal hover:text-cream">Terms</Link>
           </p>
-          <p className="text-right leading-relaxed">
+          <p className="leading-relaxed md:text-right">
             Same people,
             <br />
             different flavors.

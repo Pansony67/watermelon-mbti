@@ -13,6 +13,7 @@ import {
 import type { Icon } from "@phosphor-icons/react";
 import type { CSSProperties } from "react";
 import Link from "next/link";
+import InView from "@/components/InView";
 import Reveal from "@/components/Reveal";
 import { countResponses } from "@/lib/db";
 import SiteFooter from "@/components/SiteFooter";
@@ -231,14 +232,26 @@ export default async function Home() {
           </div>
         </Reveal>
 
-        <div
-          aria-hidden
-          className="relative flex flex-col items-center gap-1.5 pt-8 pb-2 text-cream/55"
+        <a
+          href="#why"
+          className="relative flex flex-col items-center gap-1.5 pt-8 pb-2 text-cream/55 transition-colors duration-300 hover:text-cream focus-visible:text-cream focus-visible:outline-none"
         >
-          <Mouse size={22} weight="thin" />
+          <Mouse size={22} weight="thin" aria-hidden />
           <span className="text-[10px] tracking-[0.22em] uppercase">Scroll to explore</span>
-          <CaretDown size={14} className="scroll-caret" />
-        </div>
+          <CaretDown size={14} className="scroll-caret" aria-hidden />
+        </a>
+
+        <section id="why" className="relative mx-auto w-full max-w-7xl px-5 py-28 sm:px-8 sm:py-40">
+          <InView className="mx-auto max-w-2xl text-center">
+            <h2 className="font-display text-3xl leading-tight font-semibold text-balance sm:text-5xl">
+              Why does this exist?
+            </h2>
+            <p className="mt-6 text-lg leading-relaxed text-pretty text-cream/70 sm:text-xl">
+              No grand thesis. No years of research. I just really wanted to know what kind of watermelon eater
+              you are. Twenty honest questions about how you actually eat watermelon - that&rsquo;s the whole idea.
+            </p>
+          </InView>
+        </section>
 
         <SiteFooter />
       </main>
