@@ -5,7 +5,7 @@ const LINK = "underline-offset-4 transition-colors duration-300 hover:text-cream
 
 export default function SiteFooter() {
   return (
-    <footer className="relative mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-5 py-6 text-xs text-cream/60 sm:px-8">
+    <footer className="relative mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-2 py-6 pr-20 pl-5 text-xs text-cream/60 sm:pr-24 sm:pl-8">
       <span>&copy; {new Date().getFullYear()} {OPERATOR.name}. For entertainment only.</span>
       <nav aria-label="Legal" className="flex gap-5">
         <Link href="/privacy" className={LINK}>Privacy</Link>

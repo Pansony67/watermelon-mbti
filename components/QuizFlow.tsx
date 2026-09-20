@@ -276,7 +276,7 @@ export default function QuizFlow() {
           </div>
         </section>
 
-        <footer className="relative mx-auto flex w-full max-w-7xl flex-col gap-3 px-5 pb-6 text-[10px] tracking-[0.22em] text-cream/60 uppercase sm:px-8 md:flex-row md:items-end md:justify-between">
+        <footer className="relative mx-auto flex w-full max-w-7xl flex-col gap-3 pr-20 pb-6 pl-5 text-[10px] tracking-[0.22em] text-cream/60 uppercase sm:pr-24 sm:pl-8 md:flex-row md:items-end md:justify-between">
           <p className="leading-relaxed">
             WatermelonMBTI
             <br />

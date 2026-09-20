@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Fredoka, Inter } from "next/font/google";
+import MusicPlayer from "@/components/MusicPlayer";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -49,6 +50,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Skip to content
         </a>
         {children}
+        {/* Outside the page tree: route changes must not restart playback. */}
+        <MusicPlayer />
       </body>
     </html>
   );
