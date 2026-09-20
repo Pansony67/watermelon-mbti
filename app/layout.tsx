@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fredoka, Inter } from "next/font/google";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const fredoka = Fredoka({
@@ -13,10 +14,25 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+const TITLE = "Watermelon MBTI - What Kind of Watermelon Are You?";
+const DESCRIPTION =
+  "Twenty questions, ten watermelon types. Find the one hiding under your rind, and what it says about how you operate.";
+
 export const metadata: Metadata = {
-  title: "Watermelon MBTI",
-  description:
-    "Twenty questions, ten watermelon types. Find out which one you are.",
+  metadataBase: new URL(SITE_URL),
+  title: TITLE,
+  description: DESCRIPTION,
+  openGraph: {
+    title: TITLE,
+    description: DESCRIPTION,
+    url: SITE_URL,
+    siteName: "Watermelon MBTI",
+    type: "website",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0A2015",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
