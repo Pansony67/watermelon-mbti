@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local agent settings
+.claude/settings.local.json
+
+# other local tools
+.aider-desk/
+__pycache__/

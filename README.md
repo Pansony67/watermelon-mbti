@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Watermelon MBTI
 
-## Getting Started
+A free personality quiz: twenty statements, ten watermelon types. Next.js 16 (App Router), TypeScript, Tailwind v4, react-three-fiber, Neon Postgres.
 
-First, run the development server:
+## Run locally
 
 ```bash
+npm install
+echo 'DATABASE_URL=postgres://…neon.tech/…?sslmode=require' > .env.local
+npm run db:migrate   # creates / updates the quiz_responses table (idempotent)
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The site works without a database; the landing count tile and the results page's stats simply don't render until one is configured.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Before launch
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Fill in `contactEmail` and `jurisdiction` in `lib/legal.ts` (Privacy and Terms read from it).
+- Set `DATABASE_URL` in the Vercel project and run `npm run db:migrate` against it once.
 
-## Learn More
+## Checks
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run lint
+npx tsx --test lib/scoring.test.ts
+npm run build
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Layout
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `app/` routes: landing, `/quiz`, `/quiz/results`, `/privacy`, `/terms`, API routes under `app/api`
+- `components/` UI, including the 3D melon (`Watermelon3D.tsx`) and the quiz flow
+- `lib/` questions, scoring, result copy, database access, operator details
+- `scripts/db-migrate.mjs` schema

@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Installed agent skills ship their own scripts; not part of the app.
+    ".claude/**",
+    ".agents/**",
   ]),
 ]);
 
