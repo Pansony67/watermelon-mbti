@@ -30,6 +30,10 @@ export const metadata: Metadata = {
     siteName: "Watermelon MBTI",
     type: "website",
   },
+  // Search Console: the token only; Next renders the <meta name="google-site-verification"> tag.
+  verification: {
+    google: "-ieHpQmBVmaZaYHuBgOUw0SAV2CD7P5mnP8YlDWjm1o",
+  },
 };
 
 export const viewport: Viewport = {
