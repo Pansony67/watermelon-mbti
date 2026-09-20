@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { ArrowRight } from "@phosphor-icons/react";
+import BorderBeam from "@/components/BorderBeam";
 import QuizBackdrop from "@/components/QuizBackdrop";
 import SiteFooter from "@/components/SiteFooter";
 import { Wordmark } from "@/components/SiteNav";
@@ -96,7 +97,7 @@ export default function ResultsPage() {
 
       <section className="relative mx-auto flex w-full max-w-3xl flex-1 items-center px-4 pb-16 sm:px-8">
         {!hydrated ? null : result ? (
-          <div className="card-enter w-full rounded-[2rem] bg-[linear-gradient(135deg,rgba(255,77,109,0.55),rgba(251,243,228,0.12)_45%,rgba(234,247,217,0.5))] p-px shadow-rind-lg">
+          <div className="card-enter relative w-full rounded-[2rem] bg-[linear-gradient(135deg,rgba(255,77,109,0.55),rgba(251,243,228,0.12)_45%,rgba(234,247,217,0.5))] p-px shadow-rind-lg">
             <div className="rounded-[calc(2rem-1px)] bg-rind-deep/72 px-6 py-10 text-center shadow-[inset_0_1px_0_rgba(251,243,228,0.12)] backdrop-blur-2xl sm:px-12 sm:py-14">
               <p className="text-[11px] font-medium tracking-[0.16em] text-pith/80 uppercase">Your result</p>
 
@@ -151,6 +152,7 @@ export default function ResultsPage() {
                 )}
               </p>
             </div>
+            <BorderBeam />
           </div>
         ) : (
           <div className="w-full text-center">
