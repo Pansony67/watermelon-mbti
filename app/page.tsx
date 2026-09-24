@@ -5,8 +5,10 @@ import {
   Cloud,
   Crown,
   Lightning,
+  ListChecks,
   Mouse,
   OrangeSlice,
+  PaperPlaneTilt,
   Sparkle,
   UsersThree,
 } from "@phosphor-icons/react/dist/ssr";
@@ -66,6 +68,25 @@ const CHIPS: Chip[] = [
     style: { right: "-3%", top: "58%" },
     anchor: "right",
     connector: "80,63 73,63",
+  },
+];
+
+/** OrangeSlice is the same icon the stats row uses for "10 Unique types", one size up. */
+const STEPS: { icon: Icon; title: string; body: string }[] = [
+  {
+    icon: ListChecks,
+    title: "Take the quiz",
+    body: "Answer 20 honest questions about how you actually eat watermelon. No overthinking, just be honest.",
+  },
+  {
+    icon: OrangeSlice,
+    title: "Get your type",
+    body: "See which of the 10 unhinged watermelon types you are, your Juicy/Crisp %, and how many other people got the exact same result.",
+  },
+  {
+    icon: PaperPlaneTilt,
+    title: "Send it to someone",
+    body: "Screenshot your result and share it. Bonus points if it starts an argument.",
   },
 ];
 
@@ -234,13 +255,34 @@ export default async function Home() {
         </Reveal>
 
         <a
-          href="#why"
+          href="#how"
           className="relative flex flex-col items-center gap-1.5 pt-8 pb-2 text-cream/55 transition-colors duration-300 hover:text-cream focus-visible:text-cream focus-visible:outline-none"
         >
           <Mouse size={22} weight="thin" aria-hidden />
           <span className="text-[10px] tracking-[0.22em] uppercase">Scroll to explore</span>
           <CaretDown size={14} className="scroll-caret" aria-hidden />
         </a>
+
+        <section
+          id="how"
+          aria-label="How it works"
+          className="relative mx-auto w-full max-w-7xl px-5 py-24 sm:px-8 sm:py-32"
+        >
+          <InView>
+            <ol className="grid gap-14 md:grid-cols-3 md:gap-12 lg:gap-16">
+              {STEPS.map((step, i) => (
+                <li key={step.title} className="flex flex-col items-center text-center md:items-start md:text-left">
+                  <step.icon size={34} className="text-flesh" aria-hidden />
+                  <span className="mt-6 text-[11px] font-medium tracking-[0.22em] text-cream/40 tabular-nums">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <h3 className="mt-2 font-display text-xl font-semibold sm:text-2xl">{step.title}</h3>
+                  <p className="mt-3 max-w-[38ch] leading-relaxed text-pretty text-cream/65">{step.body}</p>
+                </li>
+              ))}
+            </ol>
+          </InView>
+        </section>
 
         <section id="why" className="relative w-full overflow-hidden px-5 py-28 sm:px-8 sm:py-40">
           <SeedField />
