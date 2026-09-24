@@ -7,9 +7,7 @@ import {
   ContactShadows,
   Environment,
   Lightformer,
-  MeshReflectorMaterial,
   PresentationControls,
-  RoundedBox,
 } from "@react-three/drei";
 
 /* -------------------------------------------------------------------------- */
@@ -299,65 +297,25 @@ function WatermelonHalf() {
 }
 
 /* -------------------------------------------------------------------------- */
-/*  Plinth                                                                    */
+/*  Ground                                                                    */
 /* -------------------------------------------------------------------------- */
 
-const SLAB_H = 0.22;
-const SLAB_TOP = -MELON_R;
-const FLOOR_Y = SLAB_TOP - SLAB_H;
-
 /**
- * Stone slab the melon rests on, over a wet floor that reflects the scene.
- * The floor is a large plane; the canvas wrapper's CSS mask and the scene
- * fog fade it out long before its edges.
+ * Product-on-white: no floor or pedestal (on a white page they would only
+ * hide the background grid), just a soft contact shadow that grounds the melon.
  */
-function Plinth() {
+function Ground() {
   return (
-    <group>
-      <RoundedBox
-        args={[2.4, SLAB_H, 1.8]}
-        radius={0.04}
-        smoothness={4}
-        position={[0, SLAB_TOP - SLAB_H / 2, 0]}
-      >
-        <meshPhysicalMaterial
-          color="#111F18"
-          roughness={0.5}
-          metalness={0.05}
-          clearcoat={0.4}
-          clearcoatRoughness={0.35}
-        />
-      </RoundedBox>
-
-      <ContactShadows
-        position={[0, SLAB_TOP + 0.01, 0]}
-        scale={2.6}
-        resolution={512}
-        blur={2.4}
-        far={1.6}
-        opacity={0.7}
-        color={COLORS.shadow}
-        frames={1}
-      />
-
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, FLOOR_Y, 0]}>
-        <planeGeometry args={[14, 14]} />
-        <MeshReflectorMaterial
-          resolution={512}
-          blur={[400, 120]}
-          mixBlur={1}
-          mixStrength={22}
-          mixContrast={1}
-          roughness={1}
-          depthScale={1.1}
-          minDepthThreshold={0.4}
-          maxDepthThreshold={1.3}
-          color="#08170F"
-          metalness={0.5}
-          mirror={0}
-        />
-      </mesh>
-    </group>
+    <ContactShadows
+      position={[0, -MELON_R - 0.02, 0]}
+      scale={3.4}
+      resolution={512}
+      blur={2.6}
+      far={1.8}
+      opacity={0.38}
+      color={COLORS.shadow}
+      frames={1}
+    />
   );
 }
 
@@ -434,7 +392,7 @@ export default function Watermelon3D({ className }: { className?: string }) {
       className={className}
       dpr={[1, 1.8]}
       camera={{ position: [0, 1.7, 4.6], fov: 30, near: 0.1, far: 50 }}
-      onCreated={({ camera }) => camera.lookAt(0, -0.35, 0)}
+      onCreated={({ camera }) => camera.lookAt(0, -0.2, 0)}
       gl={{
         antialias: true,
         alpha: true,
@@ -445,15 +403,13 @@ export default function Watermelon3D({ className }: { className?: string }) {
       onPointerDown={() => setDragging(true)}
       aria-hidden
     >
-      {/* Starts beyond the melon, so only the far floor dissolves into the page. */}
-      <fog attach="fog" args={["#0A2015", 6, 11]} />
 
-      <ambientLight intensity={0.22} />
+      <ambientLight intensity={0.3} />
       <directionalLight position={[3.5, 6, 4]} intensity={1.7} color="#FFF6E8" />
-      <directionalLight position={[-4, 2, -3]} intensity={0.45} color="#9FE8B5" />
-      {/* Low pink rim from behind: the neon spill on the wet floor. */}
+      <directionalLight position={[-4, 2, -3]} intensity={0.45} color="#EEF1F5" />
+      {/* Low coral rim from behind: a warm blush spill on the white floor. */}
       <pointLight position={[2.2, -0.6, -2.4]} color="#FF4D6D" intensity={18} distance={8} decay={2} />
-      <pointLight position={[-2.6, -0.2, -1.6]} color="#8BE0A0" intensity={6} distance={7} decay={2} />
+      <pointLight position={[-2.6, -0.2, -1.6]} color="#FFE4E8" intensity={5} distance={7} decay={2} />
 
       <PresentationControls
         enabled
@@ -475,11 +431,11 @@ export default function Watermelon3D({ className }: { className?: string }) {
         </group>
       </PresentationControls>
 
-      <Plinth />
+      <Ground />
 
       {/* Studio softboxes built in-scene: PBR reflections with no HDRI fetch. */}
       <Environment resolution={256} frames={1}>
-        <color attach="background" args={["#0A2015"]} />
+        <color attach="background" args={["#2A2725"]} />
         <Lightformer
           form="rect"
           intensity={6}
@@ -494,7 +450,7 @@ export default function Watermelon3D({ className }: { className?: string }) {
           position={[-4, 1, 2]}
           rotation-y={Math.PI / 2}
           scale={[4, 4, 1]}
-          color="#BFE6C8"
+          color="#F4F6F8"
         />
         <Lightformer
           form="rect"
@@ -509,7 +465,7 @@ export default function Watermelon3D({ className }: { className?: string }) {
           intensity={3}
           position={[0, -2, -4]}
           scale={3}
-          color="#7DE08A"
+          color="#FFD9DF"
         />
       </Environment>
     </Canvas>

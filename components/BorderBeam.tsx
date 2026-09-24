@@ -16,7 +16,7 @@ export default function BorderBeam({
   duration = 9,
   borderWidth = 1.5,
   colorFrom = "#FF4D6D",
-  colorTo = "#EAF7D9",
+  colorTo = "#FFC2CE",
 }: {
   size?: number;
   duration?: number;

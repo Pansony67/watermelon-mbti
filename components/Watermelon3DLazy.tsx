@@ -12,11 +12,11 @@ export function WatermelonPlaceholder() {
   return (
     <div className="absolute inset-0 grid place-items-center" aria-hidden>
       <div
-        className="melon-placeholder aspect-square h-[62%] rounded-full"
+        className="melon-placeholder aspect-square h-[62%] rounded-full" // unslop-ignore: a melon cross-section is a circle
         style={{
           background:
             "radial-gradient(circle at 50% 42%, #FF6B85 0%, #FF4D6D 44%, #EAF7D9 45%, #EAF7D9 51%, #1C4A2B 52%, #0E2E1B 100%)",
-          boxShadow: "0 24px 60px -18px rgba(4, 22, 13, 0.85)",
+          boxShadow: "0 24px 48px -24px rgba(29, 23, 21, 0.35)",
         }}
       />
     </div>

@@ -66,7 +66,7 @@ export default function MusicPlayer() {
 
       {/* Volume is only adjustable while something is playing. */}
       <label
-        className={`flex h-11 items-center rounded-full bg-rind-deep/85 px-4 shadow-rind ring-1 ring-cream/15 backdrop-blur-xl transition-[opacity,transform] duration-500 ease-settle ${
+        className={`flex h-11 items-center rounded-control bg-paper px-4 shadow-card ring-1 ring-line transition-[opacity,transform] duration-500 ease-settle ${
           playing ? "opacity-100" : "pointer-events-none translate-x-3 opacity-0"
         }`}
       >
@@ -90,7 +90,7 @@ export default function MusicPlayer() {
         aria-pressed={playing}
         aria-label={playing ? "Pause background music" : "Play background music"}
         title={playing ? "Music on" : "Music off"}
-        className="grid h-11 w-11 cursor-pointer place-items-center rounded-full bg-rind-deep/85 text-cream/70 shadow-rind ring-1 ring-cream/15 backdrop-blur-xl transition-[transform,color,background-color] duration-500 ease-settle hover:scale-105 hover:text-cream focus-visible:ring-2 focus-visible:ring-cream focus-visible:outline-none active:scale-95 aria-pressed:text-flesh"
+        className="grid h-11 w-11 cursor-pointer place-items-center rounded-control bg-paper text-ink-2 shadow-card ring-1 ring-line transition-colors duration-300 hover:text-ink focus-visible:ring-2 focus-visible:ring-flesh focus-visible:outline-none aria-pressed:text-flesh"
       >
         <Icon size={18} weight={playing ? "fill" : "regular"} aria-hidden />
       </button>

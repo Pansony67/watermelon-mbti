@@ -8,7 +8,9 @@ import QuizBackdrop from "@/components/QuizBackdrop";
 import SiteFooter from "@/components/SiteFooter";
 import { Wordmark } from "@/components/SiteNav";
 import { ANSWERS_STORAGE_KEY, isAnswerSet } from "@/lib/questions";
+import Image from "next/image";
 import { RESULT_TYPES } from "@/lib/resultTypes";
+import { TYPE_ART } from "@/lib/typeArt";
 import { score } from "@/lib/scoring";
 
 /** Remembers which answer set was already written, so a refresh doesn't insert twice. */
@@ -86,42 +88,52 @@ export default function ResultsPage() {
     }
   };
 
+  const type = result ? RESULT_TYPES[result.resultKey] : null;
+  const art = result ? TYPE_ART[result.resultKey] : undefined;
+  const juicy = result?.axisAPole === "Juicy";
+
   return (
-    <main id="main" className="relative flex min-h-[100dvh] flex-col overflow-hidden bg-rind text-cream">
-      <div className="grain" aria-hidden />
+    <main id="main" className="relative flex min-h-dvh flex-col overflow-hidden text-ink">
       <QuizBackdrop progress={1} />
 
-      <header className="relative mx-auto flex h-[72px] w-full max-w-7xl items-center px-5 sm:px-8">
-        <Wordmark />
+      <header className="relative border-b border-line bg-paper">
+        <div className="mx-auto flex h-16 w-full max-w-7xl items-center px-5 sm:px-8">
+          <Wordmark />
+        </div>
       </header>
 
-      <section className="relative mx-auto flex w-full max-w-3xl flex-1 items-center px-4 pb-16 sm:px-8">
-        {!hydrated ? null : result ? (
-          <div className="card-enter relative w-full rounded-[2rem] bg-[linear-gradient(135deg,rgba(255,77,109,0.55),rgba(251,243,228,0.12)_45%,rgba(234,247,217,0.5))] p-px shadow-rind-lg">
-            <div className="rounded-[calc(2rem-1px)] bg-rind-deep/72 px-6 py-10 text-center shadow-[inset_0_1px_0_rgba(251,243,228,0.12)] backdrop-blur-2xl sm:px-12 sm:py-14">
-              <p className="text-[11px] font-medium tracking-[0.16em] text-pith/80 uppercase">Your result</p>
+      <section className="relative mx-auto flex w-full max-w-3xl flex-1 items-center px-4 py-16 sm:px-8">
+        {!hydrated ? null : result && type ? (
+          <div className="card-enter relative w-full rounded-panel bg-paper shadow-panel ring-1 ring-line">
+            <div className="relative overflow-hidden rounded-[inherit] px-6 py-10 text-center sm:px-12 sm:py-14">
+              <p className="text-xs font-semibold tracking-[0.16em] text-flesh-deep uppercase">Your result</p>
 
-              <h1 className="mt-4 font-display text-4xl leading-tight font-semibold text-balance sm:text-5xl">
-                {RESULT_TYPES[result.resultKey].title}
+              {/* Only rendered once this type has art in lib/typeArt.ts. */}
+              {art && (
+                <div className={`relative mx-auto mt-6 aspect-square w-40 overflow-hidden rounded-card ring-1 ring-line sm:w-48 ${juicy ? "bg-blush" : "bg-mist"}`}>
+                  <Image src={art} alt={type.title} fill sizes="192px" className="object-contain p-3" />
+                </div>
+              )}
+
+              <h1 className="mt-4 font-display text-4xl leading-tight font-semibold text-balance text-ink sm:text-5xl">
+                {type.title}
               </h1>
-              <p className="mt-2 font-display text-lg font-semibold text-flesh">
+              <p className={`mt-2 font-display text-lg font-semibold ${juicy ? "text-flesh-deep" : "text-ink-2"}`}>
                 {result.axisAPole} {result.axisBGroup}
               </p>
 
-              <p className="mx-auto mt-6 max-w-[52ch] text-lg leading-relaxed text-pretty text-cream/70">
-                {RESULT_TYPES[result.resultKey].description}
-              </p>
+              <p className="mx-auto mt-6 max-w-[52ch] text-lg leading-relaxed text-pretty text-ink-2">{type.description}</p>
 
               <dl className="mx-auto mt-9 grid max-w-md grid-cols-2 gap-3">
-                <div className="rounded-2xl bg-cream/[0.045] px-4 py-4 ring-1 ring-cream/[0.07]">
-                  <dd className="font-display text-3xl font-semibold text-flesh">{result.axisAPercent}%</dd>
-                  <dt className="mt-1 text-sm text-cream/60">{result.axisAPole}</dt>
+                <div className="rounded-card bg-paper-2 px-4 py-4 ring-1 ring-line">
+                  <dd className="font-display text-3xl font-semibold text-ink">{result.axisAPercent}%</dd>
+                  <dt className="mt-1 text-sm text-ink-3">{result.axisAPole}</dt>
                 </div>
-                <div className="rounded-2xl bg-cream/[0.045] px-4 py-4 ring-1 ring-cream/[0.07]">
-                  <dd className="font-display text-3xl font-semibold text-flesh">
-                    {share === null ? <span className="text-cream/40">&hellip;</span> : `${share}%`}
+                <div className="rounded-card bg-paper-2 px-4 py-4 ring-1 ring-line">
+                  <dd className="font-display text-3xl font-semibold text-ink">
+                    {share === null ? <span className="text-ink-3">&hellip;</span> : `${share}%`}
                   </dd>
-                  <dt className="mt-1 text-sm text-cream/60">
+                  <dt className="mt-1 text-sm text-ink-3">
                     {share === 0 ? "you're the first to get this" : "of players got this too"}
                   </dt>
                 </div>
@@ -129,25 +141,25 @@ export default function ResultsPage() {
 
               <Link
                 href="/quiz"
-                className="group mt-10 inline-flex h-14 items-center gap-4 rounded-full bg-flesh py-2 pr-2 pl-7 font-display text-lg font-semibold text-rind-deep shadow-rind transition-transform duration-500 ease-settle hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-cream focus-visible:ring-offset-4 focus-visible:ring-offset-rind focus-visible:outline-none active:translate-y-0 active:scale-[0.98]"
+                className="mt-10 inline-flex h-14 items-center gap-4 rounded-control bg-ink py-2 pr-2 pl-6 font-display text-lg font-semibold text-paper shadow-card transition-colors duration-300 hover:bg-ink/85 focus-visible:ring-2 focus-visible:ring-flesh focus-visible:ring-offset-4 focus-visible:outline-none"
               >
                 Take it again
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-rind-deep/15 transition-transform duration-500 ease-settle group-hover:translate-x-0.5 group-hover:scale-105">
+                <span className="grid h-10 w-10 place-items-center rounded-lg bg-flesh text-paper">
                   <ArrowRight size={18} weight="bold" aria-hidden />
                 </span>
               </Link>
 
-              <p className="mt-8 text-xs leading-relaxed text-cream/60">
+              <p className="mt-8 text-xs leading-relaxed text-ink-3">
                 {deleted ? (
                   "Your saved result has been deleted."
                 ) : (
                   <>
                     Your answers are stored anonymously to power the stats.{" "}
-                    <button type="button" onClick={remove} className="cursor-pointer underline underline-offset-4 hover:text-cream">
+                    <button type="button" onClick={remove} className="cursor-pointer underline underline-offset-4 hover:text-ink">
                       Delete my response
                     </button>
                     {" "}&middot;{" "}
-                    <Link href="/privacy" className="underline underline-offset-4 hover:text-cream">Privacy</Link>
+                    <Link href="/privacy" className="underline underline-offset-4 hover:text-ink">Privacy</Link>
                   </>
                 )}
               </p>
@@ -156,13 +168,13 @@ export default function ResultsPage() {
           </div>
         ) : (
           <div className="w-full text-center">
-            <h1 className="font-display text-4xl font-semibold text-balance sm:text-5xl">No answers yet.</h1>
-            <p className="mx-auto mt-4 max-w-md text-cream/60">
+            <h1 className="font-display text-4xl font-semibold text-balance text-ink sm:text-5xl">No answers yet.</h1>
+            <p className="mx-auto mt-4 max-w-md text-ink-2">
               The test keeps its answers for this browser tab only. Take it to see a result here.
             </p>
             <Link
               href="/quiz"
-              className="mt-10 inline-flex h-14 items-center rounded-full bg-flesh px-8 font-display text-lg font-semibold text-rind-deep transition-transform duration-500 ease-settle hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]"
+              className="mt-10 inline-flex h-14 items-center rounded-control bg-ink px-8 font-display text-lg font-semibold text-paper transition-colors duration-300 hover:bg-ink/85"
             >
               Take the test
             </Link>

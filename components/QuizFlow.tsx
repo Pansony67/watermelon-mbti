@@ -30,24 +30,31 @@ const OPTIONS: { value: Answer; label: string; side: Side; disc: string }[] = [
   { value: 1, label: "Strongly disagree", side: "disagree", disc: "h-9 w-9 sm:h-14 sm:w-14" },
 ];
 
-/* Agree is coral (Juicy), disagree is pith (Crisp); neutral stays cream. */
+/*
+  Agree is coral (Juicy), disagree is seed ink (Crisp), neutral sits between.
+  Idle rings use full-strength colours so every control boundary clears 3:1
+  against the white card.
+*/
 const SIDE_STYLES: Record<Side, { idle: string; selected: string }> = {
   agree: {
-    idle: "border-flesh/60 group-hover:border-flesh group-hover:bg-flesh/10",
-    selected: "border-flesh bg-flesh text-rind-deep",
+    idle: "border-flesh group-hover:bg-blush",
+    selected: "border-flesh bg-flesh text-paper",
   },
   neutral: {
-    idle: "border-cream/40 group-hover:border-cream/70 group-hover:bg-cream/10",
-    selected: "border-cream bg-cream text-rind-deep",
+    idle: "border-ink-3 group-hover:bg-paper-2",
+    selected: "border-ink-3 bg-ink-3 text-paper",
   },
   disagree: {
-    idle: "border-pith/60 group-hover:border-pith group-hover:bg-pith/10",
-    selected: "border-pith bg-pith text-rind-deep",
+    idle: "border-ink group-hover:bg-mist",
+    selected: "border-ink bg-ink text-paper",
   },
 };
 
+/* The answer scale is circles by definition, so these stay round on purpose. */
+const DISC = "grid place-items-center rounded-full border-2 transition-[background-color,border-color] duration-300 ease-settle"; // unslop-ignore
+
 const NAV_BUTTON =
-  "inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full px-3 text-sm text-cream/60 transition-colors duration-300 hover:text-cream focus-visible:ring-2 focus-visible:ring-cream focus-visible:outline-none";
+  "inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-control px-3 text-sm font-medium text-ink-2 transition-colors duration-300 hover:text-ink focus-visible:ring-2 focus-visible:ring-flesh focus-visible:outline-none";
 
 /** Forward slides in from the right and out to the left; back is the mirror. */
 const cardVariants = {
@@ -138,21 +145,21 @@ export default function QuizFlow() {
 
   return (
     <>
-      <div className="grain" aria-hidden />
-
-      <main id="main" className="relative flex min-h-[100dvh] flex-col overflow-hidden bg-rind text-cream">
+      <main id="main" className="relative flex min-h-dvh flex-col overflow-hidden text-ink">
         <QuizBackdrop progress={answered / total} />
 
-        <header className="relative mx-auto flex h-[72px] w-full max-w-7xl items-center justify-between px-5 sm:px-8">
-          <Wordmark />
-          <p className="text-sm text-cream/55">
-            <span className="font-display font-semibold text-cream/80">{answered}</span> of {total} answered
-          </p>
+        <header className="relative border-b border-line bg-paper">
+          <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-5 sm:px-8">
+            <Wordmark />
+            <p className="text-sm text-ink-3">
+              <span className="font-display font-semibold text-ink">{answered}</span> of {total} answered
+            </p>
+          </div>
         </header>
 
         <section className="relative mx-auto flex w-full max-w-3xl flex-1 items-center px-4 pb-16 sm:px-8">
-          <div className="card-enter relative w-full rounded-[2rem] bg-[linear-gradient(135deg,rgba(255,77,109,0.55),rgba(251,243,228,0.12)_45%,rgba(234,247,217,0.5))] p-px shadow-rind-lg">
-            <div className="relative overflow-hidden rounded-[calc(2rem-1px)] bg-rind-deep/72 px-3 pt-5 pb-9 shadow-[inset_0_1px_0_rgba(251,243,228,0.12)] backdrop-blur-2xl sm:px-12 sm:pt-6 sm:pb-14">
+          <div className="card-enter relative w-full rounded-panel bg-paper shadow-panel ring-1 ring-line">
+            <div className="relative overflow-hidden rounded-[inherit] px-3 pt-5 pb-9 sm:px-12 sm:pt-6 sm:pb-14">
               {/* Row 1: back, position, forward. Fixed height so Q1 (no Back yet) matches the rest. */}
               <div className="grid h-9 grid-cols-[1fr_auto_1fr] items-center">
                 <div>
@@ -163,11 +170,11 @@ export default function QuizFlow() {
                     </button>
                   )}
                 </div>
-                <p className="font-display text-sm font-semibold text-cream/70 tabular-nums" aria-live="polite">
+                <p className="font-display text-sm font-semibold text-ink tabular-nums" aria-live="polite">
                   <span className="sr-only">Question {index + 1} of {total}</span>
                   <span aria-hidden>
                     {String(index + 1).padStart(2, "0")}
-                    <span className="mx-1 text-cream/35">/</span>
+                    <span className="mx-1 text-ink-3">/</span>
                     {total}
                   </span>
                 </p>
@@ -182,7 +189,7 @@ export default function QuizFlow() {
                 </div>
               </div>
 
-              {/* Row 2: one segment per question. Answered fills coral, current glows cream. */}
+              {/* Row 2: one segment per question. Answered fills coral, current is ink. */}
               <div
                 role="progressbar"
                 aria-label="Questions answered"
@@ -194,8 +201,8 @@ export default function QuizFlow() {
                 {QUESTIONS.map((q, i) => (
                   <span
                     key={q.id}
-                    className={`h-1.5 rounded-full transition-colors duration-300 ${
-                      answers[i] !== null ? "bg-flesh" : i === index ? "bg-cream/60" : "bg-cream/10"
+                    className={`h-1.5 rounded-xs transition-colors duration-300 ${
+                      answers[i] !== null ? "bg-flesh" : i === index ? "bg-ink-3" : "bg-line"
                     }`}
                   />
                 ))}
@@ -217,7 +224,7 @@ export default function QuizFlow() {
                     <h1
                       ref={headingRef}
                       tabIndex={-1}
-                      className="text-center font-display text-2xl leading-tight font-semibold text-balance outline-none sm:text-4xl lg:text-[2.6rem]"
+                      className="text-center font-display text-2xl leading-tight font-semibold text-balance text-ink outline-none sm:text-4xl lg:text-[2.6rem]"
                     >
                       {question.text}
                     </h1>
@@ -230,12 +237,12 @@ export default function QuizFlow() {
                     className="mt-8 sm:mt-12"
                   >
                     <div className="mb-3 flex justify-between font-display text-sm font-semibold sm:hidden">
-                      <span className="text-flesh">Agree</span>
-                      <span className="text-pith">Disagree</span>
+                      <span className="text-flesh-deep">Agree</span>
+                      <span className="text-ink">Disagree</span>
                     </div>
 
                     <div className="flex items-center justify-between gap-1 sm:gap-3">
-                      <span className="hidden font-display text-lg font-semibold text-flesh sm:block">
+                      <span className="hidden font-display text-lg font-semibold text-flesh-deep sm:block">
                         Agree
                       </span>
 
@@ -250,11 +257,11 @@ export default function QuizFlow() {
                             aria-checked={selected}
                             aria-label={option.label}
                             onClick={() => select(option.value)}
-                            className="group grid h-10 w-10 shrink-0 cursor-pointer touch-manipulation place-items-center rounded-full transition-transform duration-300 ease-settle hover:scale-105 focus-visible:ring-2 focus-visible:ring-cream focus-visible:ring-offset-2 focus-visible:ring-offset-rind-soft focus-visible:outline-none active:scale-95 sm:h-14 sm:w-14"
+                            className="group grid h-10 w-10 shrink-0 cursor-pointer touch-manipulation place-items-center rounded-control transition-transform duration-200 focus-visible:ring-2 focus-visible:ring-flesh focus-visible:outline-none active:scale-95 sm:h-14 sm:w-14"
                           >
                             <span
                               aria-hidden
-                              className={`grid place-items-center rounded-full border-2 transition-[background-color,border-color] duration-300 ease-settle ${option.disc} ${
+                              className={`${DISC} ${option.disc} ${
                                 selected ? `${styles.selected} pop` : styles.idle
                               }`}
                             >
@@ -264,7 +271,7 @@ export default function QuizFlow() {
                         );
                       })}
 
-                      <span className="hidden font-display text-lg font-semibold text-pith sm:block">
+                      <span className="hidden font-display text-lg font-semibold text-ink sm:block">
                         Disagree
                       </span>
                     </div>
@@ -276,28 +283,15 @@ export default function QuizFlow() {
           </div>
         </section>
 
-        <footer className="relative mx-auto flex w-full max-w-7xl flex-col gap-3 pr-20 pb-6 pl-5 text-[10px] tracking-[0.22em] text-cream/60 uppercase sm:pr-24 sm:pl-8 md:flex-row md:items-end md:justify-between">
-          <p className="leading-relaxed">
+        <footer className="relative mx-auto flex w-full max-w-7xl flex-col gap-3 pr-20 pb-6 pl-5 text-xs text-ink-3 sm:pr-24 sm:pl-8 md:flex-row md:items-end md:justify-between">
+          <p>
             WatermelonMBTI
-            <br />
-            <a
-              href="https://commons.wikimedia.org/wiki/File:Sliced_Watermelon.jpg"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="pointer-events-auto text-cream/60 normal-case tracking-normal hover:text-cream"
-            >
-              Photo: Harsha K R, CC BY-SA 2.0
-            </a>
-            <span className="mx-2 text-cream/35" aria-hidden>&middot;</span>
-            <Link href="/privacy" className="pointer-events-auto normal-case tracking-normal hover:text-cream">Privacy</Link>
-            <span className="mx-2 text-cream/35" aria-hidden>&middot;</span>
-            <Link href="/terms" className="pointer-events-auto normal-case tracking-normal hover:text-cream">Terms</Link>
+            <span className="mx-2" aria-hidden>&middot;</span>
+            <Link href="/privacy" className="hover:text-ink">Privacy</Link>
+            <span className="mx-2" aria-hidden>&middot;</span>
+            <Link href="/terms" className="hover:text-ink">Terms</Link>
           </p>
-          <p className="leading-relaxed md:text-right">
-            Same people,
-            <br />
-            different flavors.
-          </p>
+          <p className="italic md:text-right">Same people, different flavors.</p>
         </footer>
       </main>
     </>

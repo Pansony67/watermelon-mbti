@@ -32,16 +32,11 @@ export default function TermsPage() {
         and openly licensed assets:
       </p>
       <ul>
-        <li>Fredoka and Inter typefaces, SIL Open Font License 1.1.</li>
+        <li>Fredoka and Figtree typefaces, SIL Open Font License 1.1.</li>
         <li>Phosphor Icons, MIT License.</li>
         <li>three.js, react-three-fiber and drei, MIT License.</li>
-        <li>
-          &ldquo;Sliced Watermelon&rdquo; photograph by Harsha K R,{" "}
-          <a href="https://commons.wikimedia.org/wiki/File:Sliced_Watermelon.jpg" target="_blank" rel="noopener noreferrer">
-            CC BY-SA 2.0
-          </a>
-          , used as the test&rsquo;s backdrop.
-        </li>
+        <li>Motion and anime.js, MIT License.</li>
+        <li>Animated grid background and border beam adapted from Magic UI, MIT License.</li>
       </ul>
 
       <h2>No warranty</h2>

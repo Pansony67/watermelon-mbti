@@ -3,11 +3,15 @@
 import { useEffect, useRef } from "react";
 import { animate, stagger } from "animejs";
 
-/** Deterministic scatter so server and client render the same seeds. */
+/**
+ * Deterministic scatter so server and client render the same seeds. Values are
+ * rounded: the server serialises style numbers at lower precision than the
+ * client computes them, and full floats would trip a hydration mismatch.
+ */
 const SEEDS = Array.from({ length: 22 }, (_, i) => {
   const n = (k: number) => {
     const x = Math.sin(i * 127.1 + k * 311.7) * 43758.5453;
-    return x - Math.floor(x);
+    return Math.round((x - Math.floor(x)) * 1000) / 1000;
   };
   return {
     left: n(1) * 100,
@@ -72,7 +76,7 @@ export default function SeedField() {
         >
           <span
             data-seed
-            className="block rounded-full bg-cream"
+            className="block rounded-full bg-ink" // unslop-ignore: seeds are ellipses
             style={{
               width: seed.size,
               height: seed.size * 0.6,

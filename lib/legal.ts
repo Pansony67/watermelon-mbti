@@ -10,4 +10,6 @@ export const OPERATOR = {
   jurisdiction: "",
   /** Shown as "Last updated" on both policies. */
   updated: "20 September 2026",
+  /** Public source code, linked from the footer. */
+  github: "https://github.com/Pansony67/watermelon-mbti",
 };
