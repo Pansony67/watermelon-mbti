@@ -169,15 +169,6 @@ body {
   animation: drift 22s ease-in-out infinite;
 }
 
-@keyframes melon-pulse {
-  0%,
-  100% {
-    opacity: 0.85;
-  }
-  50% {
-    opacity: 1;
-  }
-}
 
 @keyframes melon-enter {
   from {
@@ -255,12 +246,8 @@ body {
   animation: pop 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.melon-placeholder {
-  animation: melon-pulse 2.4s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-}
 
 @media (prefers-reduced-motion: reduce) {
-  .melon-placeholder,
   .reveal,
   .melon-enter,
   .card-enter,

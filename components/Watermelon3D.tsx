@@ -320,6 +320,24 @@ function Ground() {
 }
 
 /* -------------------------------------------------------------------------- */
+/*  First paint                                                               */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Calls onReady once the scene has been drawn. useFrame runs before each
+ * render, so the second call means the first frame (with its compiled
+ * shaders, shadow and environment) is already on the canvas.
+ */
+function ReportReady({ onReady }: { onReady?: () => void }) {
+  const frames = useRef(0);
+  useFrame(() => {
+    frames.current += 1;
+    if (frames.current === 2) onReady?.();
+  });
+  return null;
+}
+
+/* -------------------------------------------------------------------------- */
 /*  Motion                                                                    */
 /* -------------------------------------------------------------------------- */
 
@@ -371,7 +389,7 @@ function usePrefersReducedMotion() {
 /*  Scene                                                                     */
 /* -------------------------------------------------------------------------- */
 
-export default function Watermelon3D({ className }: { className?: string }) {
+export default function Watermelon3D({ className, onReady }: { className?: string; onReady?: () => void }) {
   const reducedMotion = usePrefersReducedMotion();
   const [dragging, setDragging] = useState(false);
 
@@ -432,6 +450,7 @@ export default function Watermelon3D({ className }: { className?: string }) {
       </PresentationControls>
 
       <Ground />
+      <ReportReady onReady={onReady} />
 
       {/* Studio softboxes built in-scene: PBR reflections with no HDRI fetch. */}
       <Environment resolution={256} frames={1}>
