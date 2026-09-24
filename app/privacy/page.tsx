@@ -3,7 +3,7 @@ import Link from "next/link";
 import LegalPage from "@/components/LegalPage";
 import { OPERATOR } from "@/lib/legal";
 
-export const metadata: Metadata = { title: "Privacy | Watermelon MBTI" };
+export const metadata: Metadata = { title: "Privacy | Melonality" };
 
 export default function PrivacyPage() {
   return (

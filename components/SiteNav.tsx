@@ -18,7 +18,7 @@ const LINKS = [
 export function Wordmark() {
   return (
     <Link href="/" className="font-display text-lg font-semibold tracking-tight text-ink">
-      Watermelon<span className="text-flesh">MBTI</span>
+      Melon<span className="text-flesh">ality</span>
     </Link>
   );
 }

@@ -3,7 +3,7 @@
  * TODO before launch: fill in contactEmail and jurisdiction.
  */
 export const OPERATOR = {
-  name: "Watermelon MBTI",
+  name: "Melonality",
   /** A monitored inbox for privacy and legal requests. Empty hides the contact lines. */
   contactEmail: "",
   /** Governing law for the Terms, e.g. "Thailand". Empty hides the clause. */

@@ -263,7 +263,7 @@ export default async function Home() {
             <figure className="col-span-2 text-center lg:col-span-1 lg:col-start-5 lg:justify-self-end lg:text-right">
               <blockquote className="text-[15px] text-ink-2 italic">&ldquo;Same people, different flavors.&rdquo;</blockquote>
               <figcaption className="mt-3 inline-block border-t border-line pt-3 text-[10px] tracking-[0.22em] text-ink-3 uppercase">
-                WatermelonMBTI
+                Melonality
               </figcaption>
             </figure>
           </div>

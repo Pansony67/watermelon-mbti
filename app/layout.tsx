@@ -16,7 +16,7 @@ const figtree = Figtree({
   subsets: ["latin"],
 });
 
-const TITLE = "Watermelon MBTI - What Kind of Watermelon Are You?";
+const TITLE = "Melonality - What Kind of Watermelon Are You?";
 const DESCRIPTION =
   "Twenty questions, ten watermelon types. Find the one hiding under your rind, and what it says about how you operate.";
 
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     title: TITLE,
     description: DESCRIPTION,
     url: SITE_URL,
-    siteName: "Watermelon MBTI",
+    siteName: "Melonality",
     type: "website",
   },
   // Search Console: the token only; Next renders the <meta name="google-site-verification"> tag.

@@ -38,7 +38,7 @@ export default function SiteFooter() {
         <div className="grid gap-12 md:grid-cols-[1.4fr_repeat(3,1fr)] md:gap-10">
           <div className="max-w-xs">
             <Link href="/" className="font-display text-xl font-semibold tracking-tight text-ink">
-              Watermelon<span className="text-flesh">MBTI</span>
+              Melon<span className="text-flesh">ality</span>
             </Link>
             <p className="mt-3 text-sm leading-relaxed text-ink-2">
               Twenty questions about how you eat watermelon. Ten types. Zero science.

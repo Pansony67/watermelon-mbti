@@ -289,7 +289,7 @@ export default function QuizFlow() {
 
         <footer className="relative mx-auto flex w-full max-w-7xl flex-col gap-3 pr-20 pb-6 pl-5 text-xs text-ink-3 sm:pr-24 sm:pl-8 md:flex-row md:items-end md:justify-between">
           <p>
-            WatermelonMBTI
+            Melonality
             <span className="mx-2" aria-hidden>&middot;</span>
             <Link href="/privacy" className="hover:text-ink">Privacy</Link>
             <span className="mx-2" aria-hidden>&middot;</span>
