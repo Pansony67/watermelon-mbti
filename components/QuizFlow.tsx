@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight, Check } from "@phosphor-icons/react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import BorderBeam from "@/components/BorderBeam";
 import QuizBackdrop from "@/components/QuizBackdrop";
+import ThemeToggle from "@/components/ThemeToggle";
 import { Wordmark } from "@/components/SiteNav";
 import { ANSWERS_STORAGE_KEY, QUESTIONS, type Answer } from "@/lib/questions";
 
@@ -151,9 +152,12 @@ export default function QuizFlow() {
         <header className="relative border-b border-line bg-paper">
           <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-5 sm:px-8">
             <Wordmark />
-            <p className="text-sm text-ink-3">
-              <span className="font-display font-semibold text-ink">{answered}</span> of {total} answered
-            </p>
+            <div className="flex items-center gap-4">
+              <p className="text-sm text-ink-3">
+                <span className="font-display font-semibold text-ink">{answered}</span> of {total} answered
+              </p>
+              <ThemeToggle />
+            </div>
           </div>
         </header>
 

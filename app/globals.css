@@ -1,14 +1,53 @@
 @import "tailwindcss";
 
 /*
-  Watermelon MBTI, light theme. Every colour is taken from the fruit:
-  paper is the page, ink is the seed, flesh is the accent. Coral (#FF4D6D)
-  is 3.2:1 on white, so it is reserved for icons, fills and large display
-  text; small coral text uses flesh-deep (5.2:1).
+  Watermelon MBTI. Every colour is taken from the fruit: paper is the page,
+  ink is the seed, flesh is the accent. Components use only the semantic
+  tokens below, so the theme lives entirely in these two blocks.
+
+  Light: coral (#FF4D6D) is 3.2:1 on white, so it is reserved for icons,
+  fills and large display text; small coral text uses flesh-deep (5.2:1).
+  Dark: warm neutral from the seed, never pure black. Paper is the raised
+  surface and paper-2 the recessed band, so cards read lighter than the band
+  behind them, as elevation should. Every text pairing is AA in both themes.
 */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 :root {
+  color-scheme: light;
   --background: #ffffff;
   --foreground: #1d1715;
+
+  --paper: #ffffff;
+  --paper-2: #f6f5f4;
+  --line: #e9e6e4;
+  --ink: #1d1715;
+  --ink-2: #5c5350;
+  --ink-3: #736966;
+  --flesh-deep: #d41e47;
+  --blush: #fff1f3;
+  --mist: #f1f0ef;
+  --elev-card: 0 1px 2px rgb(29 23 21 / 0.04), 0 12px 32px -16px rgb(29 23 21 / 0.14);
+  --elev-panel: 0 1px 2px rgb(29 23 21 / 0.05), 0 32px 64px -32px rgb(29 23 21 / 0.22);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #1c1816;
+  --foreground: #f4efec;
+
+  --paper: #1c1816;
+  --paper-2: #141110;
+  --line: #352e2b;
+  --ink: #f4efec;
+  --ink-2: #c7bdb8;
+  --ink-3: #a39893;
+  --flesh-deep: #ff7189;
+  --blush: #2d191d;
+  --mist: #26211f;
+  /* Shadows barely read on dark, so they deepen and the hairline rings carry the edge. */
+  --elev-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 12px 32px -16px rgb(0 0 0 / 0.6);
+  --elev-panel: 0 1px 2px rgb(0 0 0 / 0.35), 0 32px 64px -32px rgb(0 0 0 / 0.75);
 }
 
 @theme inline {
@@ -16,22 +55,22 @@
   --color-foreground: var(--foreground);
 
   /* Surfaces */
-  --color-paper: #ffffff;
-  --color-paper-2: #f6f5f4;
-  --color-line: #e9e6e4;
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-line: var(--line);
 
-  /* Ink, from the seed. All three pass AA on every surface below. */
-  --color-ink: #1d1715;
-  --color-ink-2: #5c5350;
-  --color-ink-3: #736966;
+  /* Ink, from the seed. */
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
 
-  /* Flesh */
+  /* Flesh. The brand coral is the same in both themes. */
   --color-flesh: #ff4d6d;
-  --color-flesh-deep: #d41e47;
+  --color-flesh-deep: var(--flesh-deep);
 
   /* Family tints: Juicy is blush, Crisp is a neutral mist. */
-  --color-blush: #fff1f3;
-  --color-mist: #f1f0ef;
+  --color-blush: var(--blush);
+  --color-mist: var(--mist);
 
   /*
     Fredoka is the brand: round like the fruit, and the joke needs it.
@@ -52,9 +91,9 @@
 
   --ease-settle: cubic-bezier(0.32, 0.72, 0, 1);
 
-  /* Shadows are tinted to the seed, never neutral black. */
-  --shadow-card: 0 1px 2px rgb(29 23 21 / 0.04), 0 12px 32px -16px rgb(29 23 21 / 0.14);
-  --shadow-panel: 0 1px 2px rgb(29 23 21 / 0.05), 0 32px 64px -32px rgb(29 23 21 / 0.22);
+  /* Shadows are tinted to the seed in light, deepened in dark. */
+  --shadow-card: var(--elev-card);
+  --shadow-panel: var(--elev-panel);
 }
 
 body {
@@ -76,7 +115,7 @@ body {
 
 /*
   Fades the 3D stage into the page so the rendered floor never ends at a
-  visible canvas edge. Opaque through the melon and plinth, gone by the rim.
+  visible canvas edge. Opaque through the melon and its shadow, gone by the rim.
 */
 .stage-mask {
   -webkit-mask-image: radial-gradient(

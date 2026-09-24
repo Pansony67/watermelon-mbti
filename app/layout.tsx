@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Figtree, Fredoka } from "next/font/google";
 import MusicPlayer from "@/components/MusicPlayer";
 import { SITE_URL } from "@/lib/site";
+import { THEME_SCRIPT } from "@/lib/theme";
 import "./globals.css";
 
 const fredoka = Fredoka({
@@ -36,16 +37,26 @@ export const metadata: Metadata = {
   },
 };
 
+/* Browser chrome follows the system theme; the page follows the visitor's choice. */
 export const viewport: Viewport = {
-  themeColor: "#FFFFFF",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#FFFFFF" },
+    { media: "(prefers-color-scheme: dark)", color: "#1C1816" },
+  ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
+    // The inline script sets data-theme before paint; suppressHydrationWarning lets the DOM win.
     <html
       lang="en"
+      data-theme="light"
+      suppressHydrationWarning
       className={`${fredoka.variable} ${figtree.variable} h-full antialiased`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body className="min-h-full flex flex-col">
         <a
           href="#main"

@@ -6,6 +6,7 @@ import { ArrowRight } from "@phosphor-icons/react";
 import BorderBeam from "@/components/BorderBeam";
 import QuizBackdrop from "@/components/QuizBackdrop";
 import SiteFooter from "@/components/SiteFooter";
+import ThemeToggle from "@/components/ThemeToggle";
 import { Wordmark } from "@/components/SiteNav";
 import { ANSWERS_STORAGE_KEY, isAnswerSet } from "@/lib/questions";
 import Image from "next/image";
@@ -97,8 +98,9 @@ export default function ResultsPage() {
       <QuizBackdrop progress={1} />
 
       <header className="relative border-b border-line bg-paper">
-        <div className="mx-auto flex h-16 w-full max-w-7xl items-center px-5 sm:px-8">
+        <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-5 sm:px-8">
           <Wordmark />
+          <ThemeToggle />
         </div>
       </header>
 

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowRight, List, X } from "@phosphor-icons/react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import ThemeToggle from "@/components/ThemeToggle";
 
 /** Every link lands on a real section of the landing page. */
 const LINKS = [
@@ -80,19 +81,22 @@ export default function SiteNav() {
           ))}
         </nav>
 
-        <TakeTheTest className="hidden lg:inline-flex" />
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <TakeTheTest className="hidden lg:inline-flex" />
 
-        <button
-          ref={openButton}
-          type="button"
-          onClick={() => setOpen(true)}
-          aria-expanded={open}
-          aria-controls="mobile-menu"
-          aria-label="Open menu"
-          className="grid h-10 w-10 cursor-pointer place-items-center rounded-control text-ink ring-1 ring-line ring-inset transition-colors duration-300 hover:bg-paper-2 focus-visible:ring-2 focus-visible:ring-flesh focus-visible:outline-none lg:hidden"
-        >
-          <List size={20} aria-hidden />
-        </button>
+          <button
+            ref={openButton}
+            type="button"
+            onClick={() => setOpen(true)}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            aria-label="Open menu"
+            className="grid h-10 w-10 cursor-pointer place-items-center rounded-control text-ink ring-1 ring-line ring-inset transition-colors duration-300 hover:bg-paper-2 focus-visible:ring-2 focus-visible:ring-flesh focus-visible:outline-none lg:hidden"
+          >
+            <List size={20} aria-hidden />
+          </button>
+        </div>
       </div>
 
       <AnimatePresence>
