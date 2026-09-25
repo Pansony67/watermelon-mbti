@@ -8,14 +8,14 @@ const COLUMNS: { heading: string; links: { label: string; href: string; external
     heading: "The Test",
     links: [
       { label: "Take the test", href: "/quiz" },
-      { label: "How it works", href: "/#how" },
+      { label: "How it works", href: "/how-it-works" },
       { label: "The types", href: "/types" },
     ],
   },
   {
     heading: "About",
     links: [
-      { label: "Why this exists", href: "/#why" },
+      { label: "Why this exists", href: "/about" },
       { label: "FAQ", href: "/#faq" },
       { label: "Source code", href: OPERATOR.github, external: true },
     ],

@@ -4,9 +4,7 @@ import {
   Cloud,
   Crown,
   Lightning,
-  ListChecks,
   OrangeSlice,
-  PaperPlaneTilt,
   Plus,
   Sparkle,
   UsersThree,
@@ -79,23 +77,12 @@ const FAMILY_STYLE: Record<Family, { label: string; tint: string; icon: string }
   Crisp: { label: "text-ink", tint: "bg-mist", icon: "text-ink" },
 };
 
-/** OrangeSlice is the same icon the stats row uses for "10 Unique types". */
-const STEPS: { icon: Icon; title: string; body: string }[] = [
-  {
-    icon: ListChecks,
-    title: "Take the quiz",
-    body: "Answer 20 honest questions about how you actually eat watermelon. No overthinking, just be honest.",
-  },
-  {
-    icon: OrangeSlice,
-    title: "Get your type",
-    body: "See which of the 10 unhinged watermelon types you are, your Juicy/Crisp %, and how many other people got the exact same result.",
-  },
-  {
-    icon: PaperPlaneTilt,
-    title: "Send it to someone",
-    body: "Screenshot your result and share it. Bonus points if it starts an argument.",
-  },
+/** Keep these checkable: each one is a well-documented fact, not a fun myth. */
+const FACTS: { label: string; body: string }[] = [
+  { label: "92% water", body: "Give or take. It is in the name for a reason, and it is why it runs down your arm." },
+  { label: "A berry", body: "Botanically, anyway. Watermelon is a pepo, the same kind of fruit as cucumbers and pumpkins." },
+  { label: "4,000+ years", body: "People have grown it at least that long. It turns up in ancient Egyptian tomb paintings." },
+  { label: "Square ones", body: "Some Japanese farmers grow cube-shaped watermelons in glass boxes, mostly for display, not eating." },
 ];
 
 /** Answers must stay true to app/privacy and the results page. */
@@ -277,34 +264,23 @@ export default async function Home() {
 
       </div>
 
-      {/* How it works: white step cards on the grey band. */}
-      <section id="how" className="relative w-full border-y border-line bg-paper-2 px-5 py-24 sm:px-8 sm:py-28">
+      {/* Fruit facts on the grey band. */}
+      <section id="facts" className="relative w-full border-y border-line bg-paper-2 px-5 py-24 sm:px-8 sm:py-28">
         <div className="mx-auto max-w-7xl">
-          <h2 className="text-center font-display text-3xl font-semibold text-ink sm:text-4xl">How it works</h2>
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="font-display text-3xl font-semibold text-ink sm:text-4xl">Know your fruit</h2>
+            <p className="mt-4 text-lg text-ink-2">Four true things about watermelon, while you&rsquo;re here.</p>
+          </div>
 
-          <ol className="mt-12 grid gap-5 md:grid-cols-3 md:gap-6">
-            {STEPS.map((step, i) => (
-              <li
-                key={step.title}
-                className="relative overflow-hidden rounded-card bg-paper p-7 shadow-card ring-1 ring-line sm:p-8"
-              >
-                <span aria-hidden className="absolute inset-x-0 top-0 h-0.75 bg-flesh" />
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute top-4 right-6 font-display text-7xl leading-none font-semibold text-ink/5 tabular-nums"
-                >
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-
-                <span className="grid h-12 w-12 place-items-center rounded-control bg-blush text-flesh">
-                  <step.icon size={26} aria-hidden />
-                </span>
-                <p className="mt-7 text-xs font-semibold tracking-[0.14em] text-flesh-deep uppercase">Step {i + 1}</p>
-                <h3 className="mt-2 font-display text-2xl font-semibold text-ink">{step.title}</h3>
-                <p className="mt-3 leading-relaxed text-pretty text-ink-2">{step.body}</p>
-              </li>
+          <dl className="mt-14 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+            {FACTS.map((fact) => (
+              <div key={fact.label} className="relative border-t border-line pt-6">
+                <span aria-hidden className="absolute -top-px left-0 h-0.5 w-10 bg-flesh" />
+                <dt className="font-display text-3xl font-semibold text-ink">{fact.label}</dt>
+                <dd className="mt-3 leading-relaxed text-pretty text-ink-2">{fact.body}</dd>
+              </div>
             ))}
-          </ol>
+          </dl>
         </div>
       </section>
 
@@ -341,16 +317,25 @@ export default async function Home() {
         </div>
       </section>
 
-      <section id="why" className="relative w-full overflow-hidden border-t border-line bg-paper-2 px-5 py-28 sm:px-8 sm:py-36">
+      {/* Closing call to action over the seed field. */}
+      <section className="relative w-full overflow-hidden border-t border-line bg-paper-2 px-5 py-28 sm:px-8 sm:py-36">
         <SeedField />
-        <InView className="relative mx-auto max-w-2xl text-center">
+        <InView className="relative mx-auto flex max-w-2xl flex-col items-center text-center">
           <h2 className="font-display text-3xl leading-tight font-semibold text-balance text-ink sm:text-5xl">
-            Why does this exist?
+            Ready when you are.
           </h2>
           <p className="mt-6 text-lg leading-relaxed text-pretty text-ink-2 sm:text-xl">
-            No grand thesis. No years of research. I just really wanted to know what kind of watermelon eater
-            you are. Twenty honest questions about how you actually eat watermelon - that&rsquo;s the whole idea.
+            Twenty questions, a few minutes, and one very specific watermelon at the end.
           </p>
+          <Link
+            href="/quiz"
+            className="mt-10 inline-flex h-14 items-center gap-4 rounded-control bg-ink py-2 pr-2 pl-6 font-display text-lg font-semibold text-paper shadow-card transition-colors duration-300 hover:bg-ink/85 focus-visible:ring-2 focus-visible:ring-flesh focus-visible:ring-offset-4 focus-visible:outline-none"
+          >
+            Take the quiz
+            <span className="grid h-10 w-10 place-items-center rounded-lg bg-flesh text-paper">
+              <ArrowRight size={18} weight="bold" aria-hidden />
+            </span>
+          </Link>
         </InView>
       </section>
 

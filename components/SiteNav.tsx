@@ -11,8 +11,8 @@ import ThemeToggle from "@/components/ThemeToggle";
 const LINKS = [
   { label: "Home", href: "/" },
   { label: "The Types", href: "/types" },
-  { label: "How it works", href: "/#how" },
-  { label: "About", href: "/#why" },
+  { label: "How it works", href: "/how-it-works" },
+  { label: "About", href: "/about" },
 ];
 
 export function Wordmark() {
