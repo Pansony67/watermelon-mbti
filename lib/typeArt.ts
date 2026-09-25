@@ -10,3 +10,23 @@ import type { ResultKey } from "./scoring";
  *   JuicyOverachiever: "/types/juicy-overachiever.png",
  */
 export const TYPE_ART: Partial<Record<ResultKey, string>> = {};
+
+/**
+ * Text under each container in the "Meet the 10 types" grid: `title` is the
+ * bold line, `subtitle` the smaller one below. Placeholders until the final
+ * names are written.
+ */
+const PLACEHOLDER = { title: "Subject", subtitle: "Subject" };
+
+export const TYPE_CARD_TEXT: Record<ResultKey, { title: string; subtitle: string }> = {
+  JuicyOverachiever: PLACEHOLDER,
+  JuicyDaydreamer: PLACEHOLDER,
+  JuicyLifeOfTheParty: PLACEHOLDER,
+  JuicyOldSoul: PLACEHOLDER,
+  JuicyChaosSnacker: PLACEHOLDER,
+  CrispOverachiever: PLACEHOLDER,
+  CrispDaydreamer: PLACEHOLDER,
+  CrispLifeOfTheParty: PLACEHOLDER,
+  CrispOldSoul: PLACEHOLDER,
+  CrispChaosSnacker: PLACEHOLDER,
+};

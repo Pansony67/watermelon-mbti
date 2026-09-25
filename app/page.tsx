@@ -24,9 +24,8 @@ import SiteFooter from "@/components/SiteFooter";
 import SiteNav from "@/components/SiteNav";
 import Watermelon3DLazy from "@/components/Watermelon3DLazy";
 import { countResponses } from "@/lib/db";
-import { RESULT_TYPES } from "@/lib/resultTypes";
 import type { ResultKey } from "@/lib/scoring";
-import { TYPE_ART } from "@/lib/typeArt";
+import { TYPE_ART, TYPE_CARD_TEXT } from "@/lib/typeArt";
 
 type Family = "Juicy" | "Crisp";
 
@@ -114,9 +113,9 @@ const ARCHETYPES = [
 /** Both families, five archetypes each, in the order the quiz scores them. */
 const FAMILIES = (["Juicy", "Crisp"] as const).map((family) => ({
   family,
-  types: ARCHETYPES.map(([archetype, key]) => {
+  types: ARCHETYPES.map(([, key]) => {
     const resultKey: ResultKey = `${family}${key}`;
-    return { resultKey, archetype, name: RESULT_TYPES[resultKey].title, art: TYPE_ART[resultKey] };
+    return { resultKey, ...TYPE_CARD_TEXT[resultKey], art: TYPE_ART[resultKey] };
   }),
 }));
 
@@ -337,7 +336,7 @@ export default async function Home() {
                           {type.art && (
                             <Image
                               src={type.art}
-                              alt={type.name}
+                              alt={type.title}
                               fill
                               sizes="(min-width: 1024px) 240px, (min-width: 640px) 30vw, 45vw"
                               className="object-contain p-4"
@@ -345,9 +344,9 @@ export default async function Home() {
                           )}
                         </div>
                         <p className="mt-3 font-display text-base leading-snug font-semibold text-balance text-ink">
-                          {family} {type.archetype}
+                          {type.title}
                         </p>
-                        <p className="mt-0.5 text-sm text-ink-3">{type.name}</p>
+                        <p className="mt-0.5 text-sm text-ink-3">{type.subtitle}</p>
                       </li>
                     ))}
                   </ul>
