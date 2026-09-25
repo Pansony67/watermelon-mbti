@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Check, Gift, GithubLogo, ShieldCheck, X } from "@phosphor-icons/react/dist/ssr";
 import type { Icon } from "@phosphor-icons/react";
-import SeedField from "@/components/SeedField";
 import SiteFooter from "@/components/SiteFooter";
 import SiteNav from "@/components/SiteNav";
+import WhyReveal from "@/components/WhyReveal";
 import { OPERATOR } from "@/lib/legal";
 
 export const metadata: Metadata = {
@@ -54,18 +54,7 @@ export default function AboutPage() {
     <main id="main" className="relative flex min-h-dvh flex-col bg-paper text-ink">
       <SiteNav />
 
-      <section className="relative w-full overflow-hidden border-b border-line bg-paper-2 px-5 py-28 sm:px-8 sm:py-36">
-        <SeedField />
-        <div className="relative mx-auto max-w-2xl text-center">
-          <h1 className="font-display text-4xl leading-tight font-semibold text-balance text-ink sm:text-6xl">
-            Why does this exist?
-          </h1>
-          <p className="mt-6 text-lg leading-relaxed text-pretty text-ink-2 sm:text-xl">
-            No grand thesis. No years of research. I just really wanted to know what kind of watermelon eater
-            you are. Twenty honest questions about how you actually eat watermelon - that&rsquo;s the whole idea.
-          </p>
-        </div>
-      </section>
+      <WhyReveal />
 
       {/* What it is, and isn't. */}
       <section className="w-full px-5 py-24 sm:px-8 sm:py-28">
