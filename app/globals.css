@@ -27,6 +27,15 @@
   --flesh-deep: #d41e47;
   --blush: #fff1f3;
   --mist: #f1f0ef;
+  /* Type categories on /types: soft band + a heading shade that passes AA on it. */
+  --cat-green: #edf5ec;
+  --cat-green-ink: #2e6b3a;
+  --cat-blue: #ebf1f8;
+  --cat-blue-ink: #2d5a8e;
+  --cat-yellow: #faf3e0;
+  --cat-yellow-ink: #7a5a0e;
+  --cat-purple: #f2eef8;
+  --cat-purple-ink: #5b3e8e;
   --elev-card: 0 1px 2px rgb(29 23 21 / 0.04), 0 12px 32px -16px rgb(29 23 21 / 0.14);
   --elev-panel: 0 1px 2px rgb(29 23 21 / 0.05), 0 32px 64px -32px rgb(29 23 21 / 0.22);
 }
@@ -45,6 +54,14 @@
   --flesh-deep: #ff7189;
   --blush: #2d191d;
   --mist: #26211f;
+  --cat-green: #18221b;
+  --cat-green-ink: #a3d6aa;
+  --cat-blue: #161d27;
+  --cat-blue-ink: #a6c4ec;
+  --cat-yellow: #241f13;
+  --cat-yellow-ink: #e8cc86;
+  --cat-purple: #1e1a27;
+  --cat-purple-ink: #c8b4ee;
   /* Shadows barely read on dark, so they deepen and the hairline rings carry the edge. */
   --elev-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 12px 32px -16px rgb(0 0 0 / 0.6);
   --elev-panel: 0 1px 2px rgb(0 0 0 / 0.35), 0 32px 64px -32px rgb(0 0 0 / 0.75);
@@ -71,6 +88,15 @@
   /* Family tints: Juicy is blush, Crisp is a neutral mist. */
   --color-blush: var(--blush);
   --color-mist: var(--mist);
+
+  --color-cat-green: var(--cat-green);
+  --color-cat-green-ink: var(--cat-green-ink);
+  --color-cat-blue: var(--cat-blue);
+  --color-cat-blue-ink: var(--cat-blue-ink);
+  --color-cat-yellow: var(--cat-yellow);
+  --color-cat-yellow-ink: var(--cat-yellow-ink);
+  --color-cat-purple: var(--cat-purple);
+  --color-cat-purple-ink: var(--cat-purple-ink);
 
   /*
     Fredoka is the brand: round like the fruit, and the joke needs it.

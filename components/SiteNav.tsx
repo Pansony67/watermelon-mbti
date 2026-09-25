@@ -10,7 +10,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 /** Every link lands on a real section of the landing page. */
 const LINKS = [
   { label: "Home", href: "/" },
-  { label: "The Types", href: "/#types" },
+  { label: "The Types", href: "/types" },
   { label: "How it works", href: "/#how" },
   { label: "About", href: "/#why" },
 ];
