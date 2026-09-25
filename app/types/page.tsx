@@ -1,53 +1,15 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import SiteFooter from "@/components/SiteFooter";
 import SiteNav from "@/components/SiteNav";
-import TypeImage from "@/components/TypeImage";
+import { FAMILIES, FAMILY_STYLE, TYPES } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "The Types | Melonality",
   description: "All 20 watermelon-eater types, grouped into Green, Blue, Yellow and Purple.",
 };
-
-/** "The Master Eater" -> "the-master-eater", the filename under /images/types/. */
-const slug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-
-/** Class names are written out in full so Tailwind can find them. */
-const CATEGORIES = [
-  {
-    name: "Green",
-    band: "bg-cat-green",
-    ink: "text-cat-green-ink",
-    mark: "text-cat-green-ink/15",
-    ground: "bg-cat-green-ink/15",
-    types: ["The Saviour-Eater", "Shy-Eater", "Quiet-Eater", "Watermelon Dictator", "Creative-Eater"],
-  },
-  {
-    name: "Blue",
-    band: "bg-cat-blue",
-    ink: "text-cat-blue-ink",
-    mark: "text-cat-blue-ink/15",
-    ground: "bg-cat-blue-ink/15",
-    types: ["Ordinary-Eater", "Boring-Eater", "Introvert-Eater", "Extraordinary-Eater", "Defender-Eater"],
-  },
-  {
-    name: "Yellow",
-    band: "bg-cat-yellow",
-    ink: "text-cat-yellow-ink",
-    mark: "text-cat-yellow-ink/15",
-    ground: "bg-cat-yellow-ink/15",
-    types: ["Obsessed-Eater", "The Master Eater", "Energetic-Eater", "Extrovert-Eater", "Flexible-Eater"],
-  },
-  {
-    name: "Purple",
-    band: "bg-cat-purple",
-    ink: "text-cat-purple-ink",
-    mark: "text-cat-purple-ink/15",
-    ground: "bg-cat-purple-ink/15",
-    types: ["Sus-Eater", "Logic-Eater", "Angry-Eater", "Challenge-Eater", "Innovative-Eater"],
-  },
-];
 
 /**
  * Each band starts on a slant that alternates direction, and pulls up over
@@ -73,35 +35,41 @@ export default function TypesPage() {
         </Link>
       </section>
 
-      {CATEGORIES.map((category, i) => (
-        <section
-          key={category.name}
-          aria-labelledby={`cat-${category.name}`}
-          className={`relative -mt-[4vw] w-full overflow-hidden px-5 pt-[calc(4vw+3rem)] pb-20 sm:px-8 sm:pb-24 ${category.band} ${SLANTS[i % 2]}`}
-        >
-          {/* The category name is the heading, set huge and faint behind the characters. */}
-          <h2
-            id={`cat-${category.name}`}
-            className={`pointer-events-none text-center font-display text-[24vw] leading-[0.8] font-bold tracking-[-0.03em] select-none lg:text-[17rem] ${category.mark}`}
+      {FAMILIES.map((family, i) => {
+        const style = FAMILY_STYLE[family];
+        return (
+          <section
+            key={family}
+            aria-labelledby={`family-${family}`}
+            className={`relative -mt-[4vw] w-full overflow-hidden px-5 pt-[calc(4vw+3rem)] pb-20 sm:px-8 sm:pb-24 ${style.tint} ${SLANTS[i % 2]}`}
           >
-            {category.name}
-          </h2>
+            {/* The family name is the heading, set huge and faint behind the characters. */}
+            <h2
+              id={`family-${family}`}
+              className={`pointer-events-none text-center font-display text-[24vw] leading-[0.8] font-bold tracking-[-0.03em] select-none lg:text-[17rem] ${style.mark}`}
+            >
+              {family}
+            </h2>
 
-          <div className="relative mx-auto -mt-[10vw] max-w-7xl lg:-mt-36">
-            <ul className="flex flex-wrap justify-center gap-y-10">
-              {category.types.map((type) => (
-                <li key={type} className="w-1/2 px-2 text-center sm:w-1/3 sm:px-4 lg:w-1/5">
-                  <div className="relative mx-auto aspect-[4/5] w-full max-w-56">
-                    <span aria-hidden className={`absolute bottom-1 left-1/2 h-3 w-1/2 -translate-x-1/2 rounded-[50%] blur-[2px] ${category.ground}`} />
-                    <TypeImage src={`/images/types/${slug(type)}.png`} alt={type} />
-                  </div>
-                  <p className={`mt-3 font-display text-lg font-semibold text-balance sm:text-xl ${category.ink}`}>{type}</p>
+            <ul className="relative mx-auto -mt-[10vw] flex max-w-7xl flex-wrap justify-center gap-y-10 lg:-mt-36">
+              {TYPES.filter((type) => type.family === family).map((type) => (
+                <li key={type.slug} className="w-1/2 px-2 text-center sm:w-1/3 sm:px-4 lg:w-1/5">
+                  {/* Cutouts sit straight on the band. Never wider than the ~300px source, so no upscaling blur. */}
+                  <Image
+                    src={type.image}
+                    alt=""
+                    width={301}
+                    height={250}
+                    sizes="(min-width: 1024px) 240px, (min-width: 640px) 33vw, 50vw"
+                    className="mx-auto h-auto w-full max-w-[300px] object-contain"
+                  />
+                  <p className={`mt-3 font-display text-lg font-semibold text-balance sm:text-xl ${style.ink}`}>{type.name}</p>
                 </li>
               ))}
             </ul>
-          </div>
-        </section>
-      ))}
+          </section>
+        );
+      })}
 
       <SiteFooter />
     </main>

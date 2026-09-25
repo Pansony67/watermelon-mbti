@@ -29,7 +29,7 @@ const STEPS: { icon: Icon; title: string; body: string }[] = [
   {
     icon: OrangeSlice,
     title: "Get your type",
-    body: "See which of the 10 unhinged watermelon types you are, your Juicy/Crisp %, and how many other people got the exact same result.",
+    body: "See which of the 20 unhinged watermelon types you are, your Juicy/Crisp %, and how many other people got the exact same result.",
   },
   {
     icon: PaperPlaneTilt,

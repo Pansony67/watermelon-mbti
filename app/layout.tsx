@@ -18,7 +18,7 @@ const figtree = Figtree({
 
 const TITLE = "Melonality - What Kind of Watermelon Are You?";
 const DESCRIPTION =
-  "Twenty questions, ten watermelon types. Find the one hiding under your rind, and what it says about how you operate.";
+  "Twenty questions, twenty watermelon types. Find the one hiding under your rind, and what it says about how you operate.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

@@ -42,7 +42,7 @@ export default function SiteFooter() {
               Melon<span className="text-flesh">ality</span>
             </Link>
             <p className="mt-3 text-sm leading-relaxed text-ink-2">
-              Twenty questions about how you eat watermelon. Ten types. Zero science.
+              Twenty questions about how you eat watermelon. Twenty types. Zero science.
             </p>
           </div>
 
