@@ -345,11 +345,9 @@ export default async function Home() {
                           )}
                         </div>
                         <p className="mt-3 font-display text-base leading-snug font-semibold text-balance text-ink">
-                          {type.name}
-                        </p>
-                        <p className="mt-0.5 text-sm text-ink-3">
                           {family} {type.archetype}
                         </p>
+                        <p className="mt-0.5 text-sm text-ink-3">{type.name}</p>
                       </li>
                     ))}
                   </ul>
