@@ -164,22 +164,6 @@ body {
   mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 100%);
 }
 
-@keyframes scroll-caret {
-  0%,
-  100% {
-    transform: translateY(0);
-    opacity: 0.6;
-  }
-  50% {
-    transform: translateY(4px);
-    opacity: 1;
-  }
-}
-
-.scroll-caret {
-  animation: scroll-caret 2.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-}
-
 /* The quiz room's warm pool breathes very slowly. Transform only. */
 @keyframes drift {
   0%,
@@ -277,7 +261,6 @@ body {
   .reveal,
   .melon-enter,
   .card-enter,
-  .scroll-caret,
   .pop,
   .drift {
     animation: none;

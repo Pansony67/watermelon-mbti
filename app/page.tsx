@@ -1,12 +1,10 @@
 import {
   ArrowRight,
-  CaretDown,
   ChatCircleDots,
   Cloud,
   Crown,
   Lightning,
   ListChecks,
-  Mouse,
   OrangeSlice,
   PaperPlaneTilt,
   Plus,
@@ -253,7 +251,7 @@ export default async function Home() {
         </section>
 
         {/* Stats and the brand line. */}
-        <Reveal delay={0.75} distance={16} className="relative mx-auto w-full max-w-7xl px-5 sm:px-8">
+        <Reveal delay={0.75} distance={16} className="relative mx-auto w-full max-w-7xl px-5 pb-20 sm:px-8">
           <div className="grid grid-cols-2 gap-x-6 gap-y-7 border-t border-line pt-8 lg:grid-cols-[auto_auto_auto_auto_1fr] lg:items-center lg:gap-y-0">
             {stats.map((stat, i) => (
               <div
@@ -277,14 +275,6 @@ export default async function Home() {
           </div>
         </Reveal>
 
-        <a
-          href="#how"
-          className="relative flex flex-col items-center gap-1.5 pt-10 pb-10 text-ink-3 transition-colors duration-300 hover:text-ink focus-visible:text-ink focus-visible:outline-none"
-        >
-          <Mouse size={22} weight="thin" aria-hidden />
-          <span className="text-[10px] tracking-[0.22em] uppercase">Scroll to explore</span>
-          <CaretDown size={14} className="scroll-caret" aria-hidden />
-        </a>
       </div>
 
       {/* How it works: white step cards on the grey band. */}
