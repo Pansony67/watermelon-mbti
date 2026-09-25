@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 /**
  * A type illustration that simply disappears if its file is missing, so the
- * slot shows an empty tinted container instead of a broken-image icon until
+ * slot shows only its ground shadow instead of a broken-image icon until
  * the art is dropped into public/images/types/.
  *
  * onError alone is not enough: an image that fails before React hydrates
@@ -24,6 +24,6 @@ export default function TypeImage({ src, alt }: { src: string; alt: string }) {
   if (missing) return null;
   return (
     // eslint-disable-next-line @next/next/no-img-element -- plain <img> by request; art arrives later as static files
-    <img ref={ref} src={src} alt={alt} loading="lazy" onError={() => setMissing(true)} className="h-full w-full object-contain p-4" />
+    <img ref={ref} src={src} alt={alt} loading="lazy" onError={() => setMissing(true)} className="relative h-full w-full object-contain object-bottom" />
   );
 }
