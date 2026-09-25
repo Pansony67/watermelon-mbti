@@ -9,12 +9,12 @@ import {
   Mouse,
   OrangeSlice,
   PaperPlaneTilt,
+  Plus,
   Sparkle,
   UsersThree,
 } from "@phosphor-icons/react/dist/ssr";
 import type { Icon } from "@phosphor-icons/react";
 import type { CSSProperties } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import GridBackground from "@/components/GridBackground";
 import InView from "@/components/InView";
@@ -24,8 +24,6 @@ import SiteFooter from "@/components/SiteFooter";
 import SiteNav from "@/components/SiteNav";
 import Watermelon3DLazy from "@/components/Watermelon3DLazy";
 import { countResponses } from "@/lib/db";
-import type { ResultKey } from "@/lib/scoring";
-import { TYPE_ART, TYPE_CARD_TEXT } from "@/lib/typeArt";
 
 type Family = "Juicy" | "Crisp";
 
@@ -102,22 +100,33 @@ const STEPS: { icon: Icon; title: string; body: string }[] = [
   },
 ];
 
-const ARCHETYPES = [
-  ["Overachiever", "Overachiever"],
-  ["Daydreamer", "Daydreamer"],
-  ["Life of the Party", "LifeOfTheParty"],
-  ["Old Soul", "OldSoul"],
-  ["Chaos Snacker", "ChaosSnacker"],
-] as const;
-
-/** Both families, five archetypes each, in the order the quiz scores them. */
-const FAMILIES = (["Juicy", "Crisp"] as const).map((family) => ({
-  family,
-  types: ARCHETYPES.map(([, key]) => {
-    const resultKey: ResultKey = `${family}${key}`;
-    return { resultKey, ...TYPE_CARD_TEXT[resultKey], art: TYPE_ART[resultKey] };
-  }),
-}));
+/** Answers must stay true to app/privacy and the results page. */
+const FAQS: { q: string; a: string }[] = [
+  {
+    q: "Is this a real personality test?",
+    a: "No. It borrows the format of one, but the questions are about watermelon and there is zero science behind the results. It is for fun.",
+  },
+  {
+    q: "How long does it take?",
+    a: "Twenty questions, each answered with one tap on a seven-point scale from agree to disagree. Most people are done in a few minutes.",
+  },
+  {
+    q: "Do I need an account?",
+    a: "No. There is no sign-up, no email and no name. Open the quiz and start.",
+  },
+  {
+    q: "What happens to my answers?",
+    a: "When you finish, we save your twenty answers, your result and the time, with nothing that identifies you: no name, email, IP address or cookies. The saved results only feed the counts shown on the site.",
+  },
+  {
+    q: "Can I delete my result?",
+    a: "Yes. The results page has a \u201cDelete my response\u201d button that removes your saved row, for as long as you keep that tab open.",
+  },
+  {
+    q: "Does it cost anything?",
+    a: "No. It is free, with no ads and no trackers.",
+  },
+];
 
 const STATS: { icon: Icon; value: string; label: string }[] = [
   { icon: OrangeSlice, value: "10", label: "Unique types" },
@@ -184,10 +193,10 @@ export default async function Home() {
                   </span>
                 </Link>
                 <Link
-                  href="#types"
+                  href="/types"
                   className="inline-flex items-center gap-1.5 text-[15px] font-semibold text-ink underline-offset-4 hover:underline"
                 >
-                  See the 10 types
+                  See the types
                   <ArrowRight size={14} weight="bold" aria-hidden />
                 </Link>
               </div>
@@ -309,50 +318,35 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* The ten types. Containers stay empty until art is added in lib/typeArt.ts. */}
-      <section id="types" className="relative w-full px-5 py-24 sm:px-8 sm:py-28">
-        <div className="mx-auto max-w-7xl">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="font-display text-3xl font-semibold text-ink sm:text-4xl">Meet the 10 types</h2>
-            <p className="mt-4 text-lg text-ink-2">Five Juicy, five Crisp. One of them is you.</p>
+      {/* FAQ: native disclosure, no script. */}
+      <section id="faq" className="relative w-full px-5 py-24 sm:px-8 sm:py-28">
+        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-4">
+            <h2 className="font-display text-3xl font-semibold text-ink sm:text-4xl">Questions, answered</h2>
+            <p className="mt-4 text-lg text-ink-2">
+              The short version. The long one is in the{" "}
+              <Link href="/privacy" className="font-semibold text-flesh-deep underline-offset-4 hover:underline">
+                privacy policy
+              </Link>
+              .
+            </p>
           </div>
 
-          <div className="mt-14 space-y-14">
-            {FAMILIES.map(({ family, types }) => {
-              const f = FAMILY_STYLE[family];
-              return (
-                <div key={family}>
-                  <div className="flex items-baseline gap-4 border-b border-line pb-3">
-                    <h3 className={`font-display text-xl font-semibold ${f.label}`}>{family}</h3>
-                    <p className="text-sm text-ink-3">
-                      {family === "Juicy" ? "Big bites, sticky hands, no regrets." : "Clean cuts, dry fingers, full control."}
-                    </p>
-                  </div>
-
-                  <ul className="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-5 lg:gap-x-5">
-                    {types.map((type) => (
-                      <li key={type.resultKey}>
-                        <div className={`relative aspect-square overflow-hidden rounded-card ring-1 ring-line ${f.tint}`}>
-                          {type.art && (
-                            <Image
-                              src={type.art}
-                              alt={type.title}
-                              fill
-                              sizes="(min-width: 1024px) 240px, (min-width: 640px) 30vw, 45vw"
-                              className="object-contain p-4"
-                            />
-                          )}
-                        </div>
-                        <p className="mt-3 font-display text-base leading-snug font-semibold text-balance text-ink">
-                          {type.title}
-                        </p>
-                        <p className="mt-0.5 text-sm text-ink-3">{type.subtitle}</p>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              );
-            })}
+          <div className="border-t border-line lg:col-span-7 lg:col-start-6">
+            {FAQS.map((faq) => (
+              <details key={faq.q} className="group border-b border-line">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-6 font-display text-lg font-semibold text-ink transition-colors duration-300 hover:text-flesh-deep focus-visible:text-flesh-deep focus-visible:outline-none sm:text-xl [&::-webkit-details-marker]:hidden">
+                  {faq.q}
+                  <Plus
+                    size={20}
+                    weight="bold"
+                    aria-hidden
+                    className="shrink-0 text-flesh transition-transform duration-300 group-open:rotate-45"
+                  />
+                </summary>
+                <p className="-mt-1 max-w-[62ch] pb-6 leading-relaxed text-pretty text-ink-2">{faq.a}</p>
+              </details>
+            ))}
           </div>
         </div>
       </section>

@@ -9,13 +9,14 @@ const COLUMNS: { heading: string; links: { label: string; href: string; external
     links: [
       { label: "Take the test", href: "/quiz" },
       { label: "How it works", href: "/#how" },
-      { label: "The 10 types", href: "/#types" },
+      { label: "The types", href: "/types" },
     ],
   },
   {
     heading: "About",
     links: [
       { label: "Why this exists", href: "/#why" },
+      { label: "FAQ", href: "/#faq" },
       { label: "Source code", href: OPERATOR.github, external: true },
     ],
   },
