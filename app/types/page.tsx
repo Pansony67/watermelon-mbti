@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
-import FamilyBackdrop from "@/components/FamilyBackdrop";
-import FamilyHeading from "@/components/FamilyHeading";
 import SiteFooter from "@/components/SiteFooter";
 import SiteNav from "@/components/SiteNav";
 import { FAMILIES, FAMILY_STYLE, TYPES } from "@/lib/types";
@@ -39,20 +37,36 @@ export default function TypesPage() {
 
       {FAMILIES.map((family, i) => {
         const style = FAMILY_STYLE[family];
+        const key = family.toLowerCase();
         return (
           <section
             key={family}
             aria-labelledby={`family-${family}`}
-            className={`relative -mt-[4vw] w-full overflow-hidden px-5 pt-[calc(4vw+3rem)] pb-20 sm:px-8 sm:pb-24 ${style.tint} ${SLANTS[i % 2]}`}
+            className={`relative -mt-[4vw] w-full overflow-clip px-5 pt-[calc(4vw+3rem)] pb-20 sm:px-8 sm:pb-24 ${style.tint} ${SLANTS[i % 2]}`}
           >
-            <FamilyBackdrop family={family} />
+            {/* overflow-clip, not hidden, on the section: hidden makes it a scroll container and freezes the view() timelines. */}
+            <div aria-hidden className={`family-field field-${key}`} />
 
-            {/* The family name is the heading, set huge and faint above the characters. */}
-            <FamilyHeading
-              family={family}
+            {/* The family name is the heading, set huge and faint above the characters. See .kin in globals.css. */}
+            <h2
               id={`family-${family}`}
               className={`pointer-events-none relative text-center font-display text-[24vw] leading-[0.8] font-bold tracking-[-0.03em] select-none lg:text-[17rem] ${style.mark}`}
-            />
+            >
+              {family === "Purple" ? (
+                <>
+                  <span className="sr-only">{family}</span>
+                  <span aria-hidden>
+                    {family.split("").map((letter, n) => (
+                      <span key={n} className="kin-letter" style={{ animationRange: `entry ${n * 9}% cover ${28 + n * 4}%` }}>
+                        {letter}
+                      </span>
+                    ))}
+                  </span>
+                </>
+              ) : (
+                <span className={`kin kin-${key}`}>{family}</span>
+              )}
+            </h2>
 
             <ul className="relative mx-auto mt-6 flex max-w-7xl flex-wrap justify-center gap-y-10 sm:mt-8">
               {TYPES.filter((type) => type.family === family).map((type) => (
