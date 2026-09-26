@@ -1,88 +1,119 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useScroll, useTransform, type MotionValue } from "motion/react";
-import Reveal from "@/components/Reveal";
+import { motion, useReducedMotion, type Transition, type Variants } from "motion/react";
 import SeedField from "@/components/SeedField";
 
+const TITLE = "Why does this exist?";
+
+/** [Brackets] mark the phrase that gets the marker highlight. */
 const TEXT =
-  "No grand thesis. No years of research. I just really wanted to know what kind of watermelon eater you are. Twenty honest questions about how you actually eat watermelon - that’s the whole idea.";
+  "No grand thesis. No years of research. I just really wanted to know what kind of [watermelon eater] you are. Twenty honest questions about how you actually eat watermelon - that’s the whole idea.";
 
-/** Revealed words containing this turn coral instead of ink. */
-const HIGHLIGHT = "watermelon";
+const EASE = [0.16, 1, 0.3, 1] as const;
+const BODY_START = 0.55;
+const BODY_STEP = 0.022;
 
-/** The last word is fully lit here, so the finished statement holds before the section scrolls away. */
-const DONE_AT = 0.8;
+/** Plain and marked runs, each word numbered in reading order for the stagger. */
+let n = 0;
+const RUNS = TEXT.split(/\[(.+?)\]/).map((run, i) => ({
+  marked: i % 2 === 1,
+  words: run
+    .trim()
+    .split(" ")
+    .filter(Boolean)
+    .map((word) => ({ word, i: n++ })),
+}));
+const MARK_END = RUNS.find((run) => run.marked)!.words.at(-1)!.i;
+
+/** Each element's `custom` carries its index and the reduced-motion flag; reduced motion shows everything at once. */
+type Custom = { i: number; reduced: boolean | null };
+const timing = (reduced: boolean | null, transition: Transition): Transition => (reduced ? { duration: 0 } : transition);
+
+const titleWord: Variants = {
+  hidden: { y: "110%" },
+  shown: ({ i, reduced }: Custom) => ({ y: "0%", transition: timing(reduced, { duration: 0.9, ease: EASE, delay: 0.1 + i * 0.08 }) }),
+};
+
+const bodyWord: Variants = {
+  hidden: { opacity: 0, y: 14 },
+  shown: ({ i, reduced }: Custom) => ({
+    opacity: 1,
+    y: 0,
+    transition: timing(reduced, { duration: 0.7, ease: EASE, delay: BODY_START + i * BODY_STEP }),
+  }),
+};
+
+const marker: Variants = {
+  hidden: { scaleX: 0 },
+  shown: ({ reduced }: Custom) => ({
+    scaleX: 1,
+    transition: timing(reduced, { duration: 0.6, ease: EASE, delay: BODY_START + MARK_END * BODY_STEP + 0.45 }),
+  }),
+};
 
 /**
- * "Why does this exist?", lit word by word as you scroll. Adapted from Magic
- * UI's TextReveal (MIT): https://github.com/magicuidesign/magicui
- *
- * Changes from the original: the dim copy is aria-hidden so screen readers
- * read each word once, words flow as inline text (spaces survive copy and
- * centring), reveal finishes at DONE_AT rather than the very end, colours
- * are theme tokens, and under prefers-reduced-motion the track collapses to
- * a normal section with every word lit, in CSS so nothing waits on hydration.
+ * The About page's opening statement. Plays once as the page opens: the
+ * title slides up out of a mask word by word, the statement follows in a
+ * quick stagger, and a coral marker sweeps under "watermelon eater". About
+ * two seconds in total, no scroll-jacking. Under prefers-reduced-motion
+ * everything appears at once. Screen readers get the plain title once.
  */
 export default function WhyReveal() {
-  const track = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: track, offset: ["start start", "end end"] });
-  const words = TEXT.split(" ");
+  // Only feeds `custom`, which never reaches the DOM, so server and client markup still match.
+  const reduced = useReducedMotion();
 
   return (
-    <div ref={track} className="relative h-[240vh] border-b border-line bg-paper-2 motion-reduce:h-auto">
-      <section className="sticky top-0 flex h-dvh items-center overflow-hidden px-5 sm:px-8 motion-reduce:static motion-reduce:h-auto motion-reduce:py-28">
-        <SeedField />
-        <div className="relative mx-auto max-w-4xl text-center">
-          <Reveal delay={0.05} distance={16}>
-            <h1 className="text-sm font-semibold tracking-[0.16em] text-flesh-deep uppercase">Why does this exist?</h1>
-          </Reveal>
-          <p className="mt-8 font-display text-[1.75rem] leading-[1.2] font-semibold tracking-[-0.01em] text-balance sm:text-5xl lg:text-6xl">
-            {words.map((word, i) => (
-              <Word
-                key={i}
-                progress={scrollYProgress}
-                range={[(i / words.length) * DONE_AT, ((i + 1) / words.length) * DONE_AT]}
-                highlight={word.includes(HIGHLIGHT)}
-              >
-                {word}
-              </Word>
+    <section className="relative flex min-h-[78dvh] items-center overflow-hidden border-b border-line bg-paper-2 px-5 py-24 sm:px-8">
+      <SeedField />
+      <motion.div initial="hidden" animate="shown" className="relative mx-auto max-w-4xl text-center">
+        <h1 className="font-display text-5xl leading-[1.05] font-semibold tracking-[-0.02em] text-balance text-ink sm:text-7xl">
+          <span className="sr-only">{TITLE}</span>
+          <span aria-hidden>
+            {TITLE.split(" ").map((word, i) => (
+              <span key={i}>
+                {/* The mask the word rises out of; padded so descenders (y) are not clipped. */}
+                <span className="-mb-[0.14em] inline-block overflow-clip pb-[0.14em] align-bottom">
+                  <motion.span custom={{ i, reduced }} variants={titleWord} className="inline-block">
+                    {word}
+                  </motion.span>
+                </span>{" "}
+              </span>
             ))}
-          </p>
-        </div>
-      </section>
-    </div>
-  );
-}
+          </span>
+        </h1>
 
-function Word({
-  children,
-  progress,
-  range,
-  highlight,
-}: {
-  children: string;
-  progress: MotionValue<number>;
-  range: [number, number];
-  highlight: boolean;
-}) {
-  // Pin both ends of the scroll. Motion may run this on a native scroll timeline, where a
-  // range that stops short of 1 eases back toward the start value instead of holding.
-  const [start, end] = range;
-  const opacity = useTransform(progress, start > 0 ? [0, start, end, 1] : [0, end, 1], start > 0 ? [0, 0, 1, 1] : [0, 1, 1]);
-  return (
-    <>
-      <span className="relative inline-block">
-        <span aria-hidden className="absolute inset-0 text-ink/15">
-          {children}
-        </span>
-        <motion.span
-          style={{ opacity }}
-          className={`relative motion-reduce:opacity-100! ${highlight ? "text-flesh-deep" : "text-ink"}`}
-        >
-          {children}
-        </motion.span>
-      </span>{" "}
-    </>
+        <p className="mx-auto mt-8 max-w-[36ch] text-xl leading-[1.55] text-pretty text-ink-2 sm:text-[1.625rem]">
+          {RUNS.map((run, r) => {
+            // Spaces sit between words and between runs, never at the end of the marked run.
+            const words = run.words.map(({ word, i }, w) => (
+              <span key={i}>
+                <motion.span custom={{ i, reduced }} variants={bodyWord} className="inline-block">
+                  {word}
+                </motion.span>
+                {w < run.words.length - 1 && " "}
+              </span>
+            ));
+            return (
+              <span key={r}>
+                {r > 0 && " "}
+                {run.marked ? (
+                  <span className="relative isolate inline-block font-medium whitespace-nowrap text-ink">
+                    <motion.span
+                      aria-hidden
+                      custom={{ i: MARK_END, reduced }}
+                      variants={marker}
+                      className="absolute inset-x-[-0.12em] bottom-[0.38em] -z-10 h-[0.44em] origin-left rounded-xs bg-flesh/30"
+                    />
+                    {words}
+                  </span>
+                ) : (
+                  words
+                )}
+              </span>
+            );
+          })}
+        </p>
+      </motion.div>
+    </section>
   );
 }
