@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Archivo } from "next/font/google";
 import Link from "next/link";
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import CineBand from "@/components/CineBand";
@@ -13,8 +13,12 @@ export const metadata: Metadata = {
   description: "All 20 watermelon-eater types, grouped into Green, Blue, Yellow and Purple.",
 };
 
-/** A sharp display face for the character select; the rest of the site keeps Fredoka and Figtree. */
-const geist = Geist({ subsets: ["latin"] });
+/**
+ * A sharp grotesque with a width axis for the character select: the giant
+ * names and title run slightly expanded, like a game title card. The rest of
+ * the site keeps Fredoka and Figtree.
+ */
+const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"] });
 
 /** Band colour and the angle its stage light comes from. Class names written out in full for Tailwind. */
 const STAGE: Record<Family, { band: string; lightAt: string }> = {
@@ -36,10 +40,10 @@ export default function TypesPage() {
       <SiteNav />
 
       {/* One dark colour-block composition from here to the footer, in both themes. */}
-      <div className={`bg-cine-base text-cine-ink ${geist.className}`}>
+      <div className={`bg-cine-base text-cine-ink ${archivo.className}`}>
         <section className="mx-auto flex w-full max-w-7xl flex-col items-center px-5 pt-20 pb-[calc(4vw+5rem)] text-center sm:px-8 sm:pt-24">
-          <h1 className="text-5xl font-extrabold tracking-[-0.04em] text-balance sm:text-7xl">The 20 Types</h1>
-          <p className="mt-5 max-w-[40ch] text-lg leading-relaxed text-pretty text-cine-ink-2">
+          <h1 className="text-5xl font-extrabold tracking-[-0.03em] text-balance [font-stretch:115%] sm:text-7xl">The 20 Types</h1>
+          <p className="mt-5 max-w-[48ch] text-lg leading-relaxed text-balance text-cine-ink-2">
             Four families, five eaters in each. One of them is you.
           </p>
           <Link

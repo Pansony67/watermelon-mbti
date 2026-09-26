@@ -56,7 +56,7 @@ export default function CineBand({ family, types, intro }: { family: Family; typ
 
       <h2
         id={`family-${family}`}
-        className="pointer-events-none text-center text-[22vw] leading-[0.85] font-black tracking-[-0.05em] text-[color:color-mix(in_srgb,var(--glow)_22%,transparent)] select-none lg:text-[15rem]"
+        className="pointer-events-none text-center text-[19vw] leading-[0.85] font-black tracking-[-0.04em] [font-stretch:118%] text-[color:color-mix(in_srgb,var(--glow)_22%,transparent)] select-none lg:text-[15rem]"
       >
         <span data-word className={`inline-block ${intro ? "cine-intro-word" : ""}`}>
           {family}
