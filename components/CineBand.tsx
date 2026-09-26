@@ -86,8 +86,9 @@ export default function CineBand({ family, types, intro }: { family: Family; typ
                 sizes="(min-width: 1024px) 240px, (min-width: 640px) 33vw, 50vw"
                 // The first band is on screen at load; on phones its first character is the LCP.
                 loading={intro ? "eager" : "lazy"}
-                // The cutouts stop at the waist; fade that hard edge into the floor.
-                className="relative h-auto w-full object-contain mask-[linear-gradient(to_bottom,#000_80%,transparent)]"
+                // Shown whole: no mask or crop. Parts reach every edge (the Angry-Eater's axe touches the top),
+                // the box keeps the PNG's ~6:5 shape via width/height, and max-w-[300px] above caps it at native size.
+                className="relative h-auto w-full object-contain"
               />
             </div>
             <p className="mt-3 text-base font-semibold tracking-[-0.01em] text-balance text-[color:var(--glow)] sm:text-lg">{type.name}</p>
