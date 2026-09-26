@@ -1,19 +1,32 @@
+import type { CSSProperties } from "react";
 import type { Metadata } from "next";
-import Image from "next/image";
+import { Geist } from "next/font/google";
 import Link from "next/link";
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
+import CineBand from "@/components/CineBand";
 import SiteFooter from "@/components/SiteFooter";
 import SiteNav from "@/components/SiteNav";
-import { FAMILIES, FAMILY_STYLE, TYPES } from "@/lib/types";
+import { FAMILIES, TYPES, type Family } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "The Types | Melonality",
   description: "All 20 watermelon-eater types, grouped into Green, Blue, Yellow and Purple.",
 };
 
+/** A sharp display face for the character select; the rest of the site keeps Fredoka and Figtree. */
+const geist = Geist({ subsets: ["latin"] });
+
+/** Band colour and the angle its stage light comes from. Class names written out in full for Tailwind. */
+const STAGE: Record<Family, { band: string; lightAt: string }> = {
+  Green: { band: "bg-cine-green", lightAt: "12% 0%" },
+  Blue: { band: "bg-cine-blue", lightAt: "88% 0%" },
+  Yellow: { band: "bg-cine-yellow", lightAt: "50% 0%" },
+  Purple: { band: "bg-cine-purple", lightAt: "50% 100%" },
+};
+
 /**
  * Each band starts on a slant that alternates direction, and pulls up over
- * the one before so the slant cuts into it rather than leaving a white wedge.
+ * the one before so the slant cuts into it rather than leaving a gap.
  */
 const SLANTS = ["[clip-path:polygon(0_4vw,100%_0,100%_100%,0_100%)]", "[clip-path:polygon(0_0,100%_4vw,100%_100%,0_100%)]"];
 
@@ -22,73 +35,38 @@ export default function TypesPage() {
     <main id="main" className="relative flex min-h-dvh flex-col bg-paper text-ink">
       <SiteNav />
 
-      <section className="mx-auto flex w-full max-w-7xl flex-col items-center px-5 pt-20 pb-[calc(4vw+5rem)] text-center sm:px-8 sm:pt-24">
-        <h1 className="font-display text-5xl font-semibold tracking-[-0.02em] text-balance sm:text-7xl">The 20 Types</h1>
-        <Link
-          href="/quiz"
-          className="mt-9 inline-flex h-14 items-center gap-4 rounded-control bg-ink py-2 pr-2 pl-6 font-display text-lg font-semibold text-paper shadow-card transition-colors duration-300 hover:bg-ink/85 focus-visible:ring-2 focus-visible:ring-flesh focus-visible:ring-offset-4 focus-visible:outline-none"
-        >
-          Take the quiz
-          <span className="grid h-10 w-10 place-items-center rounded-lg bg-flesh text-paper">
-            <ArrowRight size={18} weight="bold" aria-hidden />
-          </span>
-        </Link>
-      </section>
-
-      {FAMILIES.map((family, i) => {
-        const style = FAMILY_STYLE[family];
-        const key = family.toLowerCase();
-        return (
-          <section
-            key={family}
-            aria-labelledby={`family-${family}`}
-            className={`relative -mt-[4vw] w-full overflow-clip px-5 pt-[calc(4vw+3rem)] pb-20 sm:px-8 sm:pb-24 ${style.tint} ${SLANTS[i % 2]}`}
+      {/* One dark colour-block composition from here to the footer, in both themes. */}
+      <div className={`bg-cine-base text-cine-ink ${geist.className}`}>
+        <section className="mx-auto flex w-full max-w-7xl flex-col items-center px-5 pt-20 pb-[calc(4vw+5rem)] text-center sm:px-8 sm:pt-24">
+          <h1 className="text-5xl font-extrabold tracking-[-0.04em] text-balance sm:text-7xl">The 20 Types</h1>
+          <p className="mt-5 max-w-[40ch] text-lg leading-relaxed text-pretty text-cine-ink-2">
+            Four families, five eaters in each. One of them is you.
+          </p>
+          <Link
+            href="/quiz"
+            className="mt-9 inline-flex h-14 items-center gap-4 rounded-control bg-cine-ink py-2 pr-2 pl-6 text-lg font-semibold text-cine-base transition-colors duration-300 hover:bg-cine-ink/85 focus-visible:ring-2 focus-visible:ring-flesh focus-visible:ring-offset-4 focus-visible:ring-offset-cine-base focus-visible:outline-none"
           >
-            {/* overflow-clip, not hidden, on the section: hidden makes it a scroll container and freezes the view() timelines. */}
-            <div aria-hidden className={`family-field field-${key}`} />
+            Take the quiz
+            <span className="grid h-10 w-10 place-items-center rounded-lg bg-flesh text-paper">
+              <ArrowRight size={18} weight="bold" aria-hidden />
+            </span>
+          </Link>
+        </section>
 
-            {/* The family name is the heading, set huge and faint above the characters. See .kin in globals.css. */}
-            <h2
-              id={`family-${family}`}
-              className={`pointer-events-none relative text-center font-display text-[24vw] leading-[0.8] font-bold tracking-[-0.03em] select-none lg:text-[17rem] ${style.mark}`}
+        {FAMILIES.map((family, i) => {
+          const stage = STAGE[family];
+          return (
+            <section
+              key={family}
+              aria-labelledby={`family-${family}`}
+              className={`cine-stage relative -mt-[4vw] w-full overflow-clip px-5 pt-[calc(4vw+3rem)] pb-20 sm:px-8 sm:pb-28 ${stage.band} ${SLANTS[i % 2]}`}
+              style={{ "--glow": `var(--cine-${family.toLowerCase()}-glow)`, "--light-at": stage.lightAt } as CSSProperties}
             >
-              {family === "Purple" ? (
-                <>
-                  <span className="sr-only">{family}</span>
-                  <span aria-hidden>
-                    {family.split("").map((letter, n) => (
-                      <span key={n} className="kin-letter" style={{ animationRange: `entry ${n * 9}% cover ${28 + n * 4}%` }}>
-                        {letter}
-                      </span>
-                    ))}
-                  </span>
-                </>
-              ) : (
-                <span className={`kin kin-${key}`}>{family}</span>
-              )}
-            </h2>
-
-            <ul className="relative mx-auto mt-6 flex max-w-7xl flex-wrap justify-center gap-y-10 sm:mt-8">
-              {TYPES.filter((type) => type.family === family).map((type) => (
-                <li key={type.slug} className="w-1/2 px-2 text-center sm:w-1/3 sm:px-4 lg:w-1/5">
-                  {/* Cutouts sit straight on the band. Never wider than the ~300px source, so no upscaling blur. */}
-                  <Image
-                    src={type.image}
-                    alt=""
-                    width={301}
-                    height={250}
-                    sizes="(min-width: 1024px) 240px, (min-width: 640px) 33vw, 50vw"
-                    // The first band is on screen at load, and on phones its first character is the LCP.
-                    loading={i === 0 ? "eager" : "lazy"}
-                    className="mx-auto h-auto w-full max-w-[300px] object-contain"
-                  />
-                  <p className={`mt-3 font-display text-lg font-semibold text-balance sm:text-xl ${style.ink}`}>{type.name}</p>
-                </li>
-              ))}
-            </ul>
-          </section>
-        );
-      })}
+              <CineBand family={family} types={TYPES.filter((type) => type.family === family)} intro={i === 0} />
+            </section>
+          );
+        })}
+      </div>
 
       <SiteFooter />
     </main>

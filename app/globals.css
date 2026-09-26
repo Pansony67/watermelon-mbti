@@ -36,6 +36,22 @@
   --cat-yellow-ink: #7a5a0e;
   --cat-purple: #f2eef8;
   --cat-purple-ink: #5b3e8e;
+  /*
+    /types character-select section. Deliberately dark in BOTH themes (one
+    colour-block composition), so these are not redefined for dark mode.
+    Each glow passes AA as text on its own band (8.3:1 and up).
+  */
+  --cine-base: #0f0d0c;
+  --cine-ink: #f4efec;
+  --cine-ink-2: #c7bdb8;
+  --cine-green: #0e2419;
+  --cine-green-glow: #77d9a0;
+  --cine-blue: #0d1a30;
+  --cine-blue-glow: #8ab8ff;
+  --cine-yellow: #2a1d07;
+  --cine-yellow-glow: #f0c250;
+  --cine-purple: #1c1030;
+  --cine-purple-glow: #c0a0ff;
   --elev-card: 0 1px 2px rgb(29 23 21 / 0.04), 0 12px 32px -16px rgb(29 23 21 / 0.14);
   --elev-panel: 0 1px 2px rgb(29 23 21 / 0.05), 0 32px 64px -32px rgb(29 23 21 / 0.22);
 }
@@ -97,6 +113,13 @@
   --color-cat-yellow-ink: var(--cat-yellow-ink);
   --color-cat-purple: var(--cat-purple);
   --color-cat-purple-ink: var(--cat-purple-ink);
+  --color-cine-base: var(--cine-base);
+  --color-cine-ink: var(--cine-ink);
+  --color-cine-ink-2: var(--cine-ink-2);
+  --color-cine-green: var(--cine-green);
+  --color-cine-blue: var(--cine-blue);
+  --color-cine-yellow: var(--cine-yellow);
+  --color-cine-purple: var(--cine-purple);
 
   /*
     Fredoka is the brand: round like the fruit, and the joke needs it.
@@ -268,71 +291,38 @@ body {
 }
 
 /*
-  /types family bands. Nothing loops. Each band has a layered radial field in
-  its own ink that shifts with the scroll, and its giant name moves into
-  place its own way as it scrolls in. Both are CSS scroll-driven animations:
-  they run on the compositor with no JavaScript, show the right frame before
-  any script loads, and stay still where unsupported or under reduced motion.
+  /types character select. Each band is lit by one stage light (angle and
+  colour set per band through --light-at and --glow) and darkens toward the
+  floor. Scroll entrances are driven by Motion in components/CineBand.tsx;
+  the first band, already on screen at load, plays the same entrance from
+  these CSS keyframes so it runs before hydration.
 */
-.family-field {
-  --hi: rgb(255 255 255 / 0.72);
-  position: absolute;
-  inset: -12% -8%;
-  pointer-events: none;
-  background:
-    radial-gradient(var(--a-size) at var(--a-at), color-mix(in srgb, var(--ink) var(--a-mix), transparent), transparent 70%),
-    radial-gradient(var(--b-size) at var(--b-at), var(--hi), transparent 70%),
-    /* Spotlight behind the character row: the cutouts are dark. */
-    radial-gradient(44% 28% at 50% 72%, var(--hi), transparent 72%);
-}
-[data-theme="dark"] .family-field {
-  --hi: color-mix(in srgb, var(--ink) 8%, transparent);
-}
-.field-green { --ink: var(--cat-green-ink); --a-size: 60% 58%; --a-at: 6% 0%; --a-mix: 20%; --b-size: 42% 48%; --b-at: 92% 26%; }
-.field-blue { --ink: var(--cat-blue-ink); --a-size: 55% 70%; --a-at: 100% 45%; --a-mix: 20%; --b-size: 40% 45%; --b-at: 6% 18%; }
-.field-yellow { --ink: var(--cat-yellow-ink); --a-size: 72% 48%; --a-at: 50% 0%; --a-mix: 16%; --b-size: 42% 40%; --b-at: 12% 88%; }
-.field-purple { --ink: var(--cat-purple-ink); --a-size: 78% 55%; --a-at: 28% 100%; --a-mix: 22%; --b-size: 40% 45%; --b-at: 90% 10%; }
-
-.kin,
-.kin-letter {
-  display: inline-block;
+.cine-stage {
+  /* background-image, not the shorthand: the shorthand would wipe the band colour utility. */
+  background-image:
+    radial-gradient(75% 65% at var(--light-at), color-mix(in srgb, var(--glow) 17%, transparent), transparent 70%),
+    linear-gradient(to bottom, transparent 55%, rgb(0 0 0 / 0.32));
 }
 
-@keyframes field-fall { from { transform: translateY(-7%); } to { transform: translateY(7%); } }
-@keyframes field-across { from { transform: translateX(6%); } to { transform: translateX(-6%); } }
-@keyframes field-bloom { from { transform: scale(0.9); } to { transform: scale(1.08); } }
-@keyframes field-rise { from { transform: translateY(7%); } to { transform: translateY(-7%); } }
+@keyframes cine-wipe {
+  from { clip-path: inset(-30% 110% -40% -10%); transform: translateX(-4%); }
+  to { clip-path: inset(-30% -10% -40% -10%); transform: none; }
+}
+@keyframes cine-rise {
+  from { opacity: 0; transform: translateY(48px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cine-glow {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: none; }
+}
 
-@keyframes kin-from-left { from { transform: translateX(-32%); opacity: 0.15; } to { transform: none; opacity: 1; } }
-@keyframes kin-from-right { from { transform: translateX(32%); opacity: 0.15; } to { transform: none; opacity: 1; } }
-@keyframes kin-zoom { from { transform: translateY(16%) scale(0.6); opacity: 0.15; } to { transform: none; opacity: 1; } }
-@keyframes kin-rise { from { transform: translateY(80%); opacity: 0; } to { transform: none; opacity: 1; } }
-
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .family-field {
-      animation: field-fall linear both;
-      animation-timeline: view();
-      animation-range: cover 0% cover 100%;
-    }
-    .field-blue { animation-name: field-across; }
-    .field-yellow { animation-name: field-bloom; }
-    .field-purple { animation-name: field-rise; }
-
-    /* Headings settle by the time they reach the upper-middle of the screen. */
-    .kin {
-      animation: kin-from-left cubic-bezier(0.25, 0.6, 0.3, 1) both;
-      animation-timeline: view();
-      animation-range: entry 0% cover 42%;
-    }
-    .kin-blue { animation-name: kin-from-right; }
-    .kin-yellow { animation-name: kin-zoom; transform-origin: 50% 100%; }
-
-    /* Purple rises letter by letter; each letter's range is set inline, staggered. */
-    .kin-letter {
-      animation: kin-rise cubic-bezier(0.25, 0.6, 0.3, 1) both;
-      animation-timeline: view();
-    }
+@media (prefers-reduced-motion: no-preference) {
+  .cine-intro-word { animation: cine-wipe 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s backwards; }
+  .cine-intro-glow { animation: cine-glow 1.2s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+  .cine-intro-char {
+    animation: cine-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    animation-delay: calc(0.35s + var(--i) * 90ms);
   }
 }
 
