@@ -1,17 +1,12 @@
 import {
   ArrowRight,
   ChatCircleDots,
-  Detective,
-  Flask,
-  Headphones,
   OrangeSlice,
   Plus,
   Sparkle,
-  Sword,
   UsersThree,
 } from "@phosphor-icons/react/dist/ssr";
 import type { Icon } from "@phosphor-icons/react";
-import type { CSSProperties } from "react";
 import Link from "next/link";
 import GridBackground from "@/components/GridBackground";
 import InView from "@/components/InView";
@@ -23,15 +18,21 @@ import Watermelon3DLazy from "@/components/Watermelon3DLazy";
 import { countResponses } from "@/lib/db";
 import { FAMILY_STYLE, TYPES, type EaterType } from "@/lib/types";
 
-type Chip = {
+/**
+ * A product-style annotation: a marker on the melon, a hairline leader, and
+ * a label. Coordinates are % of the stage; the poster and the live scene
+ * share its 5:4 frame, and markers sit well inside the flesh (y 34-56%) and
+ * rind (y 58-78%) regions measured from public/melon-poster.png, so they stay
+ * on the fruit as it turns. Re-measure if the camera changes.
+ */
+type Callout = {
   type: EaterType;
-  icon: Icon;
-  /** Position inside the stage, as CSS values. */
-  style: CSSProperties;
-  /** Which stage edge the chip hangs from; phones scale it down toward that corner. */
-  anchor: "left" | "right";
-  /** Connector polyline from chip to melon, in a 0-100 stage coordinate space. */
-  connector: string;
+  /** Marker position on the melon. */
+  at: [x: number, y: number];
+  /** Where the leader ends and the label begins: above the melon or below it. */
+  labelY: number;
+  /** Which way the label hangs off its leader, outward from the melon. */
+  side: "left" | "right";
 };
 
 const typeBySlug = (slug: string) => {
@@ -40,36 +41,12 @@ const typeBySlug = (slug: string) => {
   return type;
 };
 
-/** One type from each colour family, pinned to the melon with callouts. */
-const CHIPS: Chip[] = [
-  {
-    type: typeBySlug("the-saviour-eater"),
-    icon: Sword,
-    style: { left: "4%", top: "6%" },
-    anchor: "left",
-    connector: "16,16 16,30 29.5,30",
-  },
-  {
-    type: typeBySlug("introvert-eater"),
-    icon: Headphones,
-    style: { right: "2%", top: "5%" },
-    anchor: "right",
-    connector: "86,15 86,30 70.5,30",
-  },
-  {
-    type: typeBySlug("obsessed-eater"),
-    icon: Flask,
-    style: { left: "-2%", top: "62%" },
-    anchor: "left",
-    connector: "22,67 30,67",
-  },
-  {
-    type: typeBySlug("sus-eater"),
-    icon: Detective,
-    style: { right: "-3%", top: "58%" },
-    anchor: "right",
-    connector: "80,63 73,63",
-  },
+/** One type from each colour family, two on the flesh and two on the rind. */
+const CALLOUTS: Callout[] = [
+  { type: typeBySlug("the-saviour-eater"), at: [35, 42], labelY: 16, side: "left" },
+  { type: typeBySlug("introvert-eater"), at: [63, 40], labelY: 16, side: "right" },
+  { type: typeBySlug("obsessed-eater"), at: [34, 70], labelY: 84, side: "left" },
+  { type: typeBySlug("sus-eater"), at: [66, 66], labelY: 84, side: "right" },
 ];
 
 /** Keep these checkable: each one is a well-documented fact, not a fun myth. */
@@ -183,50 +160,46 @@ export default async function Home() {
             </Reveal>
           </div>
 
-          {/* Stage: melon on its plinth, result types called out around it. */}
+          {/* Stage: the melon, with four result types annotated on it. */}
           <div className="relative mx-auto w-full max-w-[420px] sm:max-w-[560px] lg:col-span-6 lg:max-w-none">
             {/* CSS entrance, not Motion: keeps the Three.js subtree free of a second animation runtime. */}
             <div className="melon-enter relative">
               <Watermelon3DLazy />
             </div>
 
-            <Reveal delay={0.7} className="pointer-events-none absolute inset-0">
-              <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden className="h-full w-full text-ink/20">
-                {CHIPS.map((chip) => (
-                  <polyline
-                    key={chip.type.slug}
-                    points={chip.connector}
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={1}
-                    vectorEffect="non-scaling-stroke"
-                  />
-                ))}
-              </svg>
-            </Reveal>
-
-            {CHIPS.map((chip, i) => {
-              const f = FAMILY_STYLE[chip.type.family];
+            {CALLOUTS.map((callout, i) => {
+              const f = FAMILY_STYLE[callout.type.family];
+              const [x, y] = callout.at;
+              const above = callout.labelY < y;
+              const delay = 0.8 + i * 0.12;
               return (
-                <Reveal
-                  key={chip.type.slug}
-                  delay={0.6 + i * 0.09}
-                  distance={14}
-                  className="pointer-events-none absolute"
-                  style={chip.style}
+                // A zero-width column along the leader, from the marker to the label edge.
+                <div
+                  key={callout.type.slug}
+                  className="pointer-events-none absolute w-0"
+                  style={{ left: `${x}%`, top: `${Math.min(y, callout.labelY)}%`, bottom: `${100 - Math.max(y, callout.labelY)}%` }}
                 >
-                  <div
-                    className={`flex scale-[0.8] items-center gap-3 rounded-card bg-paper py-2 pr-2 pl-3.5 shadow-card ring-1 ring-line sm:scale-100 ${chip.anchor === "left" ? "origin-top-left" : "origin-top-right"}`}
+                  <span
+                    aria-hidden
+                    className={`callout-line absolute inset-y-0 -left-px w-px bg-ink/30 ${above ? "origin-bottom" : "origin-top"}`}
+                    style={{ animationDelay: `${delay + 0.1}s` }}
+                  />
+                  <span
+                    aria-hidden
+                    className={`callout-dot absolute left-0 h-3 w-3 -translate-x-1/2 rounded-full bg-paper shadow-card ring-[3px] ring-current ${f.ink} ${above ? "bottom-0 translate-y-1/2" : "top-0 -translate-y-1/2"}`}
+                    style={{ animationDelay: `${delay}s` }}
+                  />
+                  <Reveal
+                    delay={delay + 0.35}
+                    distance={8}
+                    className={`absolute whitespace-nowrap ${above ? "bottom-full mb-2.5" : "top-full mt-2.5"} ${callout.side === "left" ? "right-0 text-right" : "left-0"}`}
                   >
-                    <span>
-                      <span className="block font-display text-[13px] font-semibold whitespace-nowrap text-ink">{chip.type.name}</span>
-                      <span className={`block text-xs font-medium ${f.ink}`}>{chip.type.family}</span>
+                    <span className="block font-display text-[13px] leading-tight font-semibold text-ink sm:text-[15px]">
+                      {callout.type.name}
                     </span>
-                    <span className={`grid h-9 w-9 place-items-center rounded-lg ${f.tint} ${f.ink}`}>
-                      <chip.icon size={16} aria-hidden />
-                    </span>
-                  </div>
-                </Reveal>
+                    <span className={`mt-0.5 block text-[11px] font-medium sm:text-xs ${f.ink}`}>{callout.type.family}</span>
+                  </Reveal>
+                </div>
               );
             })}
           </div>
