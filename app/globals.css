@@ -280,34 +280,7 @@ body {
 }
 
 
-/* Hero annotations: the marker lands, then its leader draws out toward the label. */
-@keyframes callout-pop {
-  from {
-    opacity: 0;
-    transform: scale(0);
-  }
-  70% {
-    transform: scale(1.25);
-  }
-}
-
-@keyframes callout-draw {
-  from {
-    transform: scaleY(0);
-  }
-}
-
-.callout-dot {
-  animation: callout-pop 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
-}
-
-.callout-line {
-  animation: callout-draw 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .callout-dot,
-  .callout-line,
   .reveal,
   .melon-enter,
   .card-enter,
