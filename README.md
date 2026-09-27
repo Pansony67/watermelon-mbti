@@ -2,7 +2,7 @@
 
 > The repo, Vercel project and URL (watermelon-mbti.vercel.app) keep the original name on purpose: Search Console verification and the submitted sitemap are tied to that URL.
 
-A free personality quiz: twenty statements, ten watermelon types. Next.js 16 (App Router), TypeScript, Tailwind v4, react-three-fiber, Neon Postgres.
+A free personality quiz: twenty statements, twenty watermelon types. Next.js 16 (App Router), TypeScript, Tailwind v4, react-three-fiber, Neon Postgres.
 
 ## Run locally
 

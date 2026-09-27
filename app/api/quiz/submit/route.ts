@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   if (!isAnswerSet(answers)) {
     return Response.json({ error: "answers must be 20 integers from 1 to 7" }, { status: 400 });
   }
-  const { resultKey, axisAPercent } = score(answers);
-  const deleteToken = await insertResponse(answers, resultKey);
-  return Response.json({ resultKey, axisAPercent, deleteToken });
+  const { type } = score(answers);
+  const deleteToken = await insertResponse(answers, type.slug);
+  return Response.json({ resultKey: type.slug, deleteToken });
 }

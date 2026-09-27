@@ -32,7 +32,7 @@ const OPTIONS: { value: Answer; label: string; side: Side; disc: string }[] = [
 ];
 
 /*
-  Agree is coral (Juicy), disagree is seed ink (Crisp), neutral sits between.
+  Agree is coral, disagree is seed ink, neutral sits between.
   Idle rings use full-strength colours so every control boundary clears 3:1
   against the white card.
 */

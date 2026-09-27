@@ -1,7 +1,7 @@
 /**
  * The 20 watermelon-eater types, in display order. Single source of truth for
- * every page that shows them. The quiz still scores the old 10 types
- * (lib/scoring.ts, lib/resultTypes.ts) until the scoring rewrite.
+ * every page that shows them and for the quiz result. How answers map to a
+ * type lives in lib/scoring.ts.
  */
 
 export type Family = "Green" | "Blue" | "Yellow" | "Purple";

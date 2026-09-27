@@ -101,7 +101,7 @@
   --color-flesh: #ff4d6d;
   --color-flesh-deep: var(--flesh-deep);
 
-  /* Family tints: Juicy is blush, Crisp is a neutral mist. */
+  /* Soft tints: blush from the flesh, a neutral mist from the rind. */
   --color-blush: var(--blush);
   --color-mist: var(--mist);
 

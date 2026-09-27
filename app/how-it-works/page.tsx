@@ -5,9 +5,9 @@ import {
   ChartBar,
   IdentificationCard,
   ListChecks,
+  MagnifyingGlass,
   OrangeSlice,
   PaperPlaneTilt,
-  Percent,
 } from "@phosphor-icons/react/dist/ssr";
 import type { Icon } from "@phosphor-icons/react";
 import SiteFooter from "@/components/SiteFooter";
@@ -16,7 +16,7 @@ import SiteNav from "@/components/SiteNav";
 export const metadata: Metadata = {
   title: "How it works | Melonality",
   description:
-    "Twenty statements, a seven-point scale, and two parts that add up to your watermelon type. How the Melonality quiz works.",
+    "Twenty statements, six traits, and the closest of 20 watermelon types. How the Melonality quiz works.",
 };
 
 /** OrangeSlice is the same icon the landing stats row uses for "Unique types". */
@@ -29,7 +29,7 @@ const STEPS: { icon: Icon; title: string; body: string }[] = [
   {
     icon: OrangeSlice,
     title: "Get your type",
-    body: "See which of the 20 unhinged watermelon types you are, your Juicy/Crisp %, and how many other people got the exact same result.",
+    body: "See which of the 20 watermelon types you are, what in your answers gave it away, and how many other people got the exact same result.",
   },
   {
     icon: PaperPlaneTilt,
@@ -41,19 +41,19 @@ const STEPS: { icon: Icon; title: string; body: string }[] = [
 /** Mirrors lib/questions.ts and lib/scoring.ts: update this copy if the scoring changes. */
 const PARTS: { meta: string; title: string; body: string }[] = [
   {
-    meta: "Part one · 6 statements",
-    title: "Juicy or Crisp",
-    body: "How you physically eat it: bite size, speed, sticky hands, how many slices. Agreeing leans you Juicy, disagreeing leans you Crisp, and your result says by how much.",
+    meta: "Statements 1-6",
+    title: "How you eat it",
+    body: "Bite size, speed, sticky hands, how many slices. Together they say how messy an eater you are.",
   },
   {
-    meta: "Part two · 14 statements",
-    title: "Your habits",
-    body: "How you buy, cut, share, store and forget watermelon. The statements fall into five habit profiles, and the one you agree with most, on average, wins.",
+    meta: "Statements 7-20",
+    title: "How you live with it",
+    body: "Planning, daydreaming, sharing, slowing down and late-night chaos: five more traits, two or three statements each.",
   },
   {
     meta: "Together",
     title: "Your type",
-    body: "Your side from part one plus your habit profile from part two makes your type. Nothing is reverse-scored and nothing is hidden: what you tap is what counts.",
+    body: "Your six trait scores are compared with the profile of each of the 20 types, and the closest one is yours. Nothing is reverse-scored and nothing is hidden: what you tap is what counts.",
   },
 ];
 
@@ -89,12 +89,12 @@ const RESULT: { icon: Icon; title: string; body: string }[] = [
   {
     icon: IdentificationCard,
     title: "Your type",
-    body: "A name and a short, affectionate roast of how you eat.",
+    body: "Your character, and which of the four colour families it belongs to.",
   },
   {
-    icon: Percent,
-    title: "Your lean",
-    body: "How Juicy or how Crisp you are, as a percentage from part one.",
+    icon: MagnifyingGlass,
+    title: "What gave it away",
+    body: "The three traits in your answers that matched your type most closely.",
   },
   {
     icon: ChartBar,

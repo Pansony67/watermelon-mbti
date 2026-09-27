@@ -2,17 +2,16 @@
 
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { ArrowRight } from "@phosphor-icons/react";
+import { ArrowRight, Check } from "@phosphor-icons/react";
 import BorderBeam from "@/components/BorderBeam";
 import QuizBackdrop from "@/components/QuizBackdrop";
 import SiteFooter from "@/components/SiteFooter";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Wordmark } from "@/components/SiteNav";
-import { ANSWERS_STORAGE_KEY, isAnswerSet } from "@/lib/questions";
 import Image from "next/image";
-import { RESULT_TYPES } from "@/lib/resultTypes";
-import { TYPE_ART } from "@/lib/typeArt";
-import { score } from "@/lib/scoring";
+import { ANSWERS_STORAGE_KEY, isAnswerSet, type Trait } from "@/lib/questions";
+import { score, type Lean } from "@/lib/scoring";
+import { FAMILY_STYLE } from "@/lib/types";
 
 /** Remembers which answer set was already written, so a refresh doesn't insert twice. */
 const SUBMITTED_KEY = "watermelon-mbti:submitted";
@@ -20,6 +19,16 @@ const SUBMITTED_KEY = "watermelon-mbti:submitted";
 const TOKEN_KEY = "watermelon-mbti:delete-token";
 
 const noop = () => () => {};
+
+/** One line per trait and lean, in the words of the statements behind it. */
+const REASON: Record<Trait, Record<Lean, string>> = {
+  messy: { high: "Big, fast, juicy bites, hands first.", mid: "Neither dainty nor messy.", low: "Small, tidy bites, no drips." },
+  planner: { high: "You pick, plan and cut with care.", mid: "A little planning, not too much.", low: "No plan. You just grab one." },
+  dreamer: { high: "You drift off and lose count.", mid: "Sometimes here, sometimes miles away.", low: "Present for every bite." },
+  social: { high: "Watermelon is better shared.", mid: "Happy alone or with friends.", low: "You'd rather eat it alone." },
+  calm: { high: "Slow, quiet, one seed at a time.", mid: "Not slow, not rushed.", low: "No time for slow eating." },
+  chaos: { high: "Late nights and mystery fridge melon.", mid: "The odd late-night slice.", low: "Fresh melon at sensible hours." },
+};
 
 export default function ResultsPage() {
   // Server render has no sessionStorage; the client snapshot takes over on hydration.
@@ -65,7 +74,7 @@ export default function ResultsPage() {
       .then(() => fetch("/api/stats/breakdown"))
       .then((r) => r.json())
       .then((data: { shares: Record<string, number> }) => {
-        if (!cancelled) setShare(data.shares[result.resultKey] ?? 0);
+        if (!cancelled) setShare(data.shares[result.type.slug] ?? 0);
       })
       .catch((error) => console.error("breakdown unavailable", error));
 
@@ -89,9 +98,8 @@ export default function ResultsPage() {
     }
   };
 
-  const type = result ? RESULT_TYPES[result.resultKey] : null;
-  const art = result ? TYPE_ART[result.resultKey] : undefined;
-  const juicy = result?.axisAPole === "Juicy";
+  const type = result?.type;
+  const family = type ? FAMILY_STYLE[type.family] : null;
 
   return (
     <main id="main" className="relative flex min-h-dvh flex-col overflow-hidden text-ink">
@@ -105,32 +113,43 @@ export default function ResultsPage() {
       </header>
 
       <section className="relative mx-auto flex w-full max-w-3xl flex-1 items-center px-4 py-16 sm:px-8">
-        {!hydrated ? null : result && type ? (
+        {!hydrated ? null : result && type && family ? (
           <div className="card-enter relative w-full rounded-panel bg-paper shadow-panel ring-1 ring-line">
             <div className="relative overflow-hidden rounded-[inherit] px-6 py-10 text-center sm:px-12 sm:py-14">
               <p className="text-xs font-semibold tracking-[0.16em] text-flesh-deep uppercase">Your result</p>
 
-              {/* Only rendered once this type has art in lib/typeArt.ts. */}
-              {art && (
-                <div className={`relative mx-auto mt-6 aspect-square w-40 overflow-hidden rounded-card ring-1 ring-line sm:w-48 ${juicy ? "bg-blush" : "bg-mist"}`}>
-                  <Image src={art} alt={type.title} fill sizes="192px" className="object-contain p-3" />
-                </div>
-              )}
+              <Image
+                src={type.image}
+                alt=""
+                width={301}
+                height={250}
+                loading="eager"
+                className="mx-auto mt-6 h-auto w-full max-w-[240px]"
+              />
 
               <h1 className="mt-4 font-display text-4xl leading-tight font-semibold text-balance text-ink sm:text-5xl">
-                {type.title}
+                {type.name}
               </h1>
-              <p className={`mt-2 font-display text-lg font-semibold ${juicy ? "text-flesh-deep" : "text-ink-2"}`}>
-                {result.axisAPole} {result.axisBGroup}
-              </p>
+              <p className={`mt-2 font-display text-lg font-semibold ${family.ink}`}>{type.family} family</p>
 
-              <p className="mx-auto mt-6 max-w-[52ch] text-lg leading-relaxed text-pretty text-ink-2">{type.description}</p>
+              {type.description && (
+                <p className="mx-auto mt-6 max-w-[52ch] text-lg leading-relaxed text-pretty text-ink-2">{type.description}</p>
+              )}
 
-              <dl className="mx-auto mt-9 grid max-w-md grid-cols-2 gap-3">
-                <div className="rounded-card bg-paper-2 px-4 py-4 ring-1 ring-line">
-                  <dd className="font-display text-3xl font-semibold text-ink">{result.axisAPercent}%</dd>
-                  <dt className="mt-1 text-sm text-ink-3">{result.axisAPole}</dt>
-                </div>
+              {/* Why this type: the traits in the answers that matched its profile best. */}
+              <div className="mx-auto mt-8 max-w-sm text-left">
+                <h2 className="text-sm font-semibold text-ink">What gave it away</h2>
+                <ul className="mt-3 space-y-2.5">
+                  {result.reasons.map(({ trait, lean }) => (
+                    <li key={trait} className="flex gap-3 leading-snug text-ink-2">
+                      <Check size={18} weight="bold" aria-hidden className={`mt-0.5 shrink-0 ${family.ink}`} />
+                      {REASON[trait][lean]}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <dl className="mx-auto mt-9 max-w-xs">
                 <div className="rounded-card bg-paper-2 px-4 py-4 ring-1 ring-line">
                   <dd className="font-display text-3xl font-semibold text-ink">
                     {share === null ? <span className="text-ink-3">&hellip;</span> : `${share}%`}
@@ -141,15 +160,24 @@ export default function ResultsPage() {
                 </div>
               </dl>
 
-              <Link
-                href="/quiz"
-                className="mt-10 inline-flex h-14 items-center gap-4 rounded-control bg-ink py-2 pr-2 pl-6 font-display text-lg font-semibold text-paper shadow-card transition-colors duration-300 hover:bg-ink/85 focus-visible:ring-2 focus-visible:ring-flesh focus-visible:ring-offset-4 focus-visible:outline-none"
-              >
-                Take it again
-                <span className="grid h-10 w-10 place-items-center rounded-lg bg-flesh text-paper">
-                  <ArrowRight size={18} weight="bold" aria-hidden />
-                </span>
-              </Link>
+              <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
+                <Link
+                  href="/quiz"
+                  className="inline-flex h-14 items-center gap-4 rounded-control bg-ink py-2 pr-2 pl-6 font-display text-lg font-semibold text-paper shadow-card transition-colors duration-300 hover:bg-ink/85 focus-visible:ring-2 focus-visible:ring-flesh focus-visible:ring-offset-4 focus-visible:outline-none"
+                >
+                  Take it again
+                  <span className="grid h-10 w-10 place-items-center rounded-lg bg-flesh text-paper">
+                    <ArrowRight size={18} weight="bold" aria-hidden />
+                  </span>
+                </Link>
+                <Link
+                  href="/types"
+                  className="inline-flex items-center gap-1.5 text-[15px] font-semibold text-ink underline-offset-4 hover:underline"
+                >
+                  See all 20 types
+                  <ArrowRight size={14} weight="bold" aria-hidden />
+                </Link>
+              </div>
 
               <p className="mt-8 text-xs leading-relaxed text-ink-3">
                 {deleted ? (

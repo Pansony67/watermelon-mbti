@@ -1,48 +1,37 @@
 /**
- * The 20 statements of the test, in the order they are asked.
- *
- * Axis A places you on Juicy <-> Crisp: agreeing with an axis A statement
- * pushes toward Juicy, disagreeing pushes toward Crisp.
- *
- * Axis B picks one of five archetypes: agreeing with a statement pushes
- * toward that statement's group.
- *
- * Nothing is reverse-scored. Scoring itself lives elsewhere; this module is
- * only the data and the answer contract.
+ * The 20 statements of the test, in the order they are asked. Each one
+ * measures one of six traits; agreeing pushes that trait up, disagreeing
+ * pushes it down. Nothing is reverse-scored. Scoring lives in scoring.ts;
+ * this module is only the data and the answer contract.
  */
 
-export type ArchetypeGroup =
-  | "Overachiever"
-  | "Daydreamer"
-  | "Life of the Party"
-  | "Old Soul"
-  | "Chaos Snacker";
+/** The six traits, in the order they are asked. */
+export const TRAITS = ["messy", "planner", "dreamer", "social", "calm", "chaos"] as const;
+export type Trait = (typeof TRAITS)[number];
 
-export type Question =
-  | { id: number; text: string; axis: "A"; pole: "Juicy" }
-  | { id: number; text: string; axis: "B"; group: ArchetypeGroup };
+export type Question = { id: number; text: string; trait: Trait };
 
 export const QUESTIONS = [
-  { id: 1, text: "You eat watermelon in big pieces.", axis: "A", pole: "Juicy" },
-  { id: 2, text: "You eat watermelon fast.", axis: "A", pole: "Juicy" },
-  { id: 3, text: "Your hands usually get messy when you eat watermelon.", axis: "A", pole: "Juicy" },
-  { id: 4, text: "You eat watermelon with your hands, not a fork.", axis: "A", pole: "Juicy" },
-  { id: 5, text: "You can eat several pieces of watermelon in one sitting.", axis: "A", pole: "Juicy" },
-  { id: 6, text: "You don't worry much about watermelon juice dripping.", axis: "A", pole: "Juicy" },
-  { id: 7, text: "You inspect watermelon carefully before buying it.", axis: "B", group: "Overachiever" },
-  { id: 8, text: "You always cut watermelon into neat, even pieces.", axis: "B", group: "Overachiever" },
-  { id: 9, text: "You plan ahead before buying watermelon.", axis: "B", group: "Overachiever" },
-  { id: 10, text: "You often forget watermelon you've already cut in the fridge.", axis: "B", group: "Daydreamer" },
-  { id: 11, text: "You eat watermelon without keeping track of how much you've had.", axis: "B", group: "Daydreamer" },
-  { id: 12, text: "You often zone out thinking about other things while eating watermelon.", axis: "B", group: "Daydreamer" },
-  { id: 13, text: "You like sharing watermelon with friends.", axis: "B", group: "Life of the Party" },
-  { id: 14, text: "You take a photo of watermelon before eating it.", axis: "B", group: "Life of the Party" },
-  { id: 15, text: "You'd rather eat watermelon with friends than alone.", axis: "B", group: "Life of the Party" },
-  { id: 16, text: "You prefer eating watermelon alone and quietly.", axis: "B", group: "Old Soul" },
-  { id: 17, text: "You eat watermelon slowly, without rushing.", axis: "B", group: "Old Soul" },
-  { id: 18, text: "You calmly spit out watermelon seeds one at a time.", axis: "B", group: "Old Soul" },
-  { id: 19, text: "You eat watermelon late at night.", axis: "B", group: "Chaos Snacker" },
-  { id: 20, text: "You eat watermelon that's been in the fridge for days without checking it.", axis: "B", group: "Chaos Snacker" },
+  { id: 1, text: "You eat watermelon in big pieces.", trait: "messy" },
+  { id: 2, text: "You eat watermelon fast.", trait: "messy" },
+  { id: 3, text: "Your hands usually get messy when you eat watermelon.", trait: "messy" },
+  { id: 4, text: "You eat watermelon with your hands, not a fork.", trait: "messy" },
+  { id: 5, text: "You can eat several pieces of watermelon in one sitting.", trait: "messy" },
+  { id: 6, text: "You don't worry much about watermelon juice dripping.", trait: "messy" },
+  { id: 7, text: "You inspect watermelon carefully before buying it.", trait: "planner" },
+  { id: 8, text: "You always cut watermelon into neat, even pieces.", trait: "planner" },
+  { id: 9, text: "You plan ahead before buying watermelon.", trait: "planner" },
+  { id: 10, text: "You often forget watermelon you've already cut in the fridge.", trait: "dreamer" },
+  { id: 11, text: "You eat watermelon without keeping track of how much you've had.", trait: "dreamer" },
+  { id: 12, text: "You often zone out thinking about other things while eating watermelon.", trait: "dreamer" },
+  { id: 13, text: "You like sharing watermelon with friends.", trait: "social" },
+  { id: 14, text: "You take a photo of watermelon before eating it.", trait: "social" },
+  { id: 15, text: "You'd rather eat watermelon with friends than alone.", trait: "social" },
+  { id: 16, text: "You prefer eating watermelon alone and quietly.", trait: "calm" },
+  { id: 17, text: "You eat watermelon slowly, without rushing.", trait: "calm" },
+  { id: 18, text: "You calmly spit out watermelon seeds one at a time.", trait: "calm" },
+  { id: 19, text: "You eat watermelon late at night.", trait: "chaos" },
+  { id: 20, text: "You eat watermelon that's been in the fridge for days without checking it.", trait: "chaos" },
 ] as const satisfies readonly Question[];
 
 export const QUESTION_COUNT = QUESTIONS.length;

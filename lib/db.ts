@@ -1,5 +1,6 @@
 import { neon } from "@neondatabase/serverless";
 import type { Answer } from "./questions";
+import { TYPES } from "./types";
 
 // Built per call so a missing DATABASE_URL fails the query, not the import.
 const sql = () => neon(process.env.DATABASE_URL!);
@@ -26,11 +27,16 @@ export async function deleteResponse(token: string): Promise<boolean> {
   return rows.length > 0;
 }
 
-/** Each result type's share of all scored responses, as a 0-100 percentage. */
+/**
+ * Each current type's share of responses scored with the current types, as a
+ * 0-100 percentage. Rows saved under the retired 10-type system are left out,
+ * so they neither count toward any type nor dilute the percentages.
+ */
 export async function resultBreakdown(): Promise<{ total: number; shares: Record<string, number> }> {
+  const slugs = TYPES.map((type) => type.slug);
   const rows = (await sql()`
     SELECT result_type, COUNT(*)::int AS count
-    FROM quiz_responses WHERE result_type IS NOT NULL
+    FROM quiz_responses WHERE result_type = ANY(${slugs}::text[])
     GROUP BY result_type
   `) as { result_type: string; count: number }[];
   const total = rows.reduce((n, r) => n + r.count, 0);
