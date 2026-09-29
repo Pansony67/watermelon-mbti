@@ -30,7 +30,7 @@ const COLUMNS: { heading: string; links: { label: string; href: string; external
 ];
 
 const ICON_BUTTON =
-  "grid h-10 w-10 place-items-center rounded-control text-ink-2 ring-1 ring-line ring-inset transition-colors duration-300 hover:bg-paper-2 hover:text-ink focus-visible:ring-2 focus-visible:ring-flesh focus-visible:outline-none";
+  "grid h-11 w-11 place-items-center rounded-control text-ink-2 ring-1 ring-line ring-inset transition-colors duration-300 hover:bg-paper-2 hover:text-ink focus-visible:ring-2 focus-visible:ring-flesh focus-visible:outline-none";
 
 export default function SiteFooter() {
   return (
@@ -38,7 +38,7 @@ export default function SiteFooter() {
       <div className="mx-auto w-full max-w-7xl px-5 pt-16 sm:px-8">
         <div className="grid gap-12 md:grid-cols-[1.4fr_repeat(3,1fr)] md:gap-10">
           <div className="max-w-xs">
-            <Link href="/" className="font-display text-xl font-semibold tracking-tight text-ink">
+            <Link href="/" className="inline-flex min-h-11 items-center font-display text-xl font-semibold tracking-tight text-ink md:min-h-0">
               Melon<span className="text-flesh">ality</span>
             </Link>
             <p className="mt-3 text-sm leading-relaxed text-ink-2">
@@ -51,7 +51,7 @@ export default function SiteFooter() {
               <h2 className="border-b border-line pb-3 font-display text-base font-semibold text-ink">
                 {column.heading}
               </h2>
-              <ul className="mt-4 space-y-3">
+              <ul className="mt-2 md:mt-4 md:space-y-3">
                 {column.links.map((link) => (
                   <li key={link.label}>
                     {link.external ? (
@@ -59,12 +59,12 @@ export default function SiteFooter() {
                         href={link.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[15px] text-ink-2 transition-colors duration-300 hover:text-ink"
+                        className="inline-flex min-h-11 items-center text-[15px] text-ink-2 transition-colors duration-300 hover:text-ink md:min-h-0"
                       >
                         {link.label}
                       </a>
                     ) : (
-                      <Link href={link.href} className="text-[15px] text-ink-2 transition-colors duration-300 hover:text-ink">
+                      <Link href={link.href} className="inline-flex min-h-11 items-center text-[15px] text-ink-2 transition-colors duration-300 hover:text-ink md:min-h-0">
                         {link.label}
                       </Link>
                     )}
@@ -78,9 +78,9 @@ export default function SiteFooter() {
         {/* Bottom padding keeps this row clear of the fixed music player. */}
         <div className="mt-14 flex flex-col gap-6 border-t border-line pt-8 pb-24 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <nav aria-label="Legal" className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink">
-              <Link href="/terms" className="hover:underline hover:underline-offset-4">Terms of Service</Link>
-              <Link href="/privacy" className="hover:underline hover:underline-offset-4">Privacy Policy</Link>
+            <nav aria-label="Legal" className="flex flex-wrap gap-x-6 text-sm text-ink md:gap-y-2">
+              <Link href="/terms" className="inline-flex min-h-11 items-center hover:underline hover:underline-offset-4 md:min-h-0">Terms of Service</Link>
+              <Link href="/privacy" className="inline-flex min-h-11 items-center hover:underline hover:underline-offset-4 md:min-h-0">Privacy Policy</Link>
             </nav>
             <p className="mt-2 text-sm text-ink-3">
               &copy; {new Date().getFullYear()} {OPERATOR.name}. For entertainment only.

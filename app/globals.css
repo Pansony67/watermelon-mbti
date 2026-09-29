@@ -145,6 +145,19 @@
   --shadow-panel: var(--elev-panel);
 }
 
+/* Touch screens: no grey tap flash; a brief dim on press instead, so every tap is still acknowledged. */
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: none) {
+  a:active,
+  button:active,
+  summary:active {
+    opacity: 0.7;
+  }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

@@ -55,7 +55,7 @@ export default function ThemeToggle({ className = "" }: { className?: string }) 
       aria-pressed={dark}
       aria-label="Dark mode"
       title={dark ? "Switch to light mode" : "Switch to dark mode"}
-      className={`grid h-10 w-10 shrink-0 cursor-pointer place-items-center rounded-control text-ink-2 ring-1 ring-line ring-inset transition-colors duration-300 hover:bg-paper-2 hover:text-ink focus-visible:ring-2 focus-visible:ring-flesh focus-visible:outline-none ${className}`}
+      className={`grid h-11 w-11 shrink-0 cursor-pointer place-items-center rounded-control text-ink-2 ring-1 ring-line ring-inset transition-colors duration-300 hover:bg-paper-2 hover:text-ink focus-visible:ring-2 focus-visible:ring-flesh focus-visible:outline-none ${className}`}
     >
       {/* Icons switch in CSS, so the server-rendered markup is right before hydration. */}
       <Moon size={18} aria-hidden className="dark:hidden" />

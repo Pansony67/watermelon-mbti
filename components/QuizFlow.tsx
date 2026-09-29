@@ -245,7 +245,7 @@ export default function QuizFlow() {
                       <span className="text-ink">Disagree</span>
                     </div>
 
-                    <div className="flex items-center justify-between gap-1 sm:gap-3">
+                    <div className="flex items-center justify-between sm:gap-3">
                       <span className="hidden font-display text-lg font-semibold text-flesh-deep sm:block">
                         Agree
                       </span>
@@ -261,7 +261,7 @@ export default function QuizFlow() {
                             aria-checked={selected}
                             aria-label={option.label}
                             onClick={() => select(option.value)}
-                            className="group grid h-10 w-10 shrink-0 cursor-pointer touch-manipulation place-items-center rounded-control transition-transform duration-200 focus-visible:ring-2 focus-visible:ring-flesh focus-visible:outline-none active:scale-95 sm:h-14 sm:w-14"
+                            className="group grid h-11 min-w-0 flex-1 cursor-pointer touch-manipulation place-items-center rounded-control transition-transform duration-200 focus-visible:ring-2 focus-visible:ring-flesh focus-visible:outline-none active:scale-95 sm:h-14 sm:w-14 sm:flex-none"
                           >
                             <span
                               aria-hidden
@@ -287,13 +287,13 @@ export default function QuizFlow() {
           </div>
         </section>
 
-        <footer className="relative mx-auto flex w-full max-w-7xl flex-col gap-3 pr-20 pb-6 pl-5 text-xs text-ink-3 sm:pr-24 sm:pl-8 md:flex-row md:items-end md:justify-between">
+        <footer className="relative mx-auto flex w-full max-w-7xl flex-col gap-3 pr-20 pb-6 pl-5 text-xs text-ink-3 sm:pr-24 sm:pl-8 md:flex-row md:items-center md:justify-between">
           <p>
             Melonality
             <span className="mx-2" aria-hidden>&middot;</span>
-            <Link href="/privacy" className="hover:text-ink">Privacy</Link>
+            <Link href="/privacy" className="inline-flex min-h-11 items-center hover:text-ink">Privacy</Link>
             <span className="mx-2" aria-hidden>&middot;</span>
-            <Link href="/terms" className="hover:text-ink">Terms</Link>
+            <Link href="/terms" className="inline-flex min-h-11 items-center hover:text-ink">Terms</Link>
           </p>
           <p className="italic md:text-right">Same people, different flavors.</p>
         </footer>

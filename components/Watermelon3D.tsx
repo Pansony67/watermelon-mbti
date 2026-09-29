@@ -392,6 +392,10 @@ function usePrefersReducedMotion() {
 export default function Watermelon3D({ className, onReady }: { className?: string; onReady?: () => void }) {
   const reducedMotion = usePrefersReducedMotion();
   const [dragging, setDragging] = useState(false);
+  // Drawing stops while the canvas is scrolled out of view: no GPU work, battery drain or scroll jank for a melon nobody can see.
+  const [onScreen, setOnScreen] = useState(true);
+  const visibility = useRef<IntersectionObserver>(null);
+  useEffect(() => () => visibility.current?.disconnect(), []);
 
   // Pointer can be released outside the canvas, so listen on the window.
   useEffect(() => {
@@ -408,9 +412,15 @@ export default function Watermelon3D({ className, onReady }: { className?: strin
   return (
     <Canvas
       className={className}
-      dpr={[1, 1.8]}
+      // Phones already have dense screens; past 1.5x the extra pixels cost GPU time nobody can see at this size.
+      dpr={[1, window.matchMedia("(max-width: 640px)").matches ? 1.5 : 1.8]}
+      frameloop={onScreen ? "always" : "never"}
       camera={{ position: [0, 1.7, 4.6], fov: 30, near: 0.1, far: 50 }}
-      onCreated={({ camera }) => camera.lookAt(0, -0.2, 0)}
+      onCreated={({ camera, gl }) => {
+        camera.lookAt(0, -0.2, 0);
+        visibility.current = new IntersectionObserver(([entry]) => setOnScreen(entry.isIntersecting));
+        visibility.current.observe(gl.domElement);
+      }}
       gl={{
         antialias: true,
         alpha: true,

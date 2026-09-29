@@ -172,7 +172,7 @@ export default function ResultsPage() {
                 </Link>
                 <Link
                   href="/types"
-                  className="inline-flex items-center gap-1.5 text-[15px] font-semibold text-ink underline-offset-4 hover:underline"
+                  className="inline-flex min-h-11 items-center gap-1.5 text-[15px] font-semibold text-ink underline-offset-4 hover:underline"
                 >
                   See all 20 types
                   <ArrowRight size={14} weight="bold" aria-hidden />

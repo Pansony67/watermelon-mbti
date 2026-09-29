@@ -160,7 +160,7 @@ export default function AboutPage() {
               href={`${OPERATOR.github}/issues`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-[15px] font-semibold text-ink underline-offset-4 hover:underline"
+              className="inline-flex min-h-11 items-center gap-1.5 text-[15px] font-semibold text-ink underline-offset-4 hover:underline"
             >
               Open an issue
               <ArrowUpRight size={14} weight="bold" aria-hidden />

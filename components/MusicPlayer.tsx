@@ -52,8 +52,9 @@ export default function MusicPlayer() {
 
   const Icon = !playing ? SpeakerSlash : volume < 0.4 ? SpeakerLow : SpeakerHigh;
 
+  // z-10: above page content, under the header (z-20), so the open mobile menu covers it.
   return (
-    <div className="fixed right-5 bottom-5 z-[45] flex items-center gap-2">
+    <div className="fixed right-5 bottom-5 z-10 flex items-center gap-2">
       {/* State follows the element's own events, so it stays correct if playback ends or is blocked. */}
       <audio
         ref={audio}

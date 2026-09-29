@@ -17,7 +17,7 @@ const LINKS = [
 
 export function Wordmark() {
   return (
-    <Link href="/" className="font-display text-lg font-semibold tracking-tight text-ink">
+    <Link href="/" className="inline-flex h-11 items-center font-display text-lg font-semibold tracking-tight text-ink">
       Melon<span className="text-flesh">ality</span>
     </Link>
   );
@@ -92,7 +92,7 @@ export default function SiteNav() {
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label="Open menu"
-            className="grid h-10 w-10 cursor-pointer place-items-center rounded-control text-ink ring-1 ring-line ring-inset transition-colors duration-300 hover:bg-paper-2 focus-visible:ring-2 focus-visible:ring-flesh focus-visible:outline-none lg:hidden"
+            className="grid h-11 w-11 cursor-pointer place-items-center rounded-control text-ink ring-1 ring-line ring-inset transition-colors duration-300 hover:bg-paper-2 focus-visible:ring-2 focus-visible:ring-flesh focus-visible:outline-none lg:hidden"
           >
             <List size={20} aria-hidden />
           </button>
@@ -119,7 +119,7 @@ export default function SiteNav() {
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Close menu"
-                className="grid h-10 w-10 cursor-pointer place-items-center rounded-control text-ink ring-1 ring-line ring-inset focus-visible:ring-2 focus-visible:ring-flesh focus-visible:outline-none"
+                className="grid h-11 w-11 cursor-pointer place-items-center rounded-control text-ink ring-1 ring-line ring-inset focus-visible:ring-2 focus-visible:ring-flesh focus-visible:outline-none"
               >
                 <X size={20} aria-hidden />
               </button>
