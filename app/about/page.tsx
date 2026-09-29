@@ -15,20 +15,20 @@ export const metadata: Metadata = {
 /** Keep "isn't" true to app/privacy and app/terms. */
 const IS = [
   "A 20-question quiz about how you eat watermelon.",
-  "Free to take, as often as you like, with no sign-up.",
+  "Free to take, as often as you like. No sign-up needed.",
   "A joke that takes itself just seriously enough.",
 ];
 const IS_NOT = [
   "A psychological assessment. There is zero science here.",
   "Affiliated with the Myers-Briggs Type Indicator or its owners.",
-  "A way to collect your data. Nothing saved identifies you.",
+  "A way to collect your data. Your quiz answers never identify you.",
 ];
 
 const PRINCIPLES: { icon: Icon; title: string; body: string }[] = [
   {
     icon: ShieldCheck,
     title: "Private by default",
-    body: "No accounts, no cookies, no analytics. Answers are saved anonymously, and you can delete yours from the results page.",
+    body: "Accounts are optional and there are no analytics or ads. Quiz answers are saved anonymously, and you can delete yours from the results page.",
   },
   {
     icon: GithubLogo,

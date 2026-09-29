@@ -92,11 +92,11 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "Do I need an account?",
-    a: "No. There is no sign-up, no email and no name. Open the quiz and start.",
+    a: "No. Everyone starts as a Guest: no sign-up, no email, no name. Accounts are optional, if you want a Melonality pass.",
   },
   {
     q: "What happens to my answers?",
-    a: "When you finish, we save your twenty answers, your result and the time, with nothing that identifies you: no name, email, IP address or cookies. The saved results only feed the counts shown on the site.",
+    a: "When you finish, we save your twenty answers, your result and the time, with nothing that identifies you: no name, email or IP address, even if you are signed in. The saved results only feed the counts shown on the site.",
   },
   {
     q: "Can I delete my result?",

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowRight, List, X } from "@phosphor-icons/react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import AccountChip from "@/components/AccountChip";
 import ThemeToggle from "@/components/ThemeToggle";
 
 /** Every link lands on a real section of the landing page. */
@@ -82,6 +83,7 @@ export default function SiteNav() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <AccountChip />
           <ThemeToggle />
           <TakeTheTest className="hidden lg:inline-flex" />
 
@@ -114,7 +116,9 @@ export default function SiteNav() {
           >
             <div className="flex h-16 items-center justify-between">
               <Wordmark />
-              <button
+              <div className="flex items-center gap-2">
+                <AccountChip />
+                <button
                 ref={closeButton}
                 type="button"
                 onClick={() => setOpen(false)}
@@ -123,6 +127,7 @@ export default function SiteNav() {
               >
                 <X size={20} aria-hidden />
               </button>
+              </div>
             </div>
 
             <nav aria-label="Primary" className="mt-8 flex flex-col divide-y divide-line border-y border-line">
