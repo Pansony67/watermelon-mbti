@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import SignInForm from "@/components/SignInForm";
+import SignInForm, { explainSocial } from "@/components/SignInForm";
 import { Wordmark } from "@/components/SiteNav";
 import ThemeToggle from "@/components/ThemeToggle";
 import { auth, enabledProviders } from "@/lib/auth";
@@ -19,7 +19,7 @@ export default async function SignInPage({ searchParams }: PageProps<"/sign-in">
   // Already signed in: nothing to do here. If the database is down, just show the form.
   const session = await auth.api.getSession({ headers: await headers() }).catch(() => null);
   if (session) redirect("/");
-  const { mode } = await searchParams;
+  const { mode, error } = await searchParams;
 
   return (
     <main id="main" className="relative flex min-h-dvh flex-col bg-paper text-ink">
@@ -33,6 +33,7 @@ export default async function SignInPage({ searchParams }: PageProps<"/sign-in">
       <div className="mx-auto flex w-full max-w-6xl flex-1 items-center px-5 py-10 sm:px-8 lg:py-16">
         <SignInForm
           initialMode={mode === "sign-up" ? "sign-up" : "sign-in"}
+          initialProblem={typeof error === "string" ? explainSocial(error) : null}
           enabled={enabledProviders}
           showUnconfigured={process.env.NODE_ENV !== "production"}
           character={{ name: GREETER.name, image: GREETER.image }}

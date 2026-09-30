@@ -1,5 +1,12 @@
-// One-shot schema. Idempotent: safe to re-run. `npm run db:migrate`
+// Schema. Idempotent: safe to re-run. `npm run db:migrate`, and automatically before every
+// build (package.json "prebuild"), so each Vercel deploy brings the database up to date.
 import { neon } from "@neondatabase/serverless";
+
+if (!process.env.DATABASE_URL) {
+  // Local builds without a database: nothing to migrate.
+  console.log("db:migrate skipped: DATABASE_URL is not set");
+  process.exit(0);
+}
 
 const sql = neon(process.env.DATABASE_URL);
 

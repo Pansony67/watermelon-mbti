@@ -36,16 +36,39 @@ function explain(error: { code?: string; status: number }): Problem {
   }
 }
 
+/**
+ * Why a Google, Facebook or LINE sign-in bounced back here (`/sign-in?error=...`):
+ * the provider's own codes plus Better Auth's callback codes.
+ */
+export function explainSocial(code: string): Problem {
+  switch (code) {
+    case "access_denied":
+      return { title: "Sign-in cancelled.", body: "No problem. Pick another way, or keep playing as a Guest." };
+    case "email_not_found":
+      return { title: "That account didn't share an email.", body: "Allow email access when asked, or sign in another way." };
+    case "unable_to_link_account":
+    case "email_does_not_match":
+    case "email_not_verified":
+    case "account_already_linked_to_different_user":
+      return { title: "That email already has a Melonality pass.", body: "Sign in with your email and password instead." };
+    default:
+      return { title: "Couldn't finish signing in.", body: "Please try again, or use another way." };
+  }
+}
+
 const FIELD =
   "mt-2 block h-12 w-full rounded-control bg-paper px-4 text-base text-ink ring-1 ring-line ring-inset transition-shadow duration-300 placeholder:text-ink-3 focus:ring-2 focus:ring-flesh focus:outline-none";
 
 export default function SignInForm({
   initialMode,
+  initialProblem,
   enabled,
   showUnconfigured,
   character,
 }: {
   initialMode: Mode;
+  /** Set when a social sign-in bounced back with an error. */
+  initialProblem: Problem | null;
   /** Social providers with credentials set on the server. */
   enabled: ProviderId[];
   /** In development, show providers that still need credentials, disabled, so the layout can be reviewed. */
@@ -59,7 +82,7 @@ export default function SignInForm({
   const [password, setPassword] = useState("");
   const [reveal, setReveal] = useState(false);
   const [pending, setPending] = useState(false);
-  const [problem, setProblem] = useState<Problem | null>(null);
+  const [problem, setProblem] = useState<Problem | null>(initialProblem);
 
   const signingUp = mode === "sign-up";
   const providers = PROVIDERS.filter((p) => enabled.includes(p.id) || showUnconfigured);
@@ -95,7 +118,7 @@ export default function SignInForm({
 
   const social = async (provider: ProviderId) => {
     setProblem(null);
-    const { error } = await authClient.signIn.social({ provider, callbackURL: "/" });
+    const { error } = await authClient.signIn.social({ provider, callbackURL: "/", errorCallbackURL: "/sign-in" });
     if (error) setProblem(explain(error));
   };
 
