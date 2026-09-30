@@ -34,7 +34,9 @@ export const enabledProviders = PROVIDERS.map((p) => p.id).filter((id) => creden
 
 export const auth = betterAuth({
   appName: "Melonality",
-  database: new Pool({ connectionString: process.env.DATABASE_URL }),
+  // Without DATABASE_URL (local development) Better Auth keeps accounts in memory, so sign-in
+  // still works on your machine; they reset when the dev server restarts. Production always has it.
+  database: process.env.DATABASE_URL ? new Pool({ connectionString: process.env.DATABASE_URL }) : undefined,
   emailAndPassword: {
     enabled: true,
     minPasswordLength: PASSWORD_MIN,

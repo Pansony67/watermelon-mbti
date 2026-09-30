@@ -62,6 +62,7 @@ export default function ResultsPage() {
             body: JSON.stringify({ answers }),
           })
             .then(async (r) => {
+              if (r.status === 503) return; // No database here (local development): nothing to save.
               if (!r.ok) throw new Error(`submit ${r.status}`);
               const { deleteToken } = (await r.json()) as { deleteToken: string };
               sessionStorage.setItem(SUBMITTED_KEY, raw);
@@ -72,9 +73,10 @@ export default function ResultsPage() {
     // Fetch the breakdown after the write so it counts this player too.
     submit
       .then(() => fetch("/api/stats/breakdown"))
-      .then((r) => r.json())
-      .then((data: { shares: Record<string, number> }) => {
-        if (!cancelled) setShare(data.shares[result.type.slug] ?? 0);
+      // No stats without a database (503 locally); the tile just keeps its placeholder.
+      .then((r) => (r.ok ? (r.json() as Promise<{ shares: Record<string, number> }>) : null))
+      .then((data) => {
+        if (!cancelled && data) setShare(data.shares[result.type.slug] ?? 0);
       })
       .catch((error) => console.error("breakdown unavailable", error));
 

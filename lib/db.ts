@@ -2,10 +2,20 @@ import { neon } from "@neondatabase/serverless";
 import type { Answer } from "./questions";
 import { TYPES } from "./types";
 
-// Built per call so a missing DATABASE_URL fails the query, not the import.
+/**
+ * False where DATABASE_URL isn't set (local development; Vercel secrets can't be pulled).
+ * Database features then switch off quietly instead of failing: no count tile, results
+ * aren't saved, stats stay hidden. Vercel always has it.
+ */
+export const hasDatabase = Boolean(process.env.DATABASE_URL);
+
+/** What the API routes answer with when there is no database to talk to. */
+export const noDatabase = () => Response.json({ error: "No database configured" }, { status: 503 });
+
 const sql = () => neon(process.env.DATABASE_URL!);
 
-export async function countResponses(): Promise<number> {
+export async function countResponses(): Promise<number | null> {
+  if (!hasDatabase) return null;
   const [row] = await sql()`SELECT COUNT(*)::int AS count FROM quiz_responses`;
   return row.count;
 }

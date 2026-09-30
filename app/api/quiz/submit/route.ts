@@ -1,8 +1,9 @@
-import { insertResponse } from "@/lib/db";
+import { hasDatabase, insertResponse, noDatabase } from "@/lib/db";
 import { isAnswerSet } from "@/lib/questions";
 import { score } from "@/lib/scoring";
 
 export async function POST(request: Request) {
+  if (!hasDatabase) return noDatabase();
   const body: unknown = await request.json().catch(() => null);
   const answers = body && typeof body === "object" ? (body as { answers?: unknown }).answers : null;
   if (!isAnswerSet(answers)) {
