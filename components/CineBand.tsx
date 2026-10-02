@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { useCallback, useEffect, useRef, type RefObject } from "react";
 import { stagger, useAnimate, useInView, useReducedMotion, type DOMKeyframesDefinition } from "motion/react";
+import TypeCharacter from "@/components/TypeCharacter";
 import type { EaterType, Family } from "@/lib/types";
 
 /** The word's clip once revealed: negative insets so the tall glyphs are never cut. */
@@ -69,29 +69,10 @@ export default function CineBand({ family, types, intro }: { family: Family; typ
           <li
             key={type.slug}
             data-char
-            className={`group w-1/2 px-2 text-center sm:w-1/3 sm:px-4 lg:w-1/5 ${intro ? "cine-intro-char" : ""}`}
+            className={`w-1/2 px-2 sm:w-1/3 sm:px-4 lg:w-1/5 ${intro ? "cine-intro-char" : ""}`}
             style={intro ? ({ "--i": i } as React.CSSProperties) : undefined}
           >
-            <div className="relative mx-auto max-w-[300px] transition-transform duration-500 ease-settle group-hover:-translate-y-2">
-              {/* Each character's own floor light, brighter on hover. */}
-              <span
-                aria-hidden
-                className="absolute inset-x-[8%] top-[30%] bottom-0 bg-[radial-gradient(closest-side,color-mix(in_srgb,var(--glow)_30%,transparent),transparent)] opacity-60 transition-opacity duration-500 group-hover:opacity-100"
-              />
-              <Image
-                src={type.image}
-                alt=""
-                width={301}
-                height={250}
-                sizes="(min-width: 1024px) 240px, (min-width: 640px) 33vw, 50vw"
-                // The first band is on screen at load; on phones its first character is the LCP.
-                loading={intro ? "eager" : "lazy"}
-                // Shown whole: no mask or crop. Parts reach every edge (the Angry-Eater's axe touches the top),
-                // the box keeps the PNG's ~6:5 shape via width/height, and max-w-[300px] above caps it at native size.
-                className="relative h-auto w-full object-contain"
-              />
-            </div>
-            <p className="mt-3 text-base font-semibold tracking-[-0.01em] text-balance text-[color:var(--glow)] sm:text-lg">{type.name}</p>
+            <TypeCharacter type={type} eager={intro} />
           </li>
         ))}
       </ul>

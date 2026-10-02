@@ -362,3 +362,19 @@ body {
   text-decoration: underline;
   text-underline-offset: 4px;
 }
+
+/*
+  Type dialog and preview card (Radix): a short fade and scale on open and
+  close only. Separate in and out keyframes, because Radix waits for the exit
+  animation only when its name differs from the entrance one.
+*/
+@keyframes pop-in { from { opacity: 0; transform: scale(0.96); } }
+@keyframes pop-out { to { opacity: 0; transform: scale(0.96); } }
+@keyframes fade-in { from { opacity: 0; } }
+@keyframes fade-out { to { opacity: 0; } }
+@media (prefers-reduced-motion: no-preference) {
+  .pop-panel[data-state="open"] { animation: pop-in 200ms cubic-bezier(0.16, 1, 0.3, 1); }
+  .pop-panel[data-state="closed"] { animation: pop-out 140ms ease-in forwards; }
+  .pop-fade[data-state="open"] { animation: fade-in 200ms ease-out; }
+  .pop-fade[data-state="closed"] { animation: fade-out 140ms ease-in forwards; }
+}

@@ -6,7 +6,7 @@ import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import CineBand from "@/components/CineBand";
 import SiteFooter from "@/components/SiteFooter";
 import SiteNav from "@/components/SiteNav";
-import { FAMILIES, TYPES, type Family } from "@/lib/types";
+import { FAMILIES, FAMILY_STYLE, TYPES, type Family } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "The Types | Melonality",
@@ -20,13 +20,8 @@ export const metadata: Metadata = {
  */
 const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"] });
 
-/** Band colour and the angle its stage light comes from. Class names written out in full for Tailwind. */
-const STAGE: Record<Family, { band: string; lightAt: string }> = {
-  Green: { band: "bg-cine-green", lightAt: "12% 0%" },
-  Blue: { band: "bg-cine-blue", lightAt: "88% 0%" },
-  Yellow: { band: "bg-cine-yellow", lightAt: "50% 0%" },
-  Purple: { band: "bg-cine-purple", lightAt: "50% 100%" },
-};
+/** The angle each band's stage light comes from. */
+const LIGHT_AT: Record<Family, string> = { Green: "12% 0%", Blue: "88% 0%", Yellow: "50% 0%", Purple: "50% 100%" };
 
 /**
  * Each band starts on a slant that alternates direction, and pulls up over
@@ -57,19 +52,16 @@ export default function TypesPage() {
           </Link>
         </section>
 
-        {FAMILIES.map((family, i) => {
-          const stage = STAGE[family];
-          return (
-            <section
-              key={family}
-              aria-labelledby={`family-${family}`}
-              className={`cine-stage relative -mt-[4vw] w-full overflow-clip px-5 pt-[calc(4vw+3rem)] pb-20 sm:px-8 sm:pb-28 ${stage.band} ${SLANTS[i % 2]}`}
-              style={{ "--glow": `var(--cine-${family.toLowerCase()}-glow)`, "--light-at": stage.lightAt } as CSSProperties}
-            >
-              <CineBand family={family} types={TYPES.filter((type) => type.family === family)} intro={i === 0} />
-            </section>
-          );
-        })}
+        {FAMILIES.map((family, i) => (
+          <section
+            key={family}
+            aria-labelledby={`family-${family}`}
+            className={`cine-stage relative -mt-[4vw] w-full overflow-clip px-5 pt-[calc(4vw+3rem)] pb-20 sm:px-8 sm:pb-28 ${FAMILY_STYLE[family].band} ${SLANTS[i % 2]}`}
+            style={{ "--glow": `var(--cine-${family.toLowerCase()}-glow)`, "--light-at": LIGHT_AT[family] } as CSSProperties}
+          >
+            <CineBand family={family} types={TYPES.filter((type) => type.family === family)} intro={i === 0} />
+          </section>
+        ))}
       </div>
 
       <SiteFooter />
