@@ -1,18 +1,37 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { Dialog } from "radix-ui";
 import TraitRadar from "@/components/TraitRadar";
-import type { EaterType } from "@/lib/types";
+import type { EaterType, TraitAxis } from "@/lib/types";
+
+/** The coral main call to action on the dark band. */
+export const PRIMARY_CTA =
+  "inline-flex h-14 items-center gap-3 rounded-control bg-flesh px-6 font-display text-lg font-semibold text-cine-base transition-colors duration-300 hover:bg-flesh/85 focus-visible:ring-2 focus-visible:ring-cine-ink focus-visible:ring-offset-4 focus-visible:ring-offset-cine-base focus-visible:outline-none";
 
 /**
- * One type in full, for the dialog on /types and the type's own page. Drawn
- * for the family's dark band, which the parent paints. In the dialog, the name
- * and tagline are the dialog's accessible title and description, and a link
- * leads to the full page.
+ * One type in full, for the dialog on /types, the type's own page and the quiz
+ * result. Drawn for the family's dark band, which the parent paints. In the
+ * dialog, the name and tagline are the dialog's accessible title and
+ * description, and a link leads to the full page.
  */
-export default function TypeDetail({ type, dialog = false }: { type: EaterType; dialog?: boolean }) {
+export default function TypeDetail({
+  type,
+  dialog = false,
+  you,
+  actions,
+  children,
+}: {
+  type: EaterType;
+  dialog?: boolean;
+  /** The player's own scores: the radar sets them against the type's and explains the result. */
+  you?: Record<TraitAxis, number>;
+  /** Replaces the footer's default links. */
+  actions?: ReactNode;
+  /** More sections after the radar. */
+  children?: ReactNode;
+}) {
   const Title = dialog ? Dialog.Title : "h1";
   const Description = dialog ? Dialog.Description : "p";
   const Heading = dialog ? "h3" : "h2";
@@ -59,28 +78,31 @@ export default function TypeDetail({ type, dialog = false }: { type: EaterType; 
           ))}
         </ul>
 
-        <Heading className="mt-8 font-display text-xl font-semibold">What drives them</Heading>
+        <Heading className="mt-8 font-display text-xl font-semibold">{you ? "Why you got this" : "What drives them"}</Heading>
         <div className="mt-2">
-          <TraitRadar type={type} />
+          <TraitRadar type={type} you={you} />
         </div>
+
+        {children}
       </div>
 
       <footer className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 md:col-start-1 md:row-start-2 md:self-start md:justify-start">
-        <Link
-          href="/quiz"
-          className="inline-flex h-14 items-center gap-3 rounded-control bg-flesh px-6 font-display text-lg font-semibold text-cine-base transition-colors duration-300 hover:bg-flesh/85 focus-visible:ring-2 focus-visible:ring-cine-ink focus-visible:ring-offset-4 focus-visible:ring-offset-cine-base focus-visible:outline-none"
-        >
-          Take the quiz
-          <ArrowRight size={18} weight="bold" aria-hidden />
-        </Link>
-        {dialog && (
-          <Link
-            href={`/types/${type.slug}`}
-            className="inline-flex min-h-11 items-center gap-1.5 text-[15px] font-semibold underline-offset-4 hover:underline"
-          >
-            Full page
-            <ArrowRight size={14} weight="bold" aria-hidden />
-          </Link>
+        {actions ?? (
+          <>
+            <Link href="/quiz" className={PRIMARY_CTA}>
+              Take the quiz
+              <ArrowRight size={18} weight="bold" aria-hidden />
+            </Link>
+            {dialog && (
+              <Link
+                href={`/types/${type.slug}`}
+                className="inline-flex min-h-11 items-center gap-1.5 text-[15px] font-semibold underline-offset-4 hover:underline"
+              >
+                Full page
+                <ArrowRight size={14} weight="bold" aria-hidden />
+              </Link>
+            )}
+          </>
         )}
       </footer>
     </article>

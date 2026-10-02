@@ -21,6 +21,14 @@ await sql.query(`ALTER TABLE quiz_responses ADD COLUMN IF NOT EXISTS answers jso
 await sql.query(`ALTER TABLE quiz_responses ADD COLUMN IF NOT EXISTS result_type text`);
 // Unguessable per-row token: the only way to delete a row, since rows carry no identity.
 await sql.query(`ALTER TABLE quiz_responses ADD COLUMN IF NOT EXISTS delete_token uuid NOT NULL DEFAULT gen_random_uuid()`);
+// Branching quiz (2026-10). Existing rows are the linear quiz and stay version 1; version 2 rows store
+// answers keyed by question id plus the family and the 0-100 trait scores.
+await sql.query(`
+  ALTER TABLE quiz_responses
+    ADD COLUMN IF NOT EXISTS quiz_version int NOT NULL DEFAULT 1,
+    ADD COLUMN IF NOT EXISTS color_family text,
+    ADD COLUMN IF NOT EXISTS trait_scores jsonb
+`);
 console.log("quiz_responses ready");
 
 // Accounts (lib/auth.ts). Generated with `npx auth generate` for better-auth 1.7; if Better Auth

@@ -48,9 +48,11 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     // The inline script sets data-theme before paint; suppressHydrationWarning lets the DOM win.
+    // data-scroll-behavior: page changes jump to the top instantly; smooth scrolling stays for in-page links.
     <html
       lang="en"
       data-theme="light"
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
       className={`${fredoka.variable} ${figtree.variable} h-full antialiased`}
     >

@@ -45,13 +45,15 @@ Passwords follow OWASP and NIST SP 800-63B-4: 15+ characters, up to 128, no comp
 
 ```bash
 npm run lint
-npx tsx --test lib/scoring.test.ts
+npx tsx --test lib/scoring.test.ts lib/types.test.ts
+npx tsx scripts/simulate-quiz.ts   # balance: share of each family and type for simulated players
 npm run build
 ```
 
 ## Layout
 
-- `app/` routes: landing, `/quiz`, `/quiz/results`, `/types`, `/how-it-works`, `/about`, `/sign-in`, `/privacy`, `/terms`, API routes under `app/api`
+- `app/` routes: landing, `/quiz`, `/quiz/results`, `/types`, `/types/[slug]`, `/how-it-works`, `/about`, `/sign-in`, `/privacy`, `/terms`, API routes under `app/api`
 - `components/` UI, including the 3D melon (`Watermelon3D.tsx`) and the quiz flow
 - `lib/` questions, scoring, types, database access, auth, operator details
-- `scripts/db-migrate.mjs` schema
+- `scripts/db-migrate.mjs` schema (runs before every build)
+- `scripts/simulate-quiz.ts` balance check for the branching quiz

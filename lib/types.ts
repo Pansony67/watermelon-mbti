@@ -320,9 +320,9 @@ export const TYPES: EaterType[] = FAMILIES.flatMap((family) =>
   ROSTER[family].map((type) => ({ ...type, family, image: `/images/types/${type.slug}.png` })),
 );
 
-/** The axis a type scores highest on. */
-export const topTrait = (type: EaterType): TraitAxis =>
-  TRAIT_AXES.reduce((best, axis) => (type.traits[axis] > type.traits[best] ? axis : best));
+/** The highest-scoring axis; ties go to the earlier axis. */
+export const topTrait = (traits: Record<TraitAxis, number>): TraitAxis =>
+  TRAIT_AXES.reduce((best, axis) => (traits[axis] > traits[best] ? axis : best));
 
 /**
  * Family colours: a soft `tint` for bands and tiles, and an `ink` that passes

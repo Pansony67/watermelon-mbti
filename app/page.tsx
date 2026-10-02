@@ -111,7 +111,7 @@ const FAQS: { q: string; a: string }[] = [
 const STATS: { icon: Icon; value: string; label: string }[] = [
   { icon: OrangeSlice, value: "20", label: "Unique types" },
   { icon: ChatCircleDots, value: "20", label: "Questions" },
-  { icon: Sparkle, value: "100%", label: "Juicy insights" },
+  { icon: Sparkle, value: "4", label: "Colour families" },
 ];
 
 /** Count refreshes every minute; the page stays static otherwise. */

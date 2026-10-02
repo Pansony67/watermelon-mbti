@@ -18,7 +18,7 @@ export default function PrivacyPage() {
       <p>When you finish the test we store three things, none of which identify you:</p>
       <ul>
         <li>Your twenty answers on the 1 to 7 scale.</li>
-        <li>The result type the answers produced.</li>
+        <li>The colour family, type and five trait scores the answers produced.</li>
         <li>The time the result was saved.</li>
       </ul>
       <p>

@@ -28,7 +28,7 @@ test("scores are 0-100, profiles are unique, and the top trait leads clearly", (
     for (const v of scores) assert.ok(Number.isInteger(v) && v >= 0 && v <= 100, t.slug);
     seen.add(scores.join());
     const [first, second] = [...scores].sort((a, b) => b - a);
-    assert.ok(first - second >= 8, `${t.slug}: ${topTrait(t)} leads by only ${first - second}`);
+    assert.ok(first - second >= 8, `${t.slug}: ${topTrait(t.traits)} leads by only ${first - second}`);
   }
   assert.equal(seen.size, TYPES.length);
 });

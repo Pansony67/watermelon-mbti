@@ -1,53 +1,77 @@
 // Run: npx tsx --test lib/scoring.test.ts
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { QUESTIONS, TRAITS, type Answer } from "./questions";
-import { PROFILES, score } from "./scoring";
-import { TYPES } from "./types";
+import { PHASE_1, PHASE_2, type Answer, type Answers } from "./quiz";
+import { getPhase2Questions, parseAnswers, scoreFamily, scoreQuiz, scoreTraits, scoreType } from "./scoring";
+import { FAMILIES, TRAIT_AXES, TYPES, type Family } from "./types";
 
-/** Answers that sit on a profile: 2 for low, 4 for mid, 6 for high. */
-const answersFor = (slug: string): Answer[] =>
-  QUESTIONS.map((q) => ({ 0.15: 2, 0.5: 4, 0.85: 6 })[PROFILES[slug][q.trait]] as Answer);
-
-test("every roster type has exactly one profile", () => {
-  assert.deepEqual(Object.keys(PROFILES).sort(), TYPES.map((t) => t.slug).sort());
+/** A full run on one family's path, every answer `fill` unless overridden. */
+const run = (family: Family, fill: Answer, overrides: Answers = {}): Answers => ({
+  ...Object.fromEntries([...PHASE_1, ...getPhase2Questions(family)].map((q) => [q.id, fill])),
+  ...overrides,
 });
 
-test("answering like a type gives that type, for all 20", () => {
-  for (const { slug } of TYPES) assert.equal(score(answersFor(slug)).type.slug, slug);
-});
-
-test("all neutral answers give the Ordinary-Eater", () => {
-  assert.equal(score(QUESTIONS.map(() => 4 as Answer)).type.slug, "ordinary-eater");
-});
-
-test("each trait is the mean of its own statements, 0 to 1", () => {
-  // Only the two chaos statements agreed with.
-  const s = score(QUESTIONS.map((q) => (q.trait === "chaos" ? 7 : 1)));
-  assert.deepEqual(s.traits, { messy: 0, planner: 0, dreamer: 0, social: 0, calm: 0, chaos: 1 });
-});
-
-test("reasons are three different traits, led by the type's defining ones", () => {
-  const s = score(answersFor("the-saviour-eater"));
-  assert.equal(new Set(s.reasons.map((r) => r.trait)).size, 3);
-  assert.ok(s.reasons.every((r) => r.lean !== "mid"));
-});
-
-test("types are spread evenly across players with evenly spread traits", () => {
-  // Seeded, so the check is repeatable: each player has a random true trait level and answers with noise.
-  let seed = 20260927;
-  const rand = () => ((seed = (seed * 1664525 + 1013904223) % 2 ** 32) / 2 ** 32);
-  const noise = () => Math.sqrt(-2 * Math.log(rand() || 1e-9)) * Math.cos(2 * Math.PI * rand()) * 0.9;
-  const counts = new Map<string, number>();
-  const players = 20000;
-  for (let p = 0; p < players; p++) {
-    const level = Object.fromEntries(TRAITS.map((t) => [t, rand()]));
-    const answers = QUESTIONS.map((q) => Math.min(7, Math.max(1, Math.round(1 + 6 * level[q.trait] + noise()))) as Answer);
-    const slug = score(answers).type.slug;
-    counts.set(slug, (counts.get(slug) ?? 0) + 1);
+test("question data: 8 shared, 12 per family, each type asked 2 or 3 times, unique ids", () => {
+  assert.equal(PHASE_1.length, 8);
+  const ids = [...PHASE_1, ...PHASE_2].map((q) => q.id);
+  assert.equal(new Set(ids).size, ids.length);
+  for (const family of FAMILIES) {
+    assert.equal(PHASE_1.filter((q) => q.target === family).length, 2);
+    assert.equal(getPhase2Questions(family).length, 12);
+    for (const type of TYPES.filter((t) => t.family === family)) {
+      const n = PHASE_2.filter((q) => q.target === type.slug && q.family === family).length;
+      assert.ok(n === 2 || n === 3, `${type.slug} has ${n} questions`);
+    }
   }
-  for (const { slug } of TYPES) {
-    const share = (counts.get(slug) ?? 0) / players;
-    assert.ok(share > 0.035 && share < 0.07, `${slug} came up ${(share * 100).toFixed(1)}%`);
+});
+
+test("every family path covers each trait at least twice", () => {
+  for (const family of FAMILIES) {
+    const path = [...PHASE_1, ...getPhase2Questions(family)];
+    for (const axis of TRAIT_AXES) assert.ok(path.filter((q) => q.trait === axis).length >= 2, `${family} ${axis}`);
   }
+});
+
+test("the family with the highest Phase 1 average wins, with 0-100 scores", () => {
+  const { family, scores } = scoreFamily({ "p1-g1": 1, "p1-g2": 1, "p1-b1": 4, "p1-b2": 4, "p1-y1": 7, "p1-y2": 6, "p1-p1": 2, "p1-p2": 3 });
+  assert.equal(family, "Yellow");
+  assert.deepEqual(scores, { Green: 0, Blue: 50, Yellow: 92, Purple: 25 });
+});
+
+test("family ties go to the highest single answer, then to Green, Blue, Yellow, Purple order", () => {
+  // Blue and Purple both average 5; Purple has the 7.
+  const answers: Answers = { "p1-g1": 1, "p1-g2": 1, "p1-b1": 5, "p1-b2": 5, "p1-y1": 1, "p1-y2": 1, "p1-p1": 3, "p1-p2": 7 };
+  assert.equal(scoreFamily(answers).family, "Purple");
+  assert.equal(scoreFamily(run("Green", 4)).family, "Green");
+});
+
+test("type scores divide by each type's own question count; ties fall back to max, then roster order", () => {
+  // Saviour (3 questions) averages 6; Shy (2 questions) averages 6.5.
+  const answers = run("Green", 1, { "g-1": 6, "g-2": 6, "g-3": 6, "g-4": 7, "g-5": 6 });
+  assert.equal(scoreType("Green", answers).type.slug, "shy-eater");
+  // Saviour 6,6,6 vs Quiet 5,7: same mean, Quiet has the 7.
+  assert.equal(scoreType("Green", run("Green", 1, { "g-1": 6, "g-2": 6, "g-3": 6, "g-6": 5, "g-7": 7 })).type.slug, "quiet-eater");
+  // All equal: the first type in the roster.
+  for (const family of FAMILIES) assert.equal(scoreType(family, run(family, 4)).type, TYPES.find((t) => t.family === family));
+});
+
+test("traits flip answers where agreeing lowers the trait", () => {
+  // Agreeing with everything: social on the Blue path has +1 and -1 questions, mess only -1 ones.
+  const traits = scoreTraits(run("Blue", 7));
+  assert.equal(traits.mess, 0);
+  assert.equal(traits.speed, 50); // p1-y1 (+1) and b-7 (-1)
+  assert.equal(scoreTraits(run("Blue", 4)).chaos, 50);
+});
+
+test("parseAnswers accepts exactly one path and rejects anything else", () => {
+  const blue = run("Blue", 4, { "p1-b1": 7 });
+  assert.equal(scoreQuiz(parseAnswers(blue)!).family, "Blue");
+  assert.equal(parseAnswers(run("Green", 4, { "p1-b1": 7 })), null); // Phase 2 from the wrong family
+  assert.equal(parseAnswers({ ...blue, extra: 4 }), null);
+  const missing = { ...blue };
+  delete missing["b-12"];
+  assert.equal(parseAnswers(missing), null);
+  assert.equal(parseAnswers({ ...blue, "b-1": 8 }), null);
+  assert.equal(parseAnswers({ ...blue, "b-1": 2.5 }), null);
+  assert.equal(parseAnswers(Object.values(blue)), null);
 });

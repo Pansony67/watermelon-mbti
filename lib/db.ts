@@ -1,6 +1,7 @@
 import { neon } from "@neondatabase/serverless";
-import type { Answer } from "./questions";
-import { TYPES } from "./types";
+import type { Answers } from "./quiz";
+import type { Result } from "./scoring";
+import { FAMILIES, type Family } from "./types";
 
 /**
  * False where DATABASE_URL isn't set (local development; Vercel secrets can't be pulled).
@@ -20,12 +21,12 @@ export async function countResponses(): Promise<number | null> {
   return row.count;
 }
 
-/** Inserts one result and returns its deletion token. */
-export async function insertResponse(answers: readonly Answer[], resultType: string): Promise<string> {
-  // Stringified: the driver would otherwise send a JS array as a Postgres array, not JSON.
+/** Inserts one branching-quiz result (version 2) and returns its deletion token. */
+export async function insertResponse(answers: Answers, result: Result): Promise<string> {
+  // Stringified so the driver sends JSON, not a Postgres array or record.
   const [row] = await sql()`
-    INSERT INTO quiz_responses (answers, result_type)
-    VALUES (${JSON.stringify(answers)}::jsonb, ${resultType})
+    INSERT INTO quiz_responses (quiz_version, answers, result_type, color_family, trait_scores)
+    VALUES (2, ${JSON.stringify(answers)}::jsonb, ${result.type.slug}, ${result.family}, ${JSON.stringify(result.traits)}::jsonb)
     RETURNING delete_token
   `;
   return row.delete_token;
@@ -38,18 +39,27 @@ export async function deleteResponse(token: string): Promise<boolean> {
 }
 
 /**
- * Each current type's share of responses scored with the current types, as a
- * 0-100 percentage. Rows saved under the retired 10-type system are left out,
- * so they neither count toward any type nor dilute the percentages.
+ * Each type's and each family's share of branching-quiz results, as 0-100
+ * percentages. Version 1 rows (the old linear quiz) are left out, so they
+ * neither count toward a type nor dilute the percentages.
  */
-export async function resultBreakdown(): Promise<{ total: number; shares: Record<string, number> }> {
-  const slugs = TYPES.map((type) => type.slug);
+export async function resultBreakdown(): Promise<{
+  total: number;
+  shares: Record<string, number>;
+  families: Record<Family, number>;
+}> {
   const rows = (await sql()`
-    SELECT result_type, COUNT(*)::int AS count
-    FROM quiz_responses WHERE result_type = ANY(${slugs}::text[])
-    GROUP BY result_type
-  `) as { result_type: string; count: number }[];
+    SELECT color_family, result_type, COUNT(*)::int AS count
+    FROM quiz_responses WHERE quiz_version = 2
+    GROUP BY color_family, result_type
+  `) as { color_family: Family; result_type: string; count: number }[];
   const total = rows.reduce((n, r) => n + r.count, 0);
-  const shares = Object.fromEntries(rows.map((r) => [r.result_type, Math.round((r.count / total) * 100)]));
-  return { total, shares };
+  const share = (count: number) => (total ? Math.round((count / total) * 100) : 0);
+  return {
+    total,
+    shares: Object.fromEntries(rows.map((r) => [r.result_type, share(r.count)])),
+    families: Object.fromEntries(
+      FAMILIES.map((f) => [f, share(rows.filter((r) => r.color_family === f).reduce((n, r) => n + r.count, 0))]),
+    ) as Record<Family, number>,
+  };
 }

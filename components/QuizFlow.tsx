@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type KeyboardEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check } from "@phosphor-icons/react";
@@ -9,7 +9,18 @@ import BorderBeam from "@/components/BorderBeam";
 import QuizBackdrop from "@/components/QuizBackdrop";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Wordmark } from "@/components/SiteNav";
-import { ANSWERS_STORAGE_KEY, QUESTIONS, type Answer } from "@/lib/questions";
+import {
+  ANSWERS_STORAGE_KEY,
+  PHASE_1,
+  PHASE_2,
+  PROGRESS_STORAGE_KEY,
+  QUESTION_COUNT,
+  isAnswer,
+  type Answer,
+  type Answers,
+  type Question,
+} from "@/lib/quiz";
+import { getPhase2Questions, parseAnswers, scoreFamily } from "@/lib/scoring";
 
 /** Long enough to see the selection land, short enough to feel instant. */
 const ADVANCE_DELAY_MS = 300;
@@ -57,6 +68,31 @@ const DISC = "grid place-items-center rounded-full border-2 transition-[backgrou
 const NAV_BUTTON =
   "inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-control px-3 text-sm font-medium text-ink-2 transition-colors duration-300 hover:text-ink focus-visible:ring-2 focus-visible:ring-flesh focus-visible:outline-none";
 
+const noop = () => () => {};
+const KNOWN_IDS = new Set([...PHASE_1, ...PHASE_2].map((q) => q.id));
+
+/**
+ * The questions this player gets: the shared 8, then, once all 8 are in, the
+ * 12 of the family they pick. Always 20 in the end, whichever family.
+ */
+const pathFor = (answers: Answers): Question[] =>
+  PHASE_1.every((q) => answers[q.id] !== undefined) ? [...PHASE_1, ...getPhase2Questions(scoreFamily(answers).family)] : PHASE_1;
+
+/** Answers kept to the questions on their own path. */
+const onPath = (answers: Answers): Answers =>
+  Object.fromEntries(pathFor(answers).flatMap((q) => (answers[q.id] === undefined ? [] : [[q.id, answers[q.id]]])));
+
+/** This tab's saved progress, cleaned of anything that isn't a known question and a 1-7 answer. */
+function readProgress(raw: string | null): Answers {
+  try {
+    const saved: unknown = raw ? JSON.parse(raw) : null;
+    if (!saved || typeof saved !== "object") return {};
+    return onPath(Object.fromEntries(Object.entries(saved).filter(([id, value]) => KNOWN_IDS.has(id) && isAnswer(value))));
+  } catch {
+    return {};
+  }
+}
+
 /** Forward slides in from the right and out to the left; back is the mirror. */
 const cardVariants = {
   enter: ({ dir }: { dir: number }) => ({ opacity: 0, x: 40 * dir }),
@@ -72,21 +108,31 @@ export default function QuizFlow() {
   const router = useRouter();
   const reduced = useReducedMotion() ?? false;
 
-  const [index, setIndex] = useState(0);
-  const [answers, setAnswers] = useState<(Answer | null)[]>(() =>
-    Array.from(QUESTIONS, () => null),
-  );
+  // Progress survives a refresh: the server renders a fresh start, then this tab's saved answers take over.
+  const saved = useSyncExternalStore(noop, () => sessionStorage.getItem(PROGRESS_STORAGE_KEY), () => null);
+  const restored = useMemo(() => readProgress(saved), [saved]);
+  /** Null until the player answers; until then the saved progress stands. */
+  const [edited, setEdited] = useState<Answers | null>(null);
+  const answers = edited ?? restored;
+  const path = pathFor(answers);
+
+  /** Null until the player moves; until then, resume at the first unanswered question. */
+  const [position, setPosition] = useState<number | null>(null);
+  const firstOpen = path.findIndex((q) => answers[q.id] === undefined);
+  const index = position ?? (firstOpen === -1 ? path.length - 1 : firstOpen);
   /** Which way the next card travels: 1 = forward, -1 = back. */
   const [direction, setDirection] = useState<1 | -1>(1);
+  /** Set when a changed shared answer switched the family and cleared the later answers. */
+  const [rerouted, setRerouted] = useState(false);
 
   const pendingAdvance = useRef<ReturnType<typeof setTimeout> | null>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
 
-  const total = QUESTIONS.length;
-  const question = QUESTIONS[index];
-  const current = answers[index];
+  const total = QUESTION_COUNT;
+  const question = path[index];
+  const current = answers[question.id];
   const isLast = index === total - 1;
-  const answered = answers.filter((answer) => answer !== null).length;
+  const answered = path.filter((q) => answers[q.id] !== undefined).length;
 
   useEffect(() => {
     router.prefetch("/quiz/results");
@@ -102,24 +148,28 @@ export default function QuizFlow() {
 
   const goTo = (next: number, dir: 1 | -1) => {
     setDirection(dir);
-    setIndex(next);
+    setPosition(next);
   };
 
-  const finish = (final: (Answer | null)[]) => {
+  const finish = (final: Answers) => {
     // Only reachable by answering every question, but never trust that.
-    const missing = final.findIndex((answer) => answer === null);
-    if (missing !== -1) {
-      goTo(missing, 1);
+    const complete = parseAnswers(final);
+    if (!complete) {
+      goTo(Math.max(0, pathFor(final).findIndex((q) => final[q.id] === undefined)), 1);
       return;
     }
-    sessionStorage.setItem(ANSWERS_STORAGE_KEY, JSON.stringify(final));
+    sessionStorage.setItem(ANSWERS_STORAGE_KEY, JSON.stringify(complete));
+    sessionStorage.removeItem(PROGRESS_STORAGE_KEY);
     router.push("/quiz/results");
   };
 
   const select = (value: Answer) => {
-    const next = answers.slice();
-    next[index] = value;
-    setAnswers(next);
+    // A changed shared answer can switch the family: the old family's answers drop off the path.
+    const chosen = { ...answers, [question.id]: value };
+    const next = onPath(chosen);
+    setRerouted(Object.keys(next).length < Object.keys(chosen).length);
+    setEdited(next);
+    sessionStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(next));
 
     // A second click inside the delay replaces the first; the last choice wins.
     if (pendingAdvance.current) clearTimeout(pendingAdvance.current);
@@ -184,7 +234,7 @@ export default function QuizFlow() {
                 </p>
                 <div className="text-right">
                   {/* Only after going back: a way forward that doesn't require re-answering. */}
-                  {current !== null && !isLast && (
+                  {current !== undefined && !isLast && (
                     <button type="button" onClick={() => goTo(index + 1, 1)} className={`${NAV_BUTTON} -mr-3`}>
                       Next
                       <ArrowRight size={15} weight="bold" aria-hidden />
@@ -202,15 +252,19 @@ export default function QuizFlow() {
                 aria-valuenow={answered}
                 className="mt-4 grid grid-cols-20 gap-1"
               >
-                {QUESTIONS.map((q, i) => (
+                {Array.from({ length: total }, (_, i) => (
                   <span
-                    key={q.id}
+                    key={i}
                     className={`h-1.5 rounded-xs transition-colors duration-300 ${
-                      answers[i] !== null ? "bg-flesh" : i === index ? "bg-ink-3" : "bg-line"
+                      path[i] && answers[path[i].id] !== undefined ? "bg-flesh" : i === index ? "bg-ink-3" : "bg-line"
                     }`}
                   />
                 ))}
               </div>
+
+              <p aria-live="polite" className="text-center text-sm text-ink-2">
+                {rerouted && <span className="mt-3 block">Your answers changed your path, so the next questions are different.</span>}
+              </p>
 
               <AnimatePresence mode="popLayout" initial={false} custom={{ dir: direction, reduced }}>
                 <motion.div

@@ -16,7 +16,7 @@ import SiteNav from "@/components/SiteNav";
 export const metadata: Metadata = {
   title: "How it works | Melonality",
   description:
-    "Twenty statements, six traits, and the closest of 20 watermelon types. How the Melonality quiz works.",
+    "Twenty questions, four colour families, one of 20 watermelon types. How the Melonality quiz works.",
 };
 
 /** OrangeSlice is the same icon the landing stats row uses for "Unique types". */
@@ -29,7 +29,7 @@ const STEPS: { icon: Icon; title: string; body: string }[] = [
   {
     icon: OrangeSlice,
     title: "Get your type",
-    body: "See which of the 20 watermelon types you are, what in your answers gave it away, and how many other people got the exact same result.",
+    body: "See which of the 20 watermelon types you are, why your answers point there, and how many other people got the same result.",
   },
   {
     icon: PaperPlaneTilt,
@@ -38,22 +38,22 @@ const STEPS: { icon: Icon; title: string; body: string }[] = [
   },
 ];
 
-/** Mirrors lib/questions.ts and lib/scoring.ts: update this copy if the scoring changes. */
+/** Mirrors lib/quiz.ts and lib/scoring.ts: update this copy if the scoring changes. */
 const PARTS: { meta: string; title: string; body: string }[] = [
   {
-    meta: "Statements 1-6",
-    title: "How you eat it",
-    body: "Bite size, speed, sticky hands, how many slices. Together they say how messy an eater you are.",
+    meta: "Questions 1-8",
+    title: "Your family",
+    body: "Everyone answers the same eight, two for each colour family. The family you agree with most is yours: Green, Blue, Yellow or Purple.",
   },
   {
-    meta: "Statements 7-20",
-    title: "How you live with it",
-    body: "Planning, daydreaming, sharing, slowing down and late-night chaos: five more traits, two or three statements each.",
-  },
-  {
-    meta: "Together",
+    meta: "Questions 9-20",
     title: "Your type",
-    body: "Your six trait scores are compared with the profile of each of the 20 types, and the closest one is yours. Nothing is reverse-scored and nothing is hidden: what you tap is what counts.",
+    body: "Twelve questions written for your family alone, two or three for each of its five types. The type you agree with most is yours.",
+  },
+  {
+    meta: "All twenty",
+    title: "Your traits",
+    body: "Every answer also counts toward one of five traits: messiness, speed, social, planning and chaos. Your result draws them over your type's typical profile.",
   },
 ];
 
@@ -93,13 +93,13 @@ const RESULT: { icon: Icon; title: string; body: string }[] = [
   },
   {
     icon: MagnifyingGlass,
-    title: "What gave it away",
-    body: "The three traits in your answers that matched your type most closely.",
+    title: "Why you got it",
+    body: "Your five trait scores drawn over your type's typical profile, and how strongly you matched each family.",
   },
   {
     icon: ChartBar,
     title: "How rare it is",
-    body: "The share of all players who got the exact same result, counted live.",
+    body: "The share of players who got the same type, counted live once enough people have taken the test.",
   },
 ];
 
@@ -148,7 +148,7 @@ export default function HowItWorksPage() {
           <div className="lg:col-span-4">
             <h2 className="font-display text-3xl font-semibold text-ink sm:text-4xl">What the quiz measures</h2>
             <p className="mt-4 text-lg leading-relaxed text-pretty text-ink-2">
-              Twenty statements in two parts. Each part answers one question about you.
+              Twenty statements in two parts: the first finds your family, the second your type within it.
             </p>
           </div>
 
