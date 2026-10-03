@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -17,6 +17,7 @@ type Problem = { title: string; body: string };
  * password share one code and one message on purpose (no account guessing).
  */
 function explain(error: { code?: string; status: number }): Problem {
+  // The body is replaced by a live countdown while the wait lasts.
   if (error.status === 429) return { title: "Too many tries.", body: "Take a breath and try again in a minute." };
   switch (error.code) {
     case "INVALID_EMAIL_OR_PASSWORD":
@@ -56,6 +57,12 @@ export function explainSocial(code: string): Problem {
   }
 }
 
+/** Now, and when a rate-limited request may be retried (the server's X-Retry-After seconds). */
+function retryWindow(response: Response): [now: number, until: number] {
+  const now = Date.now();
+  return [now, now + 1000 * (Number(response.headers.get("X-Retry-After")) || 60)];
+}
+
 const FIELD =
   "mt-2 block h-12 w-full rounded-control bg-paper px-4 text-base text-ink ring-1 ring-line ring-inset transition-shadow duration-300 placeholder:text-ink-3 focus:ring-2 focus:ring-flesh focus:outline-none";
 
@@ -83,8 +90,46 @@ export default function SignInForm({
   const [reveal, setReveal] = useState(false);
   const [pending, setPending] = useState(false);
   const [problem, setProblem] = useState<Problem | null>(initialProblem);
+  /** The provider being opened: every button stays locked until the page leaves for it. */
+  const [opening, setOpening] = useState<ProviderId | null>(null);
+  /** After "too many tries": when tries reopen. Buttons stay locked and the notice counts down. */
+  const [waitUntil, setWaitUntil] = useState<number | null>(null);
+  const [now, setNow] = useState(0);
+  /** Set the instant a request starts, so a double-click can't send two before the buttons redraw as locked. */
+  const busy = useRef(false);
 
   const signingUp = mode === "sign-up";
+  const locked = pending || opening !== null || waitUntil !== null;
+  const waitSeconds = waitUntil ? Math.max(1, Math.ceil((waitUntil - now) / 1000)) : 0;
+
+  useEffect(() => {
+    if (!waitUntil) return;
+    const tick = setInterval(() => {
+      if (Date.now() < waitUntil) return setNow(Date.now());
+      setWaitUntil(null);
+      setProblem(null);
+    }, 1000);
+    return () => clearInterval(tick);
+  }, [waitUntil]);
+
+  // Coming back from the provider's page with Back restores this page from the browser cache, still locked.
+  useEffect(() => {
+    const unlock = (event: PageTransitionEvent) => {
+      if (!event.persisted) return;
+      busy.current = false;
+      setOpening(null);
+    };
+    addEventListener("pageshow", unlock);
+    return () => removeEventListener("pageshow", unlock);
+  }, []);
+
+  /** Starts the countdown from the server's own retry time when a request is rate-limited. */
+  const onError = ({ response }: { response: Response }) => {
+    if (response.status !== 429) return;
+    const [at, until] = retryWindow(response);
+    setNow(at);
+    setWaitUntil(until);
+  };
   const providers = PROVIDERS.filter((p) => enabled.includes(p.id) || showUnconfigured);
 
   const switchMode = (next: Mode) => {
@@ -95,16 +140,19 @@ export default function SignInForm({
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
+    if (locked || busy.current) return;
     setProblem(null);
     // Friendly early checks; the server enforces the same rules regardless.
     if (signingUp && !name.trim()) return setProblem({ title: "What should Melon call you?", body: "Add a name for your pass." });
     if (!email.trim() || !password) return setProblem({ title: "Almost.", body: "Fill in your email and password." });
     if (signingUp && password.length < PASSWORD_MIN) return setProblem(explain({ code: "PASSWORD_TOO_SHORT", status: 400 }));
 
+    busy.current = true;
     setPending(true);
     const { error } = signingUp
-      ? await authClient.signUp.email({ name: name.trim(), email: email.trim(), password })
-      : await authClient.signIn.email({ email: email.trim(), password });
+      ? await authClient.signUp.email({ name: name.trim(), email: email.trim(), password }, { onError })
+      : await authClient.signIn.email({ email: email.trim(), password }, { onError });
+    busy.current = false;
     setPending(false);
     if (error) {
       setProblem(explain(error));
@@ -117,9 +165,17 @@ export default function SignInForm({
   };
 
   const social = async (provider: ProviderId) => {
+    if (locked || busy.current) return;
+    busy.current = true;
     setProblem(null);
-    const { error } = await authClient.signIn.social({ provider, callbackURL: "/", errorCallbackURL: "/sign-in" });
-    if (error) setProblem(explain(error));
+    setOpening(provider);
+    const { error } = await authClient.signIn.social({ provider, callbackURL: "/", errorCallbackURL: "/sign-in" }, { onError });
+    // On success the browser is already on its way to the provider, so the buttons stay locked.
+    if (error) {
+      busy.current = false;
+      setOpening(null);
+      setProblem(explain(error));
+    }
   };
 
   return (
@@ -143,12 +199,12 @@ export default function SignInForm({
                   <button
                     key={provider.id}
                     type="button"
-                    disabled={!ready || pending}
+                    disabled={!ready || locked}
                     onClick={() => social(provider.id)}
                     className="flex h-12 w-full cursor-pointer items-center justify-center gap-3 rounded-control bg-paper text-[15px] font-semibold text-ink ring-1 ring-line ring-inset transition-colors duration-300 hover:bg-paper-2 focus-visible:ring-2 focus-visible:ring-flesh focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <BrandMark provider={provider.id} />
-                    Continue with {provider.label}
+                    {opening === provider.id ? `Opening ${provider.label}...` : `Continue with ${provider.label}`}
                     {!ready && <span className="text-xs font-medium text-ink-3">(needs setup)</span>}
                   </button>
                 );
@@ -234,14 +290,16 @@ export default function SignInForm({
               <WarningCircle size={20} weight="fill" aria-hidden className="mt-px shrink-0 text-flesh" />
               <p>
                 <span className="block font-semibold text-ink">{problem.title}</span>
-                <span className="text-ink-2">{problem.body}</span>
+                <span className="text-ink-2">
+                  {waitUntil ? `Take a breath. You can try again in ${waitSeconds} seconds.` : problem.body}
+                </span>
               </p>
             </div>
           )}
 
           <button
             type="submit"
-            disabled={pending}
+            disabled={locked}
             className="mt-7 inline-flex h-14 w-full cursor-pointer items-center justify-between rounded-control bg-ink py-2 pr-2 pl-6 font-display text-lg font-semibold text-paper shadow-card transition-colors duration-300 hover:bg-ink/85 focus-visible:ring-2 focus-visible:ring-flesh focus-visible:ring-offset-4 focus-visible:outline-none disabled:cursor-wait disabled:opacity-70"
           >
             {pending ? (signingUp ? "Making your pass..." : "Checking with Melon...") : signingUp ? "Create account" : "Sign in"}

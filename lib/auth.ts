@@ -50,9 +50,14 @@ export const auth = betterAuth({
   rateLimit: {
     // Counted in the database so the limit holds across serverless instances.
     storage: "database",
+    // Roomy enough that a person fixing typos never meets them; a script still does. Passwords
+    // are long and breach-checked, so guessing is hopeless well before this. Starting a Google,
+    // Facebook or LINE sign-in takes no password, so it gets more (Better Auth's default for
+    // every /sign-in path is 3 per 10 seconds, which a double-click and one retry use up).
     customRules: {
-      "/sign-in/email": { window: 60, max: 5 },
-      "/sign-up/email": { window: 60, max: 3 },
+      "/sign-in/email": { window: 60, max: 10 },
+      "/sign-up/email": { window: 60, max: 10 },
+      "/sign-in/social": { window: 60, max: 20 },
     },
   },
   plugins: [
