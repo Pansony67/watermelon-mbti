@@ -52,7 +52,8 @@ export default function ResultsPage() {
             body: JSON.stringify({ answers }),
           })
             .then(async (r) => {
-              if (r.status === 503) return; // No database here (local development): nothing to save.
+              // No database here (local development), or saving paused for this address: the result still shows.
+              if (r.status === 503 || r.status === 429) return;
               if (!r.ok) throw new Error(`submit ${r.status}`);
               const { deleteToken } = (await r.json()) as { deleteToken: string };
               sessionStorage.setItem(SUBMITTED_KEY, raw);
@@ -149,7 +150,7 @@ export default function ResultsPage() {
               ) : (
                 <>
                   Your answers are stored anonymously to power the stats.{" "}
-                  <button type="button" onClick={remove} className="cursor-pointer underline underline-offset-4 hover:text-cine-ink">
+                  <button type="button" onClick={remove} className="-my-3 cursor-pointer py-3 underline underline-offset-4 hover:text-cine-ink">
                     Delete my response
                   </button>
                   {" "}&middot;{" "}

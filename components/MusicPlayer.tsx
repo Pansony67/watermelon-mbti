@@ -81,7 +81,8 @@ export default function MusicPlayer() {
           defaultValue={DEFAULT_VOLUME}
           onInput={(event) => onVolume(Number(event.currentTarget.value))}
           tabIndex={playing ? 0 : -1}
-          className="h-1 w-24 cursor-pointer accent-flesh"
+          // Full-height box for fingers; browsers still draw the track as a thin line.
+          className="h-11 w-24 cursor-pointer accent-flesh"
         />
       </label>
 

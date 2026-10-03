@@ -44,7 +44,8 @@ export default function PrivacyPage() {
       </ul>
       <p>
         To stop password guessing, sign-in and sign-up attempts are counted per IP address for a short time, and too many
-        attempts are blocked for a minute.
+        attempts are blocked for a minute. Saved test results are counted the same way, under a one-way hash of the
+        address rather than the address itself, so no single connection can flood the stats.
       </p>
 
       <h2>Why</h2>

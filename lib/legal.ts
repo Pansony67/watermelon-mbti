@@ -9,7 +9,7 @@ export const OPERATOR = {
   /** Governing law for the Terms, e.g. "Thailand". Empty hides the clause. */
   jurisdiction: "",
   /** Shown as "Last updated" on both policies. */
-  updated: "2 October 2026",
+  updated: "3 October 2026",
   /** Public source code, linked from the footer. */
   github: "https://github.com/Pansony67/watermelon-mbti",
 };

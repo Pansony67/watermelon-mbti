@@ -211,7 +211,8 @@ export default function QuizFlow() {
           </div>
         </header>
 
-        <section className="relative mx-auto flex w-full max-w-3xl flex-1 items-center px-4 pb-16 sm:px-8">
+        {/* px-3 on phones: at 360px wide the seven answer buttons still get a full 44px each. */}
+        <section className="relative mx-auto flex w-full max-w-3xl flex-1 items-center px-3 pb-16 sm:px-8">
           <div className="card-enter relative w-full rounded-panel bg-paper shadow-panel ring-1 ring-line">
             <div className="relative overflow-hidden rounded-[inherit] px-3 pt-5 pb-9 sm:px-12 sm:pt-6 sm:pb-14">
               {/* Row 1: back, position, forward. Fixed height so Q1 (no Back yet) matches the rest. */}

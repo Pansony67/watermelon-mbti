@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { neon } from "@neondatabase/serverless";
 import type { Answers } from "./quiz";
 import type { Result } from "./scoring";
@@ -30,6 +31,28 @@ export async function insertResponse(answers: Answers, result: Result): Promise<
     RETURNING delete_token
   `;
   return row.delete_token;
+}
+
+/** Saved results per visitor address before saving pauses: roomy for a class on one Wi-Fi, tight for a script. */
+const SUBMIT_LIMIT = { windowMs: 10 * 60_000, max: 30 };
+
+/**
+ * True while this address is under the save limit. Counted in the auth
+ * rate-limit table (lib/auth.ts) under a salted hash, never the address
+ * itself, in a fixed window: `lastRequest` holds the window's start here.
+ */
+export async function allowSubmit(ip: string): Promise<boolean> {
+  const key = `quiz:${createHash("sha256").update(`${process.env.BETTER_AUTH_SECRET}:${ip}`).digest("hex").slice(0, 32)}`;
+  const now = Date.now();
+  const expired = now - SUBMIT_LIMIT.windowMs;
+  const [row] = await sql()`
+    INSERT INTO "rateLimit" (id, key, count, "lastRequest") VALUES (${key}, ${key}, 1, ${now})
+    ON CONFLICT (key) DO UPDATE SET
+      count = CASE WHEN "rateLimit"."lastRequest" < ${expired} THEN 1 ELSE "rateLimit".count + 1 END,
+      "lastRequest" = CASE WHEN "rateLimit"."lastRequest" < ${expired} THEN ${now} ELSE "rateLimit"."lastRequest" END
+    RETURNING count
+  `;
+  return row.count <= SUBMIT_LIMIT.max;
 }
 
 /** True if a row matched the token and was removed. */

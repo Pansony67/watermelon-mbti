@@ -216,13 +216,16 @@ body {
 }
 
 
+/*
+  Rise only, no fade: the melon poster and the quiz card are the pages' largest
+  elements, and Chrome counts a faded-in element as painted only at the next
+  main-thread frame, which on a busy phone can be seconds after it showed.
+*/
 @keyframes melon-enter {
   from {
-    opacity: 0;
     transform: translateY(20px) scale(0.97);
   }
   to {
-    opacity: 1;
     transform: translateY(0) scale(1);
   }
 }
