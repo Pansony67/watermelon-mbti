@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useRef, useState, useSyncExternalStore } from "react";
@@ -113,23 +113,33 @@ export default function TypeCharacter({ type, eager }: { type: EaterType; eager:
         trigger
       )}
 
-      <Dialog.Portal>
-        <Dialog.Overlay className="pop-fade fixed inset-0 z-50 bg-black/70" />
-        {/* Near full screen on phones, a centred panel from sm up; the inside scrolls, the close button stays put. */}
-        <Dialog.Content
-          className={`pop-panel fixed inset-2 z-50 flex flex-col overflow-hidden rounded-card shadow-panel sm:inset-auto sm:top-1/2 sm:left-1/2 sm:max-h-[min(90dvh,60rem)] sm:w-[min(60rem,calc(100vw-3rem))] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-panel ${FAMILY_STYLE[type.family].band}`}
-        >
-          <Dialog.Close
-            aria-label="Close"
-            className="absolute top-3 right-3 z-10 grid size-11 cursor-pointer place-items-center rounded-full bg-cine-base text-cine-ink transition-colors hover:bg-cine-ink hover:text-cine-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cine-ink"
-          >
-            <X size={20} weight="bold" aria-hidden />
-          </Dialog.Close>
-          <div className="overflow-y-auto overscroll-contain px-5 pt-16 pb-8 sm:px-10 sm:pt-12 sm:pb-10">
-            <TypeDetail type={type} dialog />
-          </div>
-        </Dialog.Content>
-      </Dialog.Portal>
+      <TypeDialogPanel type={type} />
     </Dialog.Root>
+  );
+}
+
+/**
+ * The type's detail dialog: dimmed overlay and the panel on its family band.
+ * Goes inside a Dialog.Root, here and on the landing chips. Near full screen on
+ * phones, a centred panel from sm up; the inside scrolls, the close button stays put.
+ */
+export function TypeDialogPanel({ type, actions }: { type: EaterType; actions?: ReactNode }) {
+  return (
+    <Dialog.Portal>
+      <Dialog.Overlay className="pop-fade fixed inset-0 z-50 bg-black/70" />
+      <Dialog.Content
+        className={`pop-panel fixed inset-2 z-50 flex flex-col overflow-hidden rounded-card shadow-panel sm:inset-auto sm:top-1/2 sm:left-1/2 sm:max-h-[min(90dvh,60rem)] sm:w-[min(60rem,calc(100vw-3rem))] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-panel ${FAMILY_STYLE[type.family].band}`}
+      >
+        <Dialog.Close
+          aria-label="Close"
+          className="absolute top-3 right-3 z-10 grid size-11 cursor-pointer place-items-center rounded-full bg-cine-base text-cine-ink transition-colors hover:bg-cine-ink hover:text-cine-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cine-ink"
+        >
+          <X size={20} weight="bold" aria-hidden />
+        </Dialog.Close>
+        <div className="overflow-y-auto overscroll-contain px-5 pt-16 pb-8 sm:px-10 sm:pt-12 sm:pb-10">
+          <TypeDetail type={type} dialog actions={actions} />
+        </div>
+      </Dialog.Content>
+    </Dialog.Portal>
   );
 }

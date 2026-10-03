@@ -1,19 +1,15 @@
 import {
   ArrowRight,
   ChatCircleDots,
-  Detective,
-  Flask,
-  Headphones,
   OrangeSlice,
   Plus,
   Sparkle,
-  Sword,
   UsersThree,
 } from "@phosphor-icons/react/dist/ssr";
 import type { Icon } from "@phosphor-icons/react";
-import type { CSSProperties } from "react";
 import Link from "next/link";
 import GridBackground from "@/components/GridBackground";
+import HeroChips from "@/components/HeroChips";
 import InView from "@/components/InView";
 import Reveal from "@/components/Reveal";
 import SeedField from "@/components/SeedField";
@@ -21,56 +17,6 @@ import SiteFooter from "@/components/SiteFooter";
 import SiteNav from "@/components/SiteNav";
 import Watermelon3DLazy from "@/components/Watermelon3DLazy";
 import { countResponses } from "@/lib/db";
-import { FAMILY_STYLE, TYPES, type EaterType } from "@/lib/types";
-
-type Chip = {
-  type: EaterType;
-  icon: Icon;
-  /** Position inside the stage, as CSS values. */
-  style: CSSProperties;
-  /** Which stage edge the chip hangs from; phones scale it down toward that corner. */
-  anchor: "left" | "right";
-  /** Connector polyline from chip to melon, in a 0-100 stage coordinate space. */
-  connector: string;
-};
-
-const typeBySlug = (slug: string) => {
-  const type = TYPES.find((t) => t.slug === slug);
-  if (!type) throw new Error(`Unknown type slug: ${slug}`);
-  return type;
-};
-
-/** One type from each colour family, pinned to the melon with callouts. */
-const CHIPS: Chip[] = [
-  {
-    type: typeBySlug("the-saviour-eater"),
-    icon: Sword,
-    style: { left: "4%", top: "6%" },
-    anchor: "left",
-    connector: "16,16 16,30 29.5,30",
-  },
-  {
-    type: typeBySlug("introvert-eater"),
-    icon: Headphones,
-    style: { right: "2%", top: "5%" },
-    anchor: "right",
-    connector: "86,15 86,30 70.5,30",
-  },
-  {
-    type: typeBySlug("obsessed-eater"),
-    icon: Flask,
-    style: { left: "-2%", top: "62%" },
-    anchor: "left",
-    connector: "22,67 30,67",
-  },
-  {
-    type: typeBySlug("sus-eater"),
-    icon: Detective,
-    style: { right: "-3%", top: "58%" },
-    anchor: "right",
-    connector: "80,63 73,63",
-  },
-];
 
 /** Keep these checkable: each one is a well-documented fact, not a fun myth. */
 const FACTS: { label: string; body: string }[] = [
@@ -190,50 +136,7 @@ export default async function Home() {
               <Watermelon3DLazy />
             </div>
 
-            <Reveal delay={0.7} className="pointer-events-none absolute inset-0">
-              <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden className="h-full w-full text-ink/20">
-                {CHIPS.map((chip) => (
-                  <polyline
-                    key={chip.type.slug}
-                    points={chip.connector}
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={1}
-                    vectorEffect="non-scaling-stroke"
-                  />
-                ))}
-              </svg>
-            </Reveal>
-
-            {CHIPS.map((chip, i) => {
-              const f = FAMILY_STYLE[chip.type.family];
-              return (
-                <Reveal
-                  key={chip.type.slug}
-                  delay={0.6 + i * 0.09}
-                  distance={14}
-                  className="pointer-events-none absolute"
-                  style={chip.style}
-                >
-                  {/* Opens that type's card on /types, inside its colour family. Hover (pointer devices only): ring and
-                      icon tile take the family colour; the chip lifts and the icon tilts unless motion is reduced. */}
-                  <Link
-                    href={`/types?type=${chip.type.slug}`}
-                    className={`group pointer-events-auto flex scale-[0.8] items-center gap-3 rounded-card bg-paper py-2 pr-2 pl-3.5 shadow-card ring-1 ring-line transition duration-300 ease-settle hover:shadow-panel focus-visible:ring-2 focus-visible:ring-flesh focus-visible:outline-none motion-safe:hover:-translate-y-1 sm:scale-100 ${f.hoverRing} ${chip.anchor === "left" ? "origin-top-left" : "origin-top-right"}`}
-                  >
-                    <span>
-                      <span className="block font-display text-[13px] font-semibold whitespace-nowrap text-ink">{chip.type.name}</span>
-                      <span className={`block text-xs font-medium ${f.ink}`}>{chip.type.family}</span>
-                    </span>
-                    <span
-                      className={`grid h-9 w-9 place-items-center rounded-lg transition-colors duration-300 group-hover:text-paper ${f.tint} ${f.ink} ${f.hoverTile}`}
-                    >
-                      <chip.icon size={16} aria-hidden className="transition-transform duration-300 ease-settle motion-safe:group-hover:-rotate-12" />
-                    </span>
-                  </Link>
-                </Reveal>
-              );
-            })}
+            <HeroChips />
           </div>
         </section>
 

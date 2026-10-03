@@ -381,3 +381,19 @@ body {
   .pop-fade[data-state="open"] { animation: fade-in 200ms ease-out; }
   .pop-fade[data-state="closed"] { animation: fade-out 140ms ease-in forwards; }
 }
+
+/*
+  Landing chips (components/HeroChips.tsx): each connector draws out from the
+  melon's edge, then its chip pops out at the end of it. Once per visit, no loop.
+*/
+@keyframes connector-draw { from { stroke-dashoffset: 1; } }
+@keyframes chip-pop {
+  0% { opacity: 0; transform: scale(0.6); }
+  60% { opacity: 1; transform: scale(1.06); }
+  100% { opacity: 1; transform: none; }
+}
+.connector { stroke-dasharray: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  .connector { animation: connector-draw 0.45s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+  .chip-pop { animation: chip-pop 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+}
