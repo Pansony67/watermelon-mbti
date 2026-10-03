@@ -58,6 +58,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+        {/* Facebook appends "#_=_" to its sign-in redirect; drop it so shared links stay clean. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `if(location.hash==="#_=_")history.replaceState(null,"",location.pathname+location.search)`,
+          }}
+        />
       </head>
       <body className="min-h-full flex flex-col">
         <a

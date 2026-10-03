@@ -215,9 +215,11 @@ export default async function Home() {
                   className="pointer-events-none absolute"
                   style={chip.style}
                 >
-                  {/* Hover (pointer devices only): ring and icon tile take the family colour; the chip lifts and the icon tilts unless motion is reduced. */}
-                  <div
-                    className={`group pointer-events-auto flex scale-[0.8] items-center gap-3 rounded-card bg-paper py-2 pr-2 pl-3.5 shadow-card ring-1 ring-line transition duration-300 ease-settle hover:shadow-panel motion-safe:hover:-translate-y-1 sm:scale-100 ${f.hoverRing} ${chip.anchor === "left" ? "origin-top-left" : "origin-top-right"}`}
+                  {/* Opens that type's card on /types, inside its colour family. Hover (pointer devices only): ring and
+                      icon tile take the family colour; the chip lifts and the icon tilts unless motion is reduced. */}
+                  <Link
+                    href={`/types?type=${chip.type.slug}`}
+                    className={`group pointer-events-auto flex scale-[0.8] items-center gap-3 rounded-card bg-paper py-2 pr-2 pl-3.5 shadow-card ring-1 ring-line transition duration-300 ease-settle hover:shadow-panel focus-visible:ring-2 focus-visible:ring-flesh focus-visible:outline-none motion-safe:hover:-translate-y-1 sm:scale-100 ${f.hoverRing} ${chip.anchor === "left" ? "origin-top-left" : "origin-top-right"}`}
                   >
                     <span>
                       <span className="block font-display text-[13px] font-semibold whitespace-nowrap text-ink">{chip.type.name}</span>
@@ -228,7 +230,7 @@ export default async function Home() {
                     >
                       <chip.icon size={16} aria-hidden className="transition-transform duration-300 ease-settle motion-safe:group-hover:-rotate-12" />
                     </span>
-                  </div>
+                  </Link>
                 </Reveal>
               );
             })}
