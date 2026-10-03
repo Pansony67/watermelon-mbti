@@ -1,6 +1,6 @@
 // Run: npx tsx --test lib/types.test.ts
 import assert from "node:assert/strict";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { test } from "node:test";
 import { TRAIT_AXES, TYPES, topTrait } from "./types";
 
@@ -17,8 +17,13 @@ test("copy stays inside its word limits, with no em dashes", () => {
   }
 });
 
-test("every type has an image", () => {
-  for (const t of TYPES) assert.ok(existsSync(`public${t.image}`), t.image);
+test("every type has an image, with its real pixel size stored", () => {
+  for (const t of TYPES) {
+    assert.ok(existsSync(`public${t.image}`), t.image);
+    // A PNG's width and height sit at bytes 16-23, in its IHDR chunk.
+    const png = readFileSync(`public${t.image}`);
+    assert.deepEqual([png.readUInt32BE(16), png.readUInt32BE(20)], [t.imageWidth, t.imageHeight], `${t.slug} size`);
+  }
 });
 
 test("scores are 0-100, profiles are unique, and the top trait leads clearly", () => {

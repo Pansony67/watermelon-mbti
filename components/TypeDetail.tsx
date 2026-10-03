@@ -43,21 +43,22 @@ export default function TypeDetail({
     >
       {/* Phones read top to bottom; from md the footer moves up under the tagline so the quiz link is in view. */}
       <header className="text-center md:text-left">
-        <div className="relative mx-auto max-w-[300px] md:mx-0">
+        <div className="relative mx-auto w-fit max-w-full md:mx-0">
           {/* Floor light, as on /types: the characters are dark photographs. */}
           <span
             aria-hidden
             className="absolute inset-x-[8%] top-[30%] bottom-0 bg-[radial-gradient(closest-side,color-mix(in_srgb,var(--glow)_30%,transparent),transparent)]"
           />
-          {/* Shown whole at no more than native size: no crop, no mask. Only rendered when on screen, so never lazy. */}
+          {/* Shown whole at one height (below native size), as wide as its own shape: no crop, no mask.
+              Only rendered when on screen, so never lazy. */}
           <Image
             src={type.image}
             alt=""
-            width={301}
-            height={250}
-            sizes="300px"
+            width={type.imageWidth}
+            height={type.imageHeight}
+            sizes={`(min-width: 640px) ${Math.round((320 * type.imageWidth) / type.imageHeight)}px, ${Math.round((288 * type.imageWidth) / type.imageHeight)}px`}
             loading="eager"
-            className="relative h-auto w-full object-contain"
+            className="relative h-72 w-auto max-w-full object-contain sm:h-80"
           />
         </div>
         <Title className="mt-6 font-display text-4xl leading-tight font-semibold text-balance sm:text-5xl">{type.name}</Title>

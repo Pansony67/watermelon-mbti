@@ -52,15 +52,19 @@ export default function TypeCharacter({ type, eager }: { type: EaterType; eager:
 
   const glow = { "--glow": `var(--cine-${type.family.toLowerCase()}-glow)` } as CSSProperties;
 
+  // Every figure is drawn at one height (h-40 / sm:h-52 / lg:h-64 below), as wide as its own shape.
+  // The PNGs end at the feet, so equal heights put every figure in a row on the same baseline.
+  const width = (height: number) => Math.round((height * type.imageWidth) / type.imageHeight);
+
   // Spans, not divs: a button may only hold phrasing content.
   const trigger = (
     <Dialog.Trigger asChild>
       <button
         type="button"
         aria-label={type.name}
-        className="group block w-full cursor-pointer rounded-card text-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[color:var(--glow)]"
+        className="group flex cursor-pointer flex-col items-center rounded-card text-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[color:var(--glow)]"
       >
-        <span className="relative mx-auto block max-w-[300px] transition-transform duration-500 ease-settle group-hover:-translate-y-2 group-focus-visible:-translate-y-2">
+        <span className="relative block transition-transform duration-500 ease-settle group-hover:-translate-y-2 group-focus-visible:-translate-y-2">
           {/* Each character's own floor light, brighter on hover. */}
           <span
             aria-hidden
@@ -69,17 +73,17 @@ export default function TypeCharacter({ type, eager }: { type: EaterType; eager:
           <Image
             src={type.image}
             alt=""
-            width={301}
-            height={250}
-            sizes="(min-width: 1024px) 240px, (min-width: 640px) 33vw, 50vw"
+            width={type.imageWidth}
+            height={type.imageHeight}
+            sizes={`(min-width: 1024px) ${width(256)}px, (min-width: 640px) ${width(208)}px, ${width(160)}px`}
             // The first band is on screen at load; on phones its first character is the LCP.
             loading={eager ? "eager" : "lazy"}
-            // Shown whole: no mask or crop. Parts reach every edge (the Angry-Eater's axe touches the top),
-            // the box keeps the PNG's ~6:5 shape via width/height, and max-w-[300px] above caps it at native size.
-            className="relative h-auto w-full object-contain"
+            // Shown whole: no mask or crop. The real width/height keep the box at the PNG's own shape,
+            // and 256px tall stays well under every file's native height.
+            className="relative h-40 w-auto object-contain sm:h-52 lg:h-64"
           />
         </span>
-        <span className="mt-3 block text-base font-semibold tracking-[-0.01em] text-balance text-[color:var(--glow)] sm:text-lg">
+        <span className="mt-3 block text-base font-semibold tracking-[-0.01em] whitespace-nowrap text-[color:var(--glow)] sm:text-lg">
           {type.name}
         </span>
       </button>

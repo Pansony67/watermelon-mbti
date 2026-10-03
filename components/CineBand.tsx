@@ -63,13 +63,13 @@ export default function CineBand({ family, types, intro }: { family: Family; typ
         </span>
       </h2>
 
-      {/* Wrapping row, so a short last row centres instead of hugging the left. */}
-      <ul className="relative mx-auto mt-6 flex max-w-7xl flex-wrap justify-center gap-y-10 sm:mt-10">
+      {/* Wrapping row of figures at one height, each as wide as itself; a short last row centres. */}
+      <ul className="relative mx-auto mt-6 flex max-w-7xl flex-wrap items-start justify-center gap-x-6 gap-y-10 sm:mt-10 sm:gap-x-10">
         {types.map((type, i) => (
           <li
             key={type.slug}
             data-char
-            className={`w-1/2 px-2 sm:w-1/3 sm:px-4 lg:w-1/5 ${intro ? "cine-intro-char" : ""}`}
+            className={intro ? "cine-intro-char" : undefined}
             style={intro ? ({ "--i": i } as React.CSSProperties) : undefined}
           >
             <TypeCharacter type={type} eager={intro} />

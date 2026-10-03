@@ -27,8 +27,11 @@ export type EaterType = {
   slug: string;
   name: string;
   family: Family;
-  /** Transparent PNG cutout, about 300x250, under public/images/types/. */
+  /** Full-figure transparent PNG under public/images/types/, portrait, feet on the bottom edge. */
   image: string;
+  /** The PNG's real pixel size, so next/image reserves the right box (no layout shift). */
+  imageWidth: number;
+  imageHeight: number;
   /** One line, under 12 words. */
   tagline: string;
   /** 60-90 words on how they actually eat watermelon. */
@@ -45,7 +48,7 @@ export const FAMILIES: Family[] = ["Green", "Blue", "Yellow", "Purple"];
  * Blue keeps it cold and steady, Yellow eats it loud in the summer sun, and
  * Purple does its best work after dark.
  */
-const ROSTER: Record<Family, Omit<EaterType, "family" | "image">[]> = {
+const ROSTER: Record<Family, Omit<EaterType, "family" | "image" | "imageWidth" | "imageHeight">[]> = {
   Green: [
     {
       slug: "the-saviour-eater",
@@ -316,8 +319,38 @@ const ROSTER: Record<Family, Omit<EaterType, "family" | "image">[]> = {
   ],
 };
 
+/** Each PNG's [width, height] in pixels, read from the files. types.test.ts checks they still match. */
+const IMAGE_SIZE: Record<string, [width: number, height: number]> = {
+  "the-saviour-eater": [669, 945],
+  "shy-eater": [416, 938],
+  "quiet-eater": [669, 661],
+  "watermelon-dictator": [635, 953],
+  "creative-eater": [576, 943],
+  "ordinary-eater": [427, 907],
+  "boring-eater": [436, 872],
+  "introvert-eater": [508, 880],
+  "extraordinary-eater": [900, 865],
+  "defender-eater": [605, 861],
+  "obsessed-eater": [453, 795],
+  "the-master-eater": [749, 766],
+  "energetic-eater": [488, 809],
+  "extrovert-eater": [567, 810],
+  "flexible-eater": [729, 684],
+  "sus-eater": [474, 939],
+  "logic-eater": [509, 913],
+  "angry-eater": [764, 1020],
+  "challenge-eater": [627, 877],
+  "innovative-eater": [557, 946],
+};
+
 export const TYPES: EaterType[] = FAMILIES.flatMap((family) =>
-  ROSTER[family].map((type) => ({ ...type, family, image: `/images/types/${type.slug}.png` })),
+  ROSTER[family].map((type) => ({
+    ...type,
+    family,
+    image: `/images/types/${type.slug}.png`,
+    imageWidth: IMAGE_SIZE[type.slug][0],
+    imageHeight: IMAGE_SIZE[type.slug][1],
+  })),
 );
 
 /** The highest-scoring axis; ties go to the earlier axis. */
