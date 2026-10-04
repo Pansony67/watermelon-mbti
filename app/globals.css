@@ -397,3 +397,11 @@ body {
   .connector { animation: connector-draw 0.45s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
   .chip-pop { animation: chip-pop 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
 }
+
+/*
+  A thin outline in the family's colour around each character cutout (on the
+  dark bands, where --glow is set). Two half-pixel shadows read as one crisp line.
+*/
+.char-rim {
+  filter: drop-shadow(0 0 0.6px var(--glow)) drop-shadow(0 0 0.6px var(--glow));
+}

@@ -80,7 +80,7 @@ export default function TypeCharacter({ type, eager }: { type: EaterType; eager:
             loading={eager ? "eager" : "lazy"}
             // Shown whole: no mask or crop. The real width/height keep the box at the PNG's own shape,
             // and 256px tall stays well under every file's native height.
-            className="relative h-40 w-auto object-contain sm:h-52 lg:h-64"
+            className="char-rim relative h-40 w-auto object-contain sm:h-52 lg:h-64"
           />
         </span>
         <span className="mt-3 block text-base font-semibold tracking-[-0.01em] whitespace-nowrap text-[color:var(--glow)] sm:text-lg">

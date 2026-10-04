@@ -58,7 +58,7 @@ export default function TypeDetail({
             height={type.imageHeight}
             sizes={`(min-width: 640px) ${Math.round((320 * type.imageWidth) / type.imageHeight)}px, ${Math.round((288 * type.imageWidth) / type.imageHeight)}px`}
             loading="eager"
-            className="relative h-72 w-auto max-w-full object-contain sm:h-80"
+            className="char-rim relative h-72 w-auto max-w-full object-contain sm:h-80"
           />
         </div>
         <Title className="mt-6 font-display text-4xl leading-tight font-semibold text-balance sm:text-5xl">{type.name}</Title>
