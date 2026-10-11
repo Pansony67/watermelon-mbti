@@ -20,6 +20,16 @@ const TITLE = "Melonality - What Kind of Watermelon Are You?";
 const DESCRIPTION =
   "Twenty questions, twenty watermelon types. Find the one hiding under your rind, and what it says about how you operate.";
 
+/* Structured data: tells Google the site's name is "Melonality" (shown above the result in search). */
+const WEBSITE_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Melonality",
+  alternateName: ["Melonality Quiz", "Watermelon MBTI"],
+  url: `${SITE_URL}/`,
+  description: DESCRIPTION,
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: TITLE,
@@ -58,6 +68,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSON_LD) }}
+        />
         {/* Facebook appends "#_=_" to its sign-in redirect; drop it so shared links stay clean. */}
         <script
           dangerouslySetInnerHTML={{
