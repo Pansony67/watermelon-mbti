@@ -8,9 +8,10 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import AccountChip from "@/components/AccountChip";
 import ThemeToggle from "@/components/ThemeToggle";
 
-/** Every link lands on a real section of the landing page. */
+/** The main pages, in menu order. Quiz sits next to Home so the test is always one tap away. */
 const LINKS = [
   { label: "Home", href: "/" },
+  { label: "Quiz", href: "/quiz" },
   { label: "The Types", href: "/types" },
   { label: "How it works", href: "/how-it-works" },
   { label: "About", href: "/about" },
@@ -85,7 +86,8 @@ export default function SiteNav() {
         <div className="flex items-center gap-2">
           <AccountChip />
           <ThemeToggle />
-          <TakeTheTest className="hidden lg:inline-flex" />
+          {/* Below xl the menu's Quiz link does this job; there is no room for both beside the centred menu. */}
+          <TakeTheTest className="hidden xl:inline-flex" />
 
           <button
             ref={openButton}
