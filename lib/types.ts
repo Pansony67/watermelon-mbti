@@ -399,11 +399,10 @@ export const topTrait = (traits: Record<TraitAxis, number>): TraitAxis =>
  * `band` is the family's dark stage colour on /types and the type pages, the
  * same in both themes. Written out in full so Tailwind can find the class names.
  */
-export const FAMILY_STYLE: Record<Family, { tint: string; ink: string; mark: string; hoverRing: string; hoverTile: string; band: string }> = {
+export const FAMILY_STYLE: Record<Family, { tint: string; ink: string; hoverRing: string; hoverTile: string; band: string }> = {
   Green: {
     tint: "bg-cat-green",
     ink: "text-cat-green-ink",
-    mark: "text-cat-green-ink/15",
     hoverRing: "hover:ring-cat-green-ink/40",
     hoverTile: "group-hover:bg-cat-green-ink",
     band: "bg-cine-green",
@@ -411,7 +410,6 @@ export const FAMILY_STYLE: Record<Family, { tint: string; ink: string; mark: str
   Blue: {
     tint: "bg-cat-blue",
     ink: "text-cat-blue-ink",
-    mark: "text-cat-blue-ink/15",
     hoverRing: "hover:ring-cat-blue-ink/40",
     hoverTile: "group-hover:bg-cat-blue-ink",
     band: "bg-cine-blue",
@@ -419,7 +417,6 @@ export const FAMILY_STYLE: Record<Family, { tint: string; ink: string; mark: str
   Yellow: {
     tint: "bg-cat-yellow",
     ink: "text-cat-yellow-ink",
-    mark: "text-cat-yellow-ink/15",
     hoverRing: "hover:ring-cat-yellow-ink/40",
     hoverTile: "group-hover:bg-cat-yellow-ink",
     band: "bg-cine-yellow",
@@ -427,7 +424,6 @@ export const FAMILY_STYLE: Record<Family, { tint: string; ink: string; mark: str
   Purple: {
     tint: "bg-cat-purple",
     ink: "text-cat-purple-ink",
-    mark: "text-cat-purple-ink/15",
     hoverRing: "hover:ring-cat-purple-ink/40",
     hoverTile: "group-hover:bg-cat-purple-ink",
     band: "bg-cine-purple",
