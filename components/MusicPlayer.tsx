@@ -54,7 +54,7 @@ export default function MusicPlayer() {
 
   // z-10: above page content, under the header (z-20), so the open mobile menu covers it.
   return (
-    <div className="fixed right-5 bottom-5 z-10 flex items-center gap-2">
+    <aside aria-label="Background music" className="fixed right-5 bottom-5 z-10 flex items-center gap-2">
       {/* State follows the element's own events, so it stays correct if playback ends or is blocked. */}
       <audio
         ref={audio}
@@ -96,6 +96,6 @@ export default function MusicPlayer() {
       >
         <Icon size={18} weight={playing ? "fill" : "regular"} aria-hidden />
       </button>
-    </div>
+    </aside>
   );
 }

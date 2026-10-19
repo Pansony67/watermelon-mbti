@@ -80,6 +80,7 @@ export default async function TypePage({ params }: PageProps<"/types/[slug]">) {
                 width={type.imageWidth}
                 height={type.imageHeight}
                 loading="eager"
+                fetchPriority="high"
                 sizes={`(min-width: 768px) ${figureWidth(type, 448)}px, ${figureWidth(type, 288)}px`}
                 className="char-rim h-72 w-auto max-w-full object-contain sm:h-96 md:h-[28rem]"
               />
