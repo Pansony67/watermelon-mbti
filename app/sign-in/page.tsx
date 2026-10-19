@@ -22,23 +22,23 @@ export default async function SignInPage({ searchParams }: PageProps<"/sign-in">
   const { mode, error } = await searchParams;
 
   return (
-    <main id="main" className="relative flex min-h-dvh flex-col bg-paper text-ink">
+    <div className="flex min-h-dvh flex-col bg-paper text-ink">
       <header className="border-b border-line bg-paper">
-        <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-5 sm:px-8">
+        <div className="container-page flex h-16 items-center justify-between">
           <Wordmark />
           <ThemeToggle />
         </div>
       </header>
 
-      <div className="mx-auto flex w-full max-w-6xl flex-1 items-center px-5 py-10 sm:px-8 lg:py-16">
+      <main id="main" className="container-page flex flex-1 items-center py-10 lg:py-16">
         <SignInForm
           initialMode={mode === "sign-up" ? "sign-up" : "sign-in"}
           initialProblem={typeof error === "string" ? explainSocial(error) : null}
           enabled={enabledProviders}
           showUnconfigured={process.env.NODE_ENV !== "production"}
-          character={{ name: GREETER.name, image: GREETER.image }}
+          character={GREETER}
         />
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }

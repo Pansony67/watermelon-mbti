@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -8,6 +8,7 @@ import { ArrowRight, Eye, EyeSlash, WarningCircle } from "@phosphor-icons/react"
 import BrandMark from "@/components/BrandMark";
 import { authClient } from "@/lib/auth-client";
 import { PASSWORD_MAX, PASSWORD_MIN, PROVIDERS, type ProviderId } from "@/lib/auth-rules";
+import { FAMILY_STYLE, type EaterType } from "@/lib/types";
 
 type Mode = "sign-in" | "sign-up";
 type Problem = { title: string; body: string };
@@ -80,7 +81,7 @@ export default function SignInForm({
   enabled: ProviderId[];
   /** In development, show providers that still need credentials, disabled, so the layout can be reviewed. */
   showUnconfigured: boolean;
-  character: { name: string; image: string };
+  character: Pick<EaterType, "name" | "image" | "imageWidth" | "imageHeight" | "family">;
 }) {
   const router = useRouter();
   const [mode, setMode] = useState<Mode>(initialMode);
@@ -183,7 +184,7 @@ export default function SignInForm({
       <div className="w-full">
         <MelonPass holder={signingUp ? name.trim() : ""} joining={signingUp} character={character} compact />
 
-        <h1 className="font-display text-4xl leading-tight font-semibold tracking-[-0.01em] text-ink sm:text-5xl">
+        <h1 className="t-h1 text-ink">
           {signingUp ? "Get your pass" : "Welcome back"}
         </h1>
         <p className="mt-3 text-ink-2">
@@ -300,12 +301,10 @@ export default function SignInForm({
           <button
             type="submit"
             disabled={locked}
-            className="mt-7 inline-flex h-14 w-full cursor-pointer items-center justify-between rounded-control bg-ink py-2 pr-2 pl-6 font-display text-lg font-semibold text-paper shadow-card transition-colors duration-300 hover:bg-ink/85 focus-visible:ring-2 focus-visible:ring-flesh focus-visible:ring-offset-4 focus-visible:outline-none disabled:cursor-wait disabled:opacity-70"
+            className="btn-primary mt-7 w-full cursor-pointer disabled:cursor-wait disabled:opacity-70"
           >
             {pending ? (signingUp ? "Making your pass..." : "Checking with Melon...") : signingUp ? "Create account" : "Sign in"}
-            <span className="grid h-10 w-10 place-items-center rounded-lg bg-flesh text-paper">
-              <ArrowRight size={18} weight="bold" aria-hidden />
-            </span>
+            <ArrowRight size={18} weight="bold" aria-hidden className="btn-arrow" />
           </button>
         </form>
 
@@ -353,21 +352,30 @@ function MelonPass({
 }: {
   holder: string;
   joining: boolean;
-  character: { name: string; image: string };
+  character: Pick<EaterType, "name" | "image" | "imageWidth" | "imageHeight" | "family">;
   compact?: boolean;
 }) {
   const shown = holder || "Guest";
   const status = joining && holder ? "Joining" : "Guest";
+  const band = FAMILY_STYLE[character.family].band;
+  const glow = { "--glow": `var(--cine-${character.family.toLowerCase()}-glow)` } as CSSProperties;
 
   if (compact) {
     return (
-      <div aria-hidden className="mb-8 flex items-center gap-4 rounded-card bg-cine-base py-2 pr-4 pl-2 lg:hidden">
-        <Image src={character.image} alt="" width={301} height={250} className="h-14 w-auto" />
+      <div aria-hidden className={`mb-8 flex items-center gap-4 rounded-card py-2 pr-4 pl-3 lg:hidden ${band}`} style={glow}>
+        <Image
+          src={character.image}
+          alt=""
+          width={character.imageWidth}
+          height={character.imageHeight}
+          sizes={`${Math.round((56 * character.imageWidth) / character.imageHeight)}px`}
+          className="char-rim h-14 w-auto"
+        />
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-semibold tracking-[0.14em] text-cine-ink-2 uppercase">Melonality pass</p>
-          <p className="truncate font-display text-lg font-semibold text-cine-ink">{shown}</p>
+          <p className="t-label text-cine-ink-2">Melonality pass</p>
+          <p className="truncate font-display text-lg font-bold text-cine-ink">{shown}</p>
         </div>
-        <span className="rounded-control bg-flesh px-2.5 py-1 text-xs font-semibold text-paper">{status}</span>
+        <span className="rounded-md bg-cine-ink px-2.5 py-1 text-xs font-semibold text-cine-base">{status}</span>
       </div>
     );
   }
@@ -376,31 +384,38 @@ function MelonPass({
     <aside
       aria-label="Your Melonality pass"
       className="relative hidden overflow-hidden rounded-panel bg-cine-base p-10 lg:flex lg:min-h-[36rem] lg:items-center lg:justify-center"
+      style={glow}
     >
       {/* Stage light behind the pass, the same language as the /types character select. */}
-      <div aria-hidden className="absolute inset-0 bg-[radial-gradient(60%_55%_at_50%_40%,rgb(255_77_109/0.22),transparent_70%)]" />
+      <div aria-hidden className="absolute inset-0 bg-[radial-gradient(60%_55%_at_50%_45%,color-mix(in_srgb,var(--glow)_20%,transparent),transparent_70%)]" />
 
-      <div className="relative w-full max-w-sm -rotate-2 rounded-panel bg-white/5 p-6 shadow-panel ring-1 ring-white/10 transition-transform duration-500 ease-settle hover:rotate-0">
-        <span aria-hidden className="absolute inset-x-6 top-0 h-0.75 rounded-b-full bg-flesh" />
+      <div className={`relative w-full max-w-sm -rotate-2 rounded-panel p-6 shadow-panel transition-transform duration-500 ease-settle hover:rotate-0 ${band}`}>
         <div className="flex items-center justify-between">
-          <p className="font-display text-lg font-semibold text-cine-ink">
+          <p className="font-display text-lg font-extrabold tracking-[-0.03em] text-cine-ink">
             Melon<span className="text-flesh">ality</span>
           </p>
-          <p className="text-xs font-semibold tracking-[0.14em] text-cine-ink-2 uppercase">Pass</p>
+          <p className="t-label text-cine-ink-2">Pass</p>
         </div>
 
-        <div className="mt-6 grid place-items-center rounded-card bg-[radial-gradient(closest-side,rgb(255_77_109/0.28),transparent)] py-4">
-          <Image src={character.image} alt="" width={301} height={250} className="h-auto w-56" />
+        <div className="mt-6 grid place-items-center rounded-card bg-[radial-gradient(closest-side,color-mix(in_srgb,var(--glow)_26%,transparent),transparent)] py-4">
+          <Image
+            src={character.image}
+            alt=""
+            width={character.imageWidth}
+            height={character.imageHeight}
+            sizes={`${Math.round((240 * character.imageWidth) / character.imageHeight)}px`}
+            className="char-rim h-60 w-auto"
+          />
         </div>
 
-        <p className="mt-6 text-xs font-semibold tracking-[0.14em] text-cine-ink-2 uppercase">Holder</p>
-        <p className="mt-1 truncate font-display text-3xl font-semibold text-cine-ink" aria-live="polite">
+        <p className="t-label mt-6 text-cine-ink-2">Holder</p>
+        <p className="mt-1 truncate font-display text-3xl font-bold tracking-[-0.02em] text-cine-ink" aria-live="polite">
           {shown}
         </p>
 
-        <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4 text-sm">
+        <div className="mt-5 flex items-center justify-between border-t border-cine-ink/15 pt-4 text-sm">
           <span className="text-cine-ink-2">Pictured: {character.name}</span>
-          <span className="rounded-control bg-flesh px-2.5 py-1 text-xs font-semibold text-paper">{status}</span>
+          <span className="rounded-md bg-cine-ink px-2.5 py-1 text-xs font-semibold text-cine-base">{status}</span>
         </div>
       </div>
     </aside>
