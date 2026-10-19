@@ -1,12 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type KeyboardEvent } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check } from "@phosphor-icons/react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import BorderBeam from "@/components/BorderBeam";
-import QuizBackdrop from "@/components/QuizBackdrop";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Wordmark } from "@/components/SiteNav";
 import {
@@ -66,7 +63,7 @@ const SIDE_STYLES: Record<Side, { idle: string; selected: string }> = {
 const DISC = "grid place-items-center rounded-full border-2 transition-[background-color,border-color] duration-300 ease-settle"; // unslop-ignore
 
 const NAV_BUTTON =
-  "inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-control px-3 text-sm font-medium text-ink-2 transition-colors duration-300 hover:text-ink focus-visible:ring-2 focus-visible:ring-flesh focus-visible:outline-none";
+  "inline-flex h-11 cursor-pointer items-center gap-1.5 rounded-control px-3 text-sm font-semibold text-ink-2 transition-colors duration-200 hover:bg-paper-2 hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink";
 
 const noop = () => () => {};
 const KNOWN_IDS = new Set([...PHASE_1, ...PHASE_2].map((q) => q.id));
@@ -195,164 +192,123 @@ export default function QuizFlow() {
   };
 
   return (
-    <>
-      <main id="main" className="relative flex min-h-dvh flex-col overflow-hidden text-ink">
-        <QuizBackdrop progress={answered / total} />
-
-        <header className="relative border-b border-line bg-paper">
-          <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-5 sm:px-8">
-            <Wordmark />
-            <div className="flex items-center gap-4">
-              <p className="text-sm text-ink-3">
-                <span className="font-display font-semibold text-ink">{answered}</span> of {total} answered
-              </p>
-              <ThemeToggle />
-            </div>
+    <div className="flex min-h-dvh flex-col bg-paper text-ink">
+      <header className="border-b border-line bg-paper">
+        <div className="container-page flex h-16 items-center justify-between gap-4">
+          <Wordmark />
+          <div className="flex items-center gap-3">
+            <p className="text-sm text-ink-2 tabular-nums" aria-live="polite">
+              <span className="sr-only">Question </span>
+              <span className="font-display font-bold text-ink">{index + 1}</span> of {total}
+            </p>
+            <ThemeToggle />
           </div>
-        </header>
+        </div>
+        {/* One continuous bar: answered so far, in the brand red. */}
+        <div
+          role="progressbar"
+          aria-label="Questions answered"
+          aria-valuemin={0}
+          aria-valuemax={total}
+          aria-valuenow={answered}
+          className="h-1.5 w-full bg-line"
+        >
+          <div
+            className="h-full bg-melon transition-[width] duration-500 ease-settle"
+            style={{ width: `${(answered / total) * 100}%` }}
+          />
+        </div>
+      </header>
 
-        {/* px-3 on phones: at 360px wide the seven answer buttons still get a full 44px each. */}
-        <section className="relative mx-auto flex w-full max-w-3xl flex-1 items-center px-3 pb-16 sm:px-8">
-          <div className="card-enter relative w-full rounded-panel bg-paper shadow-panel ring-1 ring-line">
-            <div className="relative overflow-hidden rounded-[inherit] px-3 pt-5 pb-9 sm:px-12 sm:pt-6 sm:pb-14">
-              {/* Row 1: back, position, forward. Fixed height so Q1 (no Back yet) matches the rest. */}
-              <div className="grid h-9 grid-cols-[1fr_auto_1fr] items-center">
-                <div>
-                  {index > 0 && (
-                    <button type="button" onClick={() => goTo(index - 1, -1)} className={`${NAV_BUTTON} -ml-3`}>
-                      <ArrowLeft size={15} weight="bold" aria-hidden />
-                      Back
-                    </button>
-                  )}
-                </div>
-                <p className="font-display text-sm font-semibold text-ink tabular-nums" aria-live="polite">
-                  <span className="sr-only">Question {index + 1} of {total}</span>
-                  <span aria-hidden>
-                    {String(index + 1).padStart(2, "0")}
-                    <span className="mx-1 text-ink-3">/</span>
-                    {total}
-                  </span>
-                </p>
-                <div className="text-right">
-                  {/* Only after going back: a way forward that doesn't require re-answering. */}
-                  {current !== undefined && !isLast && (
-                    <button type="button" onClick={() => goTo(index + 1, 1)} className={`${NAV_BUTTON} -mr-3`}>
-                      Next
-                      <ArrowRight size={15} weight="bold" aria-hidden />
-                    </button>
-                  )}
-                </div>
-              </div>
+      {/* px-3 on phones: at 360px wide the seven answer buttons still get a full 44px each. */}
+      {/* pb-24 on phones keeps the scale clear of the fixed music button in the bottom corner. */}
+      <main id="main" className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-3 pt-4 pb-24 sm:px-8 sm:pt-8 sm:pb-24">
+        {/* Back and forward. Fixed height so question one (no Back yet) lines up with the rest. */}
+        <div className="flex h-11 items-center justify-between">
+          <div>
+            {index > 0 && (
+              <button type="button" onClick={() => goTo(index - 1, -1)} className={NAV_BUTTON}>
+                <ArrowLeft size={15} weight="bold" aria-hidden />
+                Back
+              </button>
+            )}
+          </div>
+          <div>
+            {/* Only after going back: a way forward that doesn't require re-answering. */}
+            {current !== undefined && !isLast && (
+              <button type="button" onClick={() => goTo(index + 1, 1)} className={NAV_BUTTON}>
+                Next
+                <ArrowRight size={15} weight="bold" aria-hidden />
+              </button>
+            )}
+          </div>
+        </div>
 
-              {/* Row 2: one segment per question. Answered fills coral, current is ink. */}
-              <div
-                role="progressbar"
-                aria-label="Questions answered"
-                aria-valuemin={0}
-                aria-valuemax={total}
-                aria-valuenow={answered}
-                className="mt-4 grid grid-cols-20 gap-1"
+        <p aria-live="polite" className="text-center text-sm text-ink-2">
+          {rerouted && <span className="mt-2 block">Your answers changed your path, so the next questions are different.</span>}
+        </p>
+
+        <AnimatePresence mode="popLayout" initial={false} custom={{ dir: direction, reduced }}>
+          <motion.div
+            key={index}
+            custom={{ dir: direction, reduced }}
+            variants={cardVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: reduced ? 0 : 0.35, ease: EASE }}
+            className="flex w-full flex-1 flex-col sm:my-auto sm:flex-none"
+          >
+            {/* Reserved for the longest statement (5 lines on phones, 3 on desktop) so the scale never moves. */}
+            <div className="grid min-h-[13rem] place-items-center px-2 sm:min-h-[12rem]">
+              <h1
+                ref={headingRef}
+                tabIndex={-1}
+                className="text-center font-display text-[1.75rem] leading-[1.15] font-bold tracking-[-0.02em] text-balance text-ink outline-none sm:text-[2.625rem] sm:leading-[1.08] lg:text-5xl"
               >
-                {Array.from({ length: total }, (_, i) => (
-                  <span
-                    key={i}
-                    className={`h-1.5 rounded-xs transition-colors duration-300 ${
-                      path[i] && answers[path[i].id] !== undefined ? "bg-flesh" : i === index ? "bg-ink-3" : "bg-line"
-                    }`}
-                  />
-                ))}
+                {question.text}
+              </h1>
+            </div>
+            {index === 0 && (
+              <p className="mt-2 text-center text-sm text-ink-3">Go with your gut. You can go back any time.</p>
+            )}
+
+            {/* The scale sits low on phones, where thumbs are; a fixed gap below the statement on desktop. */}
+            <div role="radiogroup" aria-label="Your answer" onKeyDown={onScaleKeyDown} className="mt-auto pt-10 sm:mt-14 sm:pt-0">
+              <div className="mb-3 flex justify-between px-1 font-display text-sm font-bold sm:hidden">
+                <span className="text-flesh-deep">Agree</span>
+                <span className="text-ink">Disagree</span>
               </div>
 
-              <p aria-live="polite" className="text-center text-sm text-ink-2">
-                {rerouted && <span className="mt-3 block">Your answers changed your path, so the next questions are different.</span>}
-              </p>
+              <div className="flex items-center justify-between sm:gap-3">
+                <span className="hidden font-display text-lg font-bold text-flesh-deep sm:block">Agree</span>
 
-              <AnimatePresence mode="popLayout" initial={false} custom={{ dir: direction, reduced }}>
-                <motion.div
-                  key={index}
-                  custom={{ dir: direction, reduced }}
-                  variants={cardVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{ duration: reduced ? 0 : 0.35, ease: EASE }}
-                  className="w-full"
-                >
-                  {/* Reserved for the longest statement (4 lines on phones, 3 on desktop) so the scale never moves. */}
-                  <div className="mt-7 grid min-h-[8rem] place-items-center sm:mt-9 sm:min-h-[10rem]">
-                    <h1
-                      ref={headingRef}
-                      tabIndex={-1}
-                      className="text-center font-display text-2xl leading-tight font-semibold text-balance text-ink outline-none sm:text-4xl lg:text-[2.6rem]"
+                {OPTIONS.map((option) => {
+                  const selected = current === option.value;
+                  const styles = SIDE_STYLES[option.side];
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      role="radio"
+                      aria-checked={selected}
+                      aria-label={option.label}
+                      onClick={() => select(option.value)}
+                      className="group grid h-11 min-w-0 flex-1 cursor-pointer touch-manipulation place-items-center rounded-control transition-transform duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink active:scale-95 sm:h-14 sm:w-14 sm:flex-none"
                     >
-                      {question.text}
-                    </h1>
-                  </div>
-
-                  <div
-                    role="radiogroup"
-                    aria-label="Your answer"
-                    onKeyDown={onScaleKeyDown}
-                    className="mt-8 sm:mt-12"
-                  >
-                    <div className="mb-3 flex justify-between font-display text-sm font-semibold sm:hidden">
-                      <span className="text-flesh-deep">Agree</span>
-                      <span className="text-ink">Disagree</span>
-                    </div>
-
-                    <div className="flex items-center justify-between sm:gap-3">
-                      <span className="hidden font-display text-lg font-semibold text-flesh-deep sm:block">
-                        Agree
+                      <span aria-hidden className={`${DISC} ${option.disc} ${selected ? `${styles.selected} pop` : styles.idle}`}>
+                        {selected && <Check size={16} weight="bold" />}
                       </span>
+                    </button>
+                  );
+                })}
 
-                      {OPTIONS.map((option) => {
-                        const selected = current === option.value;
-                        const styles = SIDE_STYLES[option.side];
-                        return (
-                          <button
-                            key={option.value}
-                            type="button"
-                            role="radio"
-                            aria-checked={selected}
-                            aria-label={option.label}
-                            onClick={() => select(option.value)}
-                            className="group grid h-11 min-w-0 flex-1 cursor-pointer touch-manipulation place-items-center rounded-control transition-transform duration-200 focus-visible:ring-2 focus-visible:ring-flesh focus-visible:outline-none active:scale-95 sm:h-14 sm:w-14 sm:flex-none"
-                          >
-                            <span
-                              aria-hidden
-                              className={`${DISC} ${option.disc} ${
-                                selected ? `${styles.selected} pop` : styles.idle
-                              }`}
-                            >
-                              {selected && <Check size={16} weight="bold" />}
-                            </span>
-                          </button>
-                        );
-                      })}
-
-                      <span className="hidden font-display text-lg font-semibold text-ink sm:block">
-                        Disagree
-                      </span>
-                    </div>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
+                <span className="hidden font-display text-lg font-bold text-ink sm:block">Disagree</span>
+              </div>
             </div>
-            <BorderBeam />
-          </div>
-        </section>
-
-        <footer className="relative mx-auto flex w-full max-w-7xl flex-col gap-3 pr-20 pb-6 pl-5 text-xs text-ink-3 sm:pr-24 sm:pl-8 md:flex-row md:items-center md:justify-between">
-          <p>
-            Melonality
-            <span className="mx-2" aria-hidden>&middot;</span>
-            <Link href="/privacy" className="inline-flex min-h-11 items-center hover:text-ink">Privacy</Link>
-            <span className="mx-2" aria-hidden>&middot;</span>
-            <Link href="/terms" className="inline-flex min-h-11 items-center hover:text-ink">Terms</Link>
-          </p>
-          <p className="italic md:text-right">Same people, different flavors.</p>
-        </footer>
+          </motion.div>
+        </AnimatePresence>
       </main>
-    </>
+    </div>
   );
 }
