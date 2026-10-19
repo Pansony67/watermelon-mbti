@@ -41,12 +41,10 @@ export default function SiteNav() {
 
   // Keyboard users land inside the menu when it opens and back on the trigger when it closes.
   // Not on first render: that would focus the menu button (and show its ring) on every page load.
-  const toggled = useRef(false);
+  const wasOpen = useRef(open);
   useEffect(() => {
-    if (!toggled.current) {
-      toggled.current = true;
-      return;
-    }
+    if (wasOpen.current === open) return;
+    wasOpen.current = open;
     (open ? closeButton : openButton).current?.focus();
   }, [open]);
 

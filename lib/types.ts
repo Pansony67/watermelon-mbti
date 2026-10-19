@@ -32,6 +32,8 @@ export type EaterType = {
   /** The PNG's real pixel size, so next/image reserves the right box (no layout shift). */
   imageWidth: number;
   imageHeight: number;
+  /** What the picture shows, for screen readers where the art is the main content. */
+  alt: string;
   /** One line, under 12 words. */
   tagline: string;
   /** 60-90 words on how they actually eat watermelon. */
@@ -43,12 +45,20 @@ export type EaterType = {
 
 export const FAMILIES: Family[] = ["Green", "Blue", "Yellow", "Purple"];
 
+/** What each family stands for, in the words of the quiz brief. Display copy only; scoring never reads it. */
+export const FAMILY_INFO: Record<Family, { trait: string; line: string }> = {
+  Green: { trait: "Heart-led", line: "Cares who gets what, and does it their way." },
+  Blue: { trait: "Steady", line: "Routine, reliable, and protective of their share." },
+  Yellow: { trait: "Fired up", line: "All enthusiasm, all energy, all in." },
+  Purple: { trait: "Questioners", line: "Skeptical, competitive, always experimenting." },
+};
+
 /**
  * Each family's flavour, so the copy can lean on it: Green deals with the rind,
  * Blue keeps it cold and steady, Yellow eats it loud in the summer sun, and
  * Purple does its best work after dark.
  */
-const ROSTER: Record<Family, Omit<EaterType, "family" | "image" | "imageWidth" | "imageHeight">[]> = {
+const ROSTER: Record<Family, Omit<EaterType, "family" | "image" | "imageWidth" | "imageHeight" | "alt">[]> = {
   Green: [
     {
       slug: "the-saviour-eater",
@@ -319,6 +329,30 @@ const ROSTER: Record<Family, Omit<EaterType, "family" | "image" | "imageWidth" |
   ],
 };
 
+/** What each character drawing shows (every one has a watermelon for a head). */
+const ART: Record<string, string> = {
+  "the-saviour-eater": "a knight in armour and a green cape, both hands resting on a sword",
+  "shy-eater": "a figure in a hooded green coat, half turned away, clutching a book",
+  "quiet-eater": "a samurai sitting cross-legged with a katana across the lap",
+  "watermelon-dictator": "a general in a medal-covered green uniform, one arm raised",
+  "creative-eater": "a painter in a beret and paint-splashed coat, holding a brush and palette",
+  "ordinary-eater": "a man in a navy suit and hat, carrying a briefcase",
+  "boring-eater": "an office worker with a lanyard, holding a coffee mug",
+  "introvert-eater": "a figure in a long blue hooded coat with a backpack and a lantern",
+  "extraordinary-eater": "a showman in a navy tailcoat, sweeping off a top hat",
+  "defender-eater": "a riot officer in blue armour behind a tall shield",
+  "obsessed-eater": "a scientist in a lab coat holding up a glowing flask",
+  "the-master-eater": "a martial arts master in a yellow robe, in a fighting stance",
+  "energetic-eater": "a figure in a yellow jacket and headband, caught mid-jump",
+  "extrovert-eater": "a dancer in a yellow shirt and white flares, both hands up",
+  "flexible-eater": "a gymnast in yellow bent into a backbend",
+  "sus-eater": "a figure in a purple trench coat and hat, glancing back over the shoulder",
+  "logic-eater": "a detective in a purple coat with a magnifying glass and a note",
+  "angry-eater": "a barbarian in fur and leather, swinging an axe",
+  "challenge-eater": "a boxer in a purple robe with gloves up",
+  "innovative-eater": "an astronaut in a white and purple suit, helmet under one arm",
+};
+
 /** Each PNG's [width, height] in pixels, read from the files. types.test.ts checks they still match. */
 const IMAGE_SIZE: Record<string, [width: number, height: number]> = {
   "the-saviour-eater": [1338, 1890],
@@ -350,6 +384,7 @@ export const TYPES: EaterType[] = FAMILIES.flatMap((family) =>
     image: `/images/types/${type.slug}.png`,
     imageWidth: IMAGE_SIZE[type.slug][0],
     imageHeight: IMAGE_SIZE[type.slug][1],
+    alt: `${type.name}: ${ART[type.slug]}, with a watermelon for a head`,
   })),
 );
 
