@@ -1,15 +1,20 @@
 "use client";
 
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore, type CSSProperties } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "@phosphor-icons/react";
+import { PrimaryLink } from "@/components/Button";
+import { figureWidth } from "@/components/CharacterStage";
+import ShareButtons from "@/components/ShareButtons";
 import SiteFooter from "@/components/SiteFooter";
-import ThemeToggle from "@/components/ThemeToggle";
-import TypeDetail, { PRIMARY_CTA } from "@/components/TypeDetail";
 import { Wordmark } from "@/components/SiteNav";
+import ThemeToggle from "@/components/ThemeToggle";
+import TraitRadar from "@/components/TraitRadar";
 import { ANSWERS_STORAGE_KEY, PROGRESS_STORAGE_KEY } from "@/lib/quiz";
 import { parseAnswers, scoreQuiz } from "@/lib/scoring";
-import { FAMILIES, FAMILY_STYLE, type Family } from "@/lib/types";
+import { SITE_URL } from "@/lib/site";
+import { FAMILIES, FAMILY_INFO, FAMILY_STYLE, TRAIT_LABEL, topTrait, type Family } from "@/lib/types";
 
 /** Remembers which answer set was already written, so a refresh doesn't insert twice. */
 const SUBMITTED_KEY = "watermelon-mbti:submitted";
@@ -96,10 +101,14 @@ export default function ResultsPage() {
     sessionStorage.removeItem(PROGRESS_STORAGE_KEY);
   };
 
+  const type = result?.type;
+  const glow = type ? ({ "--glow": `var(--cine-${type.family.toLowerCase()}-glow)` } as CSSProperties) : undefined;
+  const top = result ? topTrait(result.traits) : null;
+
   return (
-    <main id="main" className="flex min-h-dvh flex-col bg-paper text-ink">
+    <div className="flex min-h-dvh flex-col bg-paper text-ink">
       <header className="border-b border-line bg-paper">
-        <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-5 sm:px-8">
+        <div className="container-page flex h-16 items-center justify-between">
           <Wordmark />
           <ThemeToggle />
         </div>
@@ -107,80 +116,160 @@ export default function ResultsPage() {
 
       {!hydrated ? (
         <div className="flex-1" />
-      ) : result ? (
-        <div className={`flex-1 ${FAMILY_STYLE[result.family].band}`}>
-          <div className="mx-auto w-full max-w-5xl px-5 pt-10 pb-20 sm:px-8 sm:pt-14 sm:pb-28">
-            <p className="text-center text-xs font-semibold tracking-[0.16em] text-cine-ink-2 uppercase md:text-left">
-              Your result
-            </p>
-            <div className="mt-6">
-              <TypeDetail
-                type={result.type}
-                you={result.traits}
-                actions={
-                  <>
-                    <Link href="/quiz" onClick={retake} className={PRIMARY_CTA}>
-                      Take it again
-                      <ArrowRight size={18} weight="bold" aria-hidden />
-                    </Link>
-                    <Link
-                      href={`/types?type=${result.type.slug}`}
-                      className="inline-flex min-h-11 items-center gap-1.5 text-[15px] font-semibold text-cine-ink underline-offset-4 hover:underline"
-                    >
-                      See all 20 types
-                      <ArrowRight size={14} weight="bold" aria-hidden />
-                    </Link>
-                  </>
-                }
-              >
-                <h2 className="mt-8 font-display text-xl font-semibold">Family match</h2>
+      ) : result && type && top ? (
+        <main id="main" className={`flex-1 text-cine-ink ${FAMILY_STYLE[type.family].band}`} style={glow}>
+          {/* The card: everything worth a screenshot fits one phone screen, with the site's name on it. */}
+          <section aria-labelledby="result-name" className="relative isolate overflow-hidden">
+            <span
+              aria-hidden
+              className="absolute inset-0 -z-10 bg-[radial-gradient(70%_55%_at_50%_42%,color-mix(in_srgb,var(--glow)_22%,transparent),transparent_72%)] md:bg-[radial-gradient(45%_70%_at_74%_55%,color-mix(in_srgb,var(--glow)_22%,transparent),transparent_72%)]"
+            />
+            <div className="container-page grid grid-cols-1 items-center gap-x-12 pt-8 pb-10 [grid-template-areas:'head''art''body'] md:grid-cols-2 md:pt-16 md:pb-16 md:[grid-template-areas:'head_art''body_art']">
+              <div className="text-center [grid-area:head] md:self-end md:text-left">
+                <p className="t-label text-cine-ink-2">Your result</p>
+                <h1 id="result-name" className="t-h1 lg:t-display mt-2">
+                  <span className="block text-[0.5em] leading-tight font-semibold tracking-[-0.01em] text-cine-ink-2">You&rsquo;re the</span>
+                  {type.name}
+                </h1>
+              </div>
+
+              <div className="mt-4 flex justify-center [grid-area:art] md:mt-0">
+                <Image
+                  src={type.image}
+                  alt={type.alt}
+                  width={type.imageWidth}
+                  height={type.imageHeight}
+                  loading="eager"
+                  sizes={`(min-width: 768px) ${figureWidth(type, 448)}px, ${figureWidth(type, 288)}px`}
+                  className="char-rim h-72 w-auto max-w-full object-contain sm:h-96 md:h-[28rem]"
+                />
+              </div>
+
+              <div className="mt-5 text-center [grid-area:body] md:mt-6 md:self-start md:text-left">
+                <p className="t-label text-[color:var(--glow)]">
+                  {type.family} family &middot; {FAMILY_INFO[type.family].trait}
+                </p>
+                <p className="t-lead mx-auto mt-3 max-w-[34ch] text-cine-ink md:mx-0">{type.tagline}</p>
+                <p className="mt-3 text-sm text-cine-ink-2">
+                  Your strongest trait:{" "}
+                  <span className="font-semibold text-cine-ink">
+                    {TRAIT_LABEL[top]} ({result.traits[top]})
+                  </span>
+                </p>
+                <div className="mt-7">
+                  <ShareButtons slug={type.slug} name={type.name} />
+                </div>
+                <p className="mt-6 text-xs text-cine-ink-2">Find yours at {SITE_URL.replace("https://", "")}</p>
+              </div>
+            </div>
+          </section>
+
+          {/* Why: the player's own scores over the type's typical shape, and how the families compared. */}
+          <section aria-labelledby="why" className="border-t border-cine-ink/10">
+            <div className="container-page grid gap-10 pt-14 pb-16 md:grid-cols-2 md:gap-16 md:pt-20 md:pb-20">
+              <div>
+                <h2 id="why" className="t-h2">
+                  Why you got this
+                </h2>
+                <p className="mt-3 max-w-[44ch] text-cine-ink-2">
+                  Every answer counts toward one of five traits. Yours are the solid shape; the dashed one is a typical{" "}
+                  {type.name}.
+                </p>
+                <div className="mt-6">
+                  <TraitRadar type={type} you={result.traits} />
+                </div>
+              </div>
+              <div className="md:pt-2">
+                <h2 className="t-h3">Family match</h2>
+                <p className="mt-2 text-sm text-cine-ink-2">How strongly your first eight answers matched each family.</p>
                 <FamilyBars scores={result.familyScores} winner={result.family} />
                 {share !== null && (
                   <p className="mt-8 text-cine-ink-2">
-                    <span className="font-display text-2xl font-semibold text-cine-ink">{share}%</span> of players got{" "}
-                    {result.type.name}
+                    <span className="font-display text-3xl font-extrabold tracking-[-0.02em] text-cine-ink">{share}%</span> of players
+                    got the {type.name}.
                   </p>
                 )}
-              </TypeDetail>
+              </div>
             </div>
+          </section>
 
-            <p className="mt-14 text-center text-xs leading-relaxed text-cine-ink-2 md:text-left">
-              {deleted ? (
-                "Your saved result has been deleted."
-              ) : (
-                <>
-                  Your answers are stored anonymously to power the stats.{" "}
-                  <button type="button" onClick={remove} className="-my-3 cursor-pointer py-3 underline underline-offset-4 hover:text-cine-ink">
-                    Delete my response
-                  </button>
-                  {" "}&middot;{" "}
-                  <Link href="/privacy" className="underline underline-offset-4 hover:text-cine-ink">
-                    Privacy
-                  </Link>
-                </>
-              )}
-            </p>
-          </div>
-        </div>
+          {/* The type itself. */}
+          <section aria-labelledby="about-type" className="border-t border-cine-ink/10">
+            <div className="container-page grid gap-10 pt-14 pb-16 md:grid-cols-[1.4fr_1fr] md:gap-16 md:pt-20 md:pb-20">
+              <div>
+                <h2 id="about-type" className="t-h2">
+                  About the {type.name}
+                </h2>
+                <p className="t-lead mt-4 max-w-[60ch] text-cine-ink-2">{type.description}</p>
+              </div>
+              <div>
+                <h3 className="t-h3">Signature habits</h3>
+                <ul className="mt-4 space-y-3">
+                  {type.habits.map((habit) => (
+                    <li key={habit} className="flex gap-3 leading-snug text-cine-ink-2">
+                      <span aria-hidden className="mt-2 size-1.5 shrink-0 rounded-full bg-[color:var(--glow)]" />
+                      {habit}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          {/* What next. */}
+          <section aria-labelledby="next" className="border-t border-cine-ink/10">
+            <div className="container-page flex flex-col items-center pt-14 pb-12 text-center md:pt-20">
+              <h2 id="next" className="t-h2 max-w-[20ch]">
+                Now make your friends take it.
+              </h2>
+              <p className="mt-3 text-cine-ink-2">Then compare. Someone in the group chat is definitely a Sus-Eater.</p>
+              <div className="mt-7">
+                <ShareButtons slug={type.slug} name={type.name} />
+              </div>
+              <div className="mt-6 flex flex-wrap justify-center gap-x-8">
+                <Link href="/quiz" onClick={retake} className="link-arrow text-cine-ink">
+                  Take it again
+                  <ArrowRight size={15} weight="bold" aria-hidden className="btn-arrow" />
+                </Link>
+                <Link href={`/types?type=${type.slug}`} className="link-arrow text-cine-ink">
+                  See all 20 types
+                  <ArrowRight size={15} weight="bold" aria-hidden className="btn-arrow" />
+                </Link>
+              </div>
+
+              <p className="mt-12 max-w-[60ch] text-xs leading-relaxed text-cine-ink-2">
+                {deleted ? (
+                  "Your saved result has been deleted."
+                ) : (
+                  <>
+                    Your answers are stored anonymously to power the stats.{" "}
+                    <button type="button" onClick={remove} className="-my-3 cursor-pointer py-3 underline underline-offset-4 hover:text-cine-ink">
+                      Delete my response
+                    </button>{" "}
+                    &middot;{" "}
+                    <Link href="/privacy" className="underline underline-offset-4 hover:text-cine-ink">
+                      Privacy
+                    </Link>
+                  </>
+                )}
+              </p>
+            </div>
+          </section>
+        </main>
       ) : (
-        <section className="mx-auto flex w-full max-w-3xl flex-1 items-center px-4 py-16 sm:px-8">
-          <div className="w-full text-center">
-            <h1 className="font-display text-4xl font-semibold text-balance text-ink sm:text-5xl">No answers yet.</h1>
-            <p className="mx-auto mt-4 max-w-md text-ink-2">
-              The test keeps its answers for this browser tab only. Take it to see a result here.
-            </p>
-            <Link
-              href="/quiz"
-              className="mt-10 inline-flex h-14 items-center rounded-control bg-ink px-8 font-display text-lg font-semibold text-paper transition-colors duration-300 hover:bg-ink/85"
-            >
-              Take the test
-            </Link>
-          </div>
-        </section>
+        <main id="main" className="container-page flex flex-1 flex-col items-center justify-center py-20 text-center">
+          <h1 className="t-h1 text-ink">No result yet.</h1>
+          <p className="t-lead mt-4 max-w-[40ch] text-ink-2">
+            Your answers stay in this browser tab only. Take the quiz and your result shows up here.
+          </p>
+          <PrimaryLink href="/quiz" className="mt-8 w-full sm:w-auto">
+            Take the quiz
+          </PrimaryLink>
+        </main>
       )}
 
       <SiteFooter />
-    </main>
+    </div>
   );
 }
 
