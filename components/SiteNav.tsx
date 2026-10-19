@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { ArrowRight, List, X } from "@phosphor-icons/react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import AccountChip from "@/components/AccountChip";
+import { PrimaryLink } from "@/components/Button";
 import ThemeToggle from "@/components/ThemeToggle";
 
 /** The main pages, in menu order. Quiz sits next to Home so the test is always one tap away. */
@@ -17,25 +18,19 @@ const LINKS = [
   { label: "About", href: "/about" },
 ];
 
-export function Wordmark() {
+export function Wordmark({ className = "" }: { className?: string }) {
   return (
-    <Link href="/" className="inline-flex h-11 items-center font-display text-lg font-semibold tracking-tight text-ink">
-      Melon<span className="text-flesh">ality</span>
+    <Link
+      href="/"
+      className={`inline-flex h-11 items-center font-display text-xl font-extrabold tracking-[-0.03em] text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ${className}`}
+    >
+      Melon<span className="text-flesh-deep">ality</span>
     </Link>
   );
 }
 
-export function TakeTheTest({ className = "" }: { className?: string }) {
-  return (
-    <Link
-      href="/quiz"
-      className={`group h-10 items-center gap-2 rounded-control bg-ink px-4 text-sm font-semibold text-paper transition-colors duration-300 hover:bg-ink/85 focus-visible:ring-2 focus-visible:ring-flesh focus-visible:ring-offset-2 focus-visible:outline-none ${className}`}
-    >
-      Take the Test
-      <ArrowRight size={15} weight="bold" aria-hidden className="text-flesh" />
-    </Link>
-  );
-}
+/** Home matches only itself; every other link also lights up on its sub-pages (a type page lights Types). */
+const isCurrent = (href: string, pathname: string) => (href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`));
 
 export default function SiteNav() {
   const [open, setOpen] = useState(false);
@@ -45,7 +40,13 @@ export default function SiteNav() {
   const closeButton = useRef<HTMLButtonElement>(null);
 
   // Keyboard users land inside the menu when it opens and back on the trigger when it closes.
+  // Not on first render: that would focus the menu button (and show its ring) on every page load.
+  const toggled = useRef(false);
   useEffect(() => {
+    if (!toggled.current) {
+      toggled.current = true;
+      return;
+    }
     (open ? closeButton : openButton).current?.focus();
   }, [open]);
 
@@ -65,29 +66,32 @@ export default function SiteNav() {
   }, [open]);
 
   return (
-    // No backdrop-filter here: it would make the header the containing block of the fixed mobile menu.
-    <header className="relative z-20 w-full border-b border-line bg-paper">
-      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-5 sm:px-8">
+    // Sticky and solid: no backdrop-filter, which would also make the header the containing block of the fixed mobile menu.
+    <header className="sticky top-0 z-30 w-full border-b border-line bg-paper">
+      <div className="container-page flex h-16 items-center gap-4">
         <Wordmark />
 
-        <nav aria-label="Primary" className="absolute left-1/2 hidden h-16 -translate-x-1/2 items-stretch gap-8 lg:flex">
+        <nav aria-label="Primary" className="ml-6 hidden items-stretch gap-7 self-stretch lg:flex">
           {LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              aria-current={link.href === pathname ? "page" : undefined}
-              className="relative flex items-center text-[15px] font-medium text-ink-2 transition-colors duration-300 hover:text-ink aria-[current=page]:text-ink before:absolute before:inset-x-0 before:top-0 before:h-0.75 before:bg-flesh before:opacity-0 before:transition-opacity before:duration-300 aria-[current=page]:before:opacity-100"
+              aria-current={isCurrent(link.href, pathname) ? "page" : undefined}
+              className="relative flex items-center text-[15px] font-medium text-ink-2 transition-colors duration-200 hover:text-ink aria-[current=page]:text-ink after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:origin-left after:scale-x-0 after:bg-ink after:transition-transform after:duration-200 hover:after:scale-x-100 aria-[current=page]:after:scale-x-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
             >
               {link.label}
             </Link>
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
-          <AccountChip />
-          <ThemeToggle />
-          {/* Below xl the menu's Quiz link does this job; there is no room for both beside the centred menu. */}
-          <TakeTheTest className="hidden xl:inline-flex" />
+        <div className="ml-auto flex items-center gap-2">
+          <div className="hidden items-center gap-2 lg:flex">
+            <AccountChip />
+            <ThemeToggle />
+          </div>
+          <PrimaryLink href="/quiz" className="btn-sm">
+            Take the quiz
+          </PrimaryLink>
 
           <button
             ref={openButton}
@@ -96,7 +100,7 @@ export default function SiteNav() {
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label="Open menu"
-            className="grid h-11 w-11 cursor-pointer place-items-center rounded-control text-ink ring-1 ring-line ring-inset transition-colors duration-300 hover:bg-paper-2 focus-visible:ring-2 focus-visible:ring-flesh focus-visible:outline-none lg:hidden"
+            className="grid h-11 w-11 cursor-pointer place-items-center rounded-control text-ink ring-1 ring-line ring-inset transition-colors duration-200 hover:bg-paper-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink lg:hidden"
           >
             <List size={20} aria-hidden />
           </button>
@@ -118,36 +122,41 @@ export default function SiteNav() {
           >
             <div className="flex h-16 items-center justify-between">
               <Wordmark />
-              <div className="flex items-center gap-2">
-                <AccountChip />
-                <button
+              <button
                 ref={closeButton}
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Close menu"
-                className="grid h-11 w-11 cursor-pointer place-items-center rounded-control text-ink ring-1 ring-line ring-inset focus-visible:ring-2 focus-visible:ring-flesh focus-visible:outline-none"
+                className="grid h-11 w-11 cursor-pointer place-items-center rounded-control text-ink ring-1 ring-line ring-inset focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
               >
                 <X size={20} aria-hidden />
               </button>
-              </div>
             </div>
 
-            <nav aria-label="Primary" className="mt-8 flex flex-col divide-y divide-line border-y border-line">
+            <nav aria-label="Primary" className="mt-6 flex flex-col border-t border-line">
               {LINKS.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  aria-current={link.href === pathname ? "page" : undefined}
+                  aria-current={isCurrent(link.href, pathname) ? "page" : undefined}
                   onClick={() => setOpen(false)}
-                  className="block py-4 font-display text-3xl font-semibold text-ink-2 aria-[current=page]:text-ink"
+                  className="flex min-h-16 items-center justify-between border-b border-line font-display text-[1.75rem] font-bold tracking-[-0.02em] text-ink-2 aria-[current=page]:text-ink"
                 >
                   {link.label}
+                  <ArrowRight size={20} weight="bold" aria-hidden className="text-ink-3" />
                 </Link>
               ))}
             </nav>
 
-            <div className="mt-auto pb-10">
-              <TakeTheTest className="inline-flex h-12 w-full justify-center text-base" />
+            <div className="mt-6 flex items-center gap-2">
+              <AccountChip />
+              <ThemeToggle />
+            </div>
+
+            <div className="mt-auto pb-8">
+              <PrimaryLink href="/quiz" onClick={() => setOpen(false)} className="w-full">
+                Take the quiz
+              </PrimaryLink>
             </div>
           </motion.div>
         )}

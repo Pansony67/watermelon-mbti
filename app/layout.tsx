@@ -1,14 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Figtree, Fredoka } from "next/font/google";
+import { Bricolage_Grotesque, Figtree } from "next/font/google";
 import MusicPlayer from "@/components/MusicPlayer";
 import { SITE_URL } from "@/lib/site";
 import { THEME_SCRIPT } from "@/lib/theme";
 import "./globals.css";
 
-const fredoka = Fredoka({
-  variable: "--font-fredoka",
+/* Display: a grotesque with character. Optical size and width axes are used for the giant family words. */
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  axes: ["opsz", "wdth"],
 });
 
 const figtree = Figtree({
@@ -41,6 +42,8 @@ export const metadata: Metadata = {
     siteName: "Melonality",
     type: "website",
   },
+  // The image comes from app/twitter-image (and each type's own); the card shows it full width.
+  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION },
   // Search Console: the token only; Next renders the <meta name="google-site-verification"> tag.
   verification: {
     google: "-ieHpQmBVmaZaYHuBgOUw0SAV2CD7P5mnP8YlDWjm1o",
@@ -64,7 +67,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       data-theme="light"
       data-scroll-behavior="smooth"
       suppressHydrationWarning
-      className={`${fredoka.variable} ${figtree.variable} h-full antialiased`}
+      className={`${bricolage.variable} ${figtree.variable} h-full antialiased`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />

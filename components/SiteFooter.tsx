@@ -1,101 +1,63 @@
 import Link from "next/link";
-import { ArrowUp, GithubLogo } from "@phosphor-icons/react/dist/ssr";
+import { GithubLogo } from "@phosphor-icons/react/dist/ssr";
+import { Wordmark } from "@/components/SiteNav";
 import { OPERATOR } from "@/lib/legal";
 
-/** Only destinations that exist. Add columns as real pages ship. */
-const COLUMNS: { heading: string; links: { label: string; href: string; external?: boolean }[] }[] = [
-  {
-    heading: "The Test",
-    links: [
-      { label: "Take the test", href: "/quiz" },
-      { label: "How it works", href: "/how-it-works" },
-      { label: "The types", href: "/types" },
-    ],
-  },
-  {
-    heading: "About",
-    links: [
-      { label: "Why this exists", href: "/about" },
-      { label: "FAQ", href: "/#faq" },
-      { label: "Source code", href: OPERATOR.github, external: true },
-    ],
-  },
-  {
-    heading: "Legal",
-    links: [
-      { label: "Privacy Policy", href: "/privacy" },
-      { label: "Terms of Service", href: "/terms" },
-    ],
-  },
+/** Only destinations that exist. */
+const LINKS: { label: string; href: string }[] = [
+  { label: "Take the quiz", href: "/quiz" },
+  { label: "The 20 types", href: "/types" },
+  { label: "How it works", href: "/how-it-works" },
+  { label: "About", href: "/about" },
+  { label: "FAQ", href: "/#faq" },
 ];
 
-const ICON_BUTTON =
-  "grid h-11 w-11 place-items-center rounded-control text-ink-2 ring-1 ring-line ring-inset transition-colors duration-300 hover:bg-paper-2 hover:text-ink focus-visible:ring-2 focus-visible:ring-flesh focus-visible:outline-none";
+const LINK =
+  "inline-flex min-h-11 items-center text-[15px] text-ink-2 underline-offset-4 transition-colors duration-200 hover:text-ink hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink";
 
 export default function SiteFooter() {
   return (
-    <footer className="relative w-full border-t border-line bg-paper">
-      <div className="mx-auto w-full max-w-7xl px-5 pt-16 sm:px-8">
-        <div className="grid gap-12 md:grid-cols-[1.4fr_repeat(3,1fr)] md:gap-10">
-          <div className="max-w-xs">
-            <Link href="/" className="inline-flex min-h-11 items-center font-display text-xl font-semibold tracking-tight text-ink md:min-h-0">
-              Melon<span className="text-flesh">ality</span>
-            </Link>
-            <p className="mt-3 text-sm leading-relaxed text-ink-2">
-              Twenty questions about how you eat watermelon. Twenty types. Zero science.
-            </p>
-          </div>
-
-          {COLUMNS.map((column) => (
-            <nav key={column.heading} aria-label={column.heading}>
-              <h2 className="border-b border-line pb-3 font-display text-base font-semibold text-ink">
-                {column.heading}
-              </h2>
-              <ul className="mt-2 md:mt-4 md:space-y-3">
-                {column.links.map((link) => (
-                  <li key={link.label}>
-                    {link.external ? (
-                      <a
-                        href={link.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex min-h-11 items-center text-[15px] text-ink-2 transition-colors duration-300 hover:text-ink md:min-h-0"
-                      >
-                        {link.label}
-                      </a>
-                    ) : (
-                      <Link href={link.href} className="inline-flex min-h-11 items-center text-[15px] text-ink-2 transition-colors duration-300 hover:text-ink md:min-h-0">
-                        {link.label}
-                      </Link>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ))}
+    <footer className="w-full border-t border-line bg-paper-2">
+      <div className="container-page grid gap-8 pt-14 pb-10 md:grid-cols-[1fr_auto] md:items-start">
+        <div className="max-w-sm">
+          <Wordmark />
+          <p className="mt-2 text-[15px] leading-relaxed text-pretty text-ink-2">
+            Twenty questions about how you eat watermelon. Twenty types. Zero science.
+          </p>
         </div>
 
-        {/* Bottom padding keeps this row clear of the fixed music player. */}
-        <div className="mt-14 flex flex-col gap-6 border-t border-line pt-8 pb-24 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <nav aria-label="Legal" className="flex flex-wrap gap-x-6 text-sm text-ink md:gap-y-2">
-              <Link href="/terms" className="inline-flex min-h-11 items-center hover:underline hover:underline-offset-4 md:min-h-0">Terms of Service</Link>
-              <Link href="/privacy" className="inline-flex min-h-11 items-center hover:underline hover:underline-offset-4 md:min-h-0">Privacy Policy</Link>
-            </nav>
-            <p className="mt-2 text-sm text-ink-3">
-              &copy; {new Date().getFullYear()} {OPERATOR.name}. For entertainment only.
-            </p>
-          </div>
+        <nav aria-label="Footer">
+          <ul className="grid grid-cols-2 gap-x-10 sm:grid-cols-3 md:grid-cols-[auto_auto] md:gap-x-14">
+            {LINKS.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className={LINK}>
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+            <li>
+              <a href={OPERATOR.github} target="_blank" rel="noopener noreferrer" className={`${LINK} gap-1.5`}>
+                <GithubLogo size={16} aria-hidden />
+                Source code
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
 
-          <div className="flex gap-2.5">
-            <a href={OPERATOR.github} target="_blank" rel="noopener noreferrer" aria-label="Source code on GitHub" className={ICON_BUTTON}>
-              <GithubLogo size={18} aria-hidden />
-            </a>
-            <a href="#main" aria-label="Back to top" className={ICON_BUTTON}>
-              <ArrowUp size={18} aria-hidden />
-            </a>
-          </div>
-        </div>
+      {/* Bottom padding keeps this row clear of the fixed music button. */}
+      <div className="container-page flex flex-col gap-1 border-t border-line pt-4 pb-24 text-sm text-ink-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+        <p>
+          &copy; {new Date().getFullYear()} {OPERATOR.name}. For fun only, not affiliated with Myers-Briggs.
+        </p>
+        <nav aria-label="Legal" className="flex gap-6">
+          <Link href="/privacy" className={LINK}>
+            Privacy
+          </Link>
+          <Link href="/terms" className={LINK}>
+            Terms
+          </Link>
+        </nav>
       </div>
     </footer>
   );
