@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Check, Gift, GithubLogo, ShieldCheck, X } from "@phosphor-icons/react/dist/ssr";
-import type { Icon } from "@phosphor-icons/react";
+import { ArrowUpRight, Check, X } from "@phosphor-icons/react/dist/ssr";
+import { PrimaryLink } from "@/components/Button";
 import SiteFooter from "@/components/SiteFooter";
 import SiteNav from "@/components/SiteNav";
 import WhyReveal from "@/components/WhyReveal";
@@ -9,7 +8,8 @@ import { OPERATOR } from "@/lib/legal";
 
 export const metadata: Metadata = {
   title: "About | Melonality",
-  description: "Why a watermelon personality quiz exists at all, what it is and isn't, and how it is made.",
+  description:
+    "Why a watermelon personality quiz exists at all, what it is and isn't (zero science, zero data about you), and what it is built with.",
 };
 
 /** Keep "isn't" true to app/privacy and app/terms. */
@@ -24,19 +24,16 @@ const IS_NOT = [
   "A way to collect your data. Your quiz answers never identify you.",
 ];
 
-const PRINCIPLES: { icon: Icon; title: string; body: string }[] = [
+const PRINCIPLES: { title: string; body: string }[] = [
   {
-    icon: ShieldCheck,
     title: "Private by default",
     body: "Accounts are optional and there are no analytics or ads. Quiz answers are saved anonymously, and you can delete yours from the results page.",
   },
   {
-    icon: GithubLogo,
     title: "Open source",
     body: "Every line is public on GitHub, from the twenty statements to the scoring that turns them into a type.",
   },
   {
-    icon: Gift,
     title: "Free, no ads",
     body: "No paywall, no premium tier, no ads. It costs nothing to take and nothing to share.",
   },
@@ -51,125 +48,106 @@ const STACK: { name: string; role: string }[] = [
 
 export default function AboutPage() {
   return (
-    <main id="main" className="relative flex min-h-dvh flex-col bg-paper text-ink">
+    <>
       <SiteNav />
+      <main id="main" className="flex-1 bg-paper text-ink">
+        <WhyReveal />
 
-      <WhyReveal />
-
-      {/* What it is, and isn't. */}
-      <section className="w-full px-5 py-24 sm:px-8 sm:py-28">
-        <div className="mx-auto max-w-5xl">
-          <h2 className="text-center font-display text-3xl font-semibold text-ink sm:text-4xl">
-            What it is, and what it isn&rsquo;t
-          </h2>
-
-          <div className="mt-14 grid gap-5 md:grid-cols-2 md:gap-6">
-            <div className="rounded-card bg-paper p-7 ring-1 ring-line sm:p-8">
-              <h3 className="font-display text-xl font-semibold text-flesh-deep">It is</h3>
-              <ul className="mt-5 space-y-4">
-                {IS.map((line) => (
-                  <li key={line} className="flex gap-3 leading-relaxed text-ink-2">
-                    <Check size={20} weight="bold" className="mt-0.5 shrink-0 text-flesh" aria-hidden />
-                    {line}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="rounded-card bg-paper p-7 ring-1 ring-line sm:p-8">
-              <h3 className="font-display text-xl font-semibold text-ink">It isn&rsquo;t</h3>
-              <ul className="mt-5 space-y-4">
-                {IS_NOT.map((line) => (
-                  <li key={line} className="flex gap-3 leading-relaxed text-ink-2">
-                    <X size={20} weight="bold" className="mt-0.5 shrink-0 text-ink-3" aria-hidden />
-                    {line}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* How it is made: white cards on the grey band. */}
-      <section className="w-full border-y border-line bg-paper-2 px-5 py-24 sm:px-8 sm:py-28">
-        <div className="mx-auto max-w-7xl">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="font-display text-3xl font-semibold text-ink sm:text-4xl">How it&rsquo;s made</h2>
-            <p className="mt-4 text-lg leading-relaxed text-pretty text-ink-2">
-              Three rules the site is built on.
-            </p>
-          </div>
-
-          <ul className="mt-14 grid gap-5 md:grid-cols-3 md:gap-6">
-            {PRINCIPLES.map((item) => (
-              <li
-                key={item.title}
-                className="relative overflow-hidden rounded-card bg-paper p-7 shadow-card ring-1 ring-line sm:p-8"
-              >
-                <span aria-hidden className="absolute inset-x-0 top-0 h-0.75 bg-flesh" />
-                <span className="grid h-12 w-12 place-items-center rounded-control bg-blush text-flesh">
-                  <item.icon size={26} aria-hidden />
-                </span>
-                <h3 className="mt-7 font-display text-2xl font-semibold text-ink">{item.title}</h3>
-                <p className="mt-3 leading-relaxed text-pretty text-ink-2">{item.body}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* Built with. */}
-      <section className="w-full px-5 py-24 sm:px-8 sm:py-28">
-        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-12 lg:gap-8">
-          <div className="lg:col-span-4">
-            <h2 className="font-display text-3xl font-semibold text-ink sm:text-4xl">Under the rind</h2>
-            <p className="mt-4 text-lg leading-relaxed text-pretty text-ink-2">What the site is built with.</p>
-          </div>
-
-          <dl className="border-t border-line lg:col-span-7 lg:col-start-6">
-            {STACK.map((item) => (
-              <div key={item.name} className="grid gap-1 border-b border-line py-6 sm:grid-cols-[12rem_1fr] sm:gap-8">
-                <dt className="font-display text-xl font-semibold text-ink">{item.name}</dt>
-                <dd className="leading-relaxed text-ink-2 sm:pt-0.5">{item.role}</dd>
+        {/* What it is, and isn't: two plain lists, no boxed cards. */}
+        <section aria-labelledby="is" className="border-t border-line">
+          <div className="container-page pt-16 pb-20 lg:pt-24 lg:pb-28">
+            <h2 id="is" className="t-h2">
+              What it is, and what it isn&rsquo;t
+            </h2>
+            <div className="mt-10 grid gap-10 md:grid-cols-2 md:gap-16">
+              <div>
+                <h3 className="t-h3 text-flesh-deep">It is</h3>
+                <ul className="mt-5 divide-y divide-line border-y border-line">
+                  {IS.map((line) => (
+                    <li key={line} className="flex gap-3 py-4 leading-relaxed text-ink-2">
+                      <Check size={20} weight="bold" className="mt-0.5 shrink-0 text-flesh-deep" aria-hidden />
+                      {line}
+                    </li>
+                  ))}
+                </ul>
               </div>
-            ))}
-          </dl>
-        </div>
-      </section>
-
-      {/* Feedback. */}
-      <section className="w-full border-t border-line bg-paper-2 px-5 py-24 sm:px-8 sm:py-28">
-        <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
-          <h2 className="font-display text-3xl leading-tight font-semibold text-balance text-ink sm:text-5xl">
-            Found a bug, or a better question?
-          </h2>
-          <p className="mt-5 text-lg leading-relaxed text-pretty text-ink-2">
-            Open an issue on GitHub. Suggestions for new statements are especially welcome.
-          </p>
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
-            <Link
-              href="/quiz"
-              className="inline-flex h-14 items-center gap-4 rounded-control bg-ink py-2 pr-2 pl-6 font-display text-lg font-semibold text-paper shadow-card transition-colors duration-300 hover:bg-ink/85 focus-visible:ring-2 focus-visible:ring-flesh focus-visible:ring-offset-4 focus-visible:outline-none"
-            >
-              Take the quiz
-              <span className="grid h-10 w-10 place-items-center rounded-lg bg-flesh text-paper">
-                <ArrowRight size={18} weight="bold" aria-hidden />
-              </span>
-            </Link>
-            <a
-              href={`${OPERATOR.github}/issues`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-11 items-center gap-1.5 text-[15px] font-semibold text-ink underline-offset-4 hover:underline"
-            >
-              Open an issue
-              <ArrowUpRight size={14} weight="bold" aria-hidden />
-            </a>
+              <div>
+                <h3 className="t-h3">It isn&rsquo;t</h3>
+                <ul className="mt-5 divide-y divide-line border-y border-line">
+                  {IS_NOT.map((line) => (
+                    <li key={line} className="flex gap-3 py-4 leading-relaxed text-ink-2">
+                      <X size={20} weight="bold" className="mt-0.5 shrink-0 text-ink-3" aria-hidden />
+                      {line}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
+        {/* The three rules, as a list rather than a row of icon cards. */}
+        <section aria-labelledby="rules" className="border-t border-line bg-paper-2">
+          <div className="container-page grid gap-10 pt-16 pb-20 lg:grid-cols-[minmax(0,22rem)_1fr] lg:gap-20 lg:pt-24 lg:pb-28">
+            <div>
+              <h2 id="rules" className="t-h2">
+                Three rules it is built on
+              </h2>
+              <p className="t-lead mt-4 text-ink-2">So the joke never costs you anything.</p>
+            </div>
+            <dl className="divide-y divide-line border-y border-line">
+              {PRINCIPLES.map((item) => (
+                <div key={item.title} className="grid gap-2 py-7 sm:grid-cols-[12rem_1fr] sm:gap-8">
+                  <dt className="t-h3">{item.title}</dt>
+                  <dd className="max-w-[56ch] leading-relaxed text-ink-2">{item.body}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+
+        {/* Built with. */}
+        <section aria-labelledby="stack" className="border-t border-line">
+          <div className="container-page grid gap-10 pt-16 pb-20 lg:grid-cols-[minmax(0,22rem)_1fr] lg:gap-20 lg:pt-24 lg:pb-28">
+            <div>
+              <h2 id="stack" className="t-h2">
+                Under the rind
+              </h2>
+              <p className="t-lead mt-4 text-ink-2">What the site is built with.</p>
+            </div>
+            <dl className="divide-y divide-line border-y border-line">
+              {STACK.map((item) => (
+                <div key={item.name} className="grid gap-1 py-6 sm:grid-cols-[12rem_1fr] sm:gap-8">
+                  <dt className="t-h3">{item.name}</dt>
+                  <dd className="leading-relaxed text-ink-2 sm:pt-0.5">{item.role}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+
+        {/* Feedback, then the quiz. */}
+        <section aria-labelledby="feedback" className="border-t border-line bg-paper-2">
+          <div className="container-page flex flex-col items-center pt-20 pb-24 text-center lg:pt-28 lg:pb-32">
+            <h2 id="feedback" className="t-h1 max-w-[18ch]">
+              Found a bug, or a better question?
+            </h2>
+            <p className="t-lead mt-4 max-w-[44ch] text-ink-2">
+              Open an issue on GitHub. Suggestions for new statements are especially welcome.
+            </p>
+            <div className="mt-8 flex w-full flex-col items-center gap-2 sm:w-auto sm:flex-row sm:gap-6">
+              <PrimaryLink href="/quiz" className="w-full sm:w-auto">
+                Take the quiz
+              </PrimaryLink>
+              <a href={`${OPERATOR.github}/issues`} target="_blank" rel="noopener noreferrer" className="link-arrow text-ink">
+                Open an issue
+                <ArrowUpRight size={15} weight="bold" aria-hidden className="btn-arrow" />
+              </a>
+            </div>
+          </div>
+        </section>
+      </main>
       <SiteFooter />
-    </main>
+    </>
   );
 }

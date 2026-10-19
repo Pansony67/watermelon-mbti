@@ -3,14 +3,15 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLink, PrimaryLink } from "@/components/Button";
-import CharacterStage, { figureWidth } from "@/components/CharacterStage";
+import { figureWidth } from "@/components/CharacterStage";
 import HeroChips from "@/components/HeroChips";
+import HowSteps from "@/components/HowSteps";
+import ResultPreview from "@/components/ResultPreview";
 import SiteFooter from "@/components/SiteFooter";
 import SiteNav from "@/components/SiteNav";
-import TraitBars from "@/components/TraitBars";
 import Watermelon3DLazy from "@/components/Watermelon3DLazy";
 import { countResponses } from "@/lib/db";
-import { FAMILIES, FAMILY_INFO, FAMILY_STYLE, TRAIT_LABEL, TYPES, topTrait } from "@/lib/types";
+import { FAMILIES, FAMILY_INFO, FAMILY_STYLE, TYPES } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: { absolute: "Melonality: What kind of watermelon are you?" },
@@ -23,24 +24,6 @@ export const revalidate = 60;
 
 /** Below this many players a count reads as an empty room, not social proof. */
 const SHOW_COUNT_FROM = 1000;
-
-/** The example on "what you get": a real type, so the preview is honest. */
-const EXAMPLE = TYPES.find((t) => t.slug === "sus-eater")!;
-
-const STEPS: { title: string; body: string }[] = [
-  {
-    title: "Answer 20 statements",
-    body: "Tap how much you agree. Go with your first instinct; the melon can tell when you overthink.",
-  },
-  {
-    title: "Find your family",
-    body: "The first eight sort you into Green, Blue, Yellow or Purple. The other twelve find your exact type inside it.",
-  },
-  {
-    title: "Send it to the group chat",
-    body: "Share your result, then watch everyone insist they are actually the Saviour-Eater.",
-  },
-];
 
 /** Answers must stay true to app/privacy and the results page. */
 const FAQS: { q: string; a: string }[] = [
@@ -76,7 +59,6 @@ export default async function Home() {
     console.error("quiz_responses count failed", error);
     return null;
   });
-  const exampleTop = topTrait(EXAMPLE.traits);
 
   return (
     <>
@@ -150,28 +132,7 @@ export default async function Home() {
               </ul>
             </div>
 
-            {/* The preview card: the same parts as the real result page. */}
-            <figure className="overflow-hidden rounded-panel shadow-panel">
-              <CharacterStage type={EXAMPLE} imgClass="h-64 sm:h-72" heights={[256, 288]} className="pt-10">
-                <figcaption className="t-label absolute top-4 left-4 rounded-md bg-cine-base/80 px-2.5 py-1.5 text-cine-ink">
-                  Example result
-                </figcaption>
-              </CharacterStage>
-              <div
-                className={`px-6 pt-6 pb-7 text-cine-ink ${FAMILY_STYLE[EXAMPLE.family].band}`}
-                style={{ "--glow": `var(--cine-${EXAMPLE.family.toLowerCase()}-glow)` } as CSSProperties}
-              >
-                <p className="t-label text-cine-ink-2">You&rsquo;re the</p>
-                <p className="t-h2 mt-1">{EXAMPLE.name}</p>
-                <p className="mt-2 leading-snug text-cine-ink-2">{EXAMPLE.tagline}</p>
-                <p className="t-label mt-5 text-[color:var(--glow)]">
-                  {EXAMPLE.family} family &middot; strongest trait: {TRAIT_LABEL[exampleTop]}
-                </p>
-                <div className="mt-4">
-                  <TraitBars traits={EXAMPLE.traits} />
-                </div>
-              </div>
-            </figure>
+            <ResultPreview />
           </div>
         </section>
 
@@ -187,19 +148,7 @@ export default async function Home() {
                 How the scoring works
               </ArrowLink>
             </div>
-            <ol className="divide-y divide-line border-y border-line">
-              {STEPS.map((step, i) => (
-                <li key={step.title} className="grid grid-cols-[3rem_1fr] gap-4 py-7 sm:grid-cols-[4.5rem_1fr] sm:gap-6">
-                  <span aria-hidden className="font-display text-4xl leading-none font-extrabold tracking-[-0.04em] text-flesh-deep sm:text-5xl">
-                    {i + 1}
-                  </span>
-                  <div>
-                    <h3 className="t-h3 text-ink">{step.title}</h3>
-                    <p className="mt-2 max-w-[52ch] text-ink-2">{step.body}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
+            <HowSteps />
           </div>
         </section>
 

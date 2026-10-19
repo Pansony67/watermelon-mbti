@@ -1,59 +1,32 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import {
-  ArrowRight,
-  ChartBar,
-  IdentificationCard,
-  ListChecks,
-  MagnifyingGlass,
-  OrangeSlice,
-  PaperPlaneTilt,
-} from "@phosphor-icons/react/dist/ssr";
-import type { Icon } from "@phosphor-icons/react";
+import { PrimaryLink } from "@/components/Button";
+import HowSteps from "@/components/HowSteps";
+import ResultPreview from "@/components/ResultPreview";
 import SiteFooter from "@/components/SiteFooter";
 import SiteNav from "@/components/SiteNav";
 
 export const metadata: Metadata = {
   title: "How it works | Melonality",
   description:
-    "Twenty questions, four colour families, one of 20 watermelon types. How the Melonality quiz works.",
+    "Twenty statements, two parts: the first eight find your colour family, the last twelve your type within it. Here is exactly how Melonality sorts you.",
 };
-
-/** OrangeSlice is the same icon the landing stats row uses for "Unique types". */
-const STEPS: { icon: Icon; title: string; body: string }[] = [
-  {
-    icon: ListChecks,
-    title: "Take the quiz",
-    body: "Answer 20 honest questions about how you actually eat watermelon. No overthinking, just be honest.",
-  },
-  {
-    icon: OrangeSlice,
-    title: "Get your type",
-    body: "See which of the 20 watermelon types you are, why your answers point there, and how many other people got the same result.",
-  },
-  {
-    icon: PaperPlaneTilt,
-    title: "Send it to someone",
-    body: "Screenshot your result and share it. Bonus points if it starts an argument.",
-  },
-];
 
 /** Mirrors lib/quiz.ts and lib/scoring.ts: update this copy if the scoring changes. */
 const PARTS: { meta: string; title: string; body: string }[] = [
   {
-    meta: "Questions 1-8",
+    meta: "Questions 1 to 8",
     title: "Your family",
     body: "Everyone answers the same eight, two for each colour family. The family you agree with most is yours: Green, Blue, Yellow or Purple.",
   },
   {
-    meta: "Questions 9-20",
+    meta: "Questions 9 to 20",
     title: "Your type",
     body: "Twelve questions written for your family alone, two or three for each of its five types. The type you agree with most is yours.",
   },
   {
     meta: "All twenty",
     title: "Your traits",
-    body: "Every answer also counts toward one of five traits: messiness, speed, social, planning and chaos. Your result draws them over your type's typical profile.",
+    body: "Every answer also counts toward one of five traits: messiness, speed, social, planning and chaos. Your result draws them over your type's typical shape.",
   },
 ];
 
@@ -71,180 +44,112 @@ const SCALE: { label: string; disc: string }[] = [
 const DISC = "block rounded-full border-2"; // unslop-ignore: the answer scale is circles by definition, as in QuizFlow
 
 const TIPS: { title: string; body: string }[] = [
-  {
-    title: "Answer for the real you",
-    body: "How you actually eat watermelon, not how you would like to. Nobody is watching.",
-  },
-  {
-    title: "Go with your first instinct",
-    body: "There is no timer. Your first reaction to a statement is usually the honest one.",
-  },
-  {
-    title: "Save Neutral for true ties",
-    body: "The middle circle is the smallest for a reason. Lean one way whenever you can.",
-  },
-];
-
-const RESULT: { icon: Icon; title: string; body: string }[] = [
-  {
-    icon: IdentificationCard,
-    title: "Your type",
-    body: "Your character, and which of the four colour families it belongs to.",
-  },
-  {
-    icon: MagnifyingGlass,
-    title: "Why you got it",
-    body: "Your five trait scores drawn over your type's typical profile, and how strongly you matched each family.",
-  },
-  {
-    icon: ChartBar,
-    title: "How rare it is",
-    body: "The share of players who got the same type, counted live once enough people have taken the test.",
-  },
+  { title: "Answer for the real you", body: "How you actually eat watermelon, not how you would like to. Nobody is watching." },
+  { title: "Go with your first instinct", body: "There is no timer. Your first reaction to a statement is usually the honest one." },
+  { title: "Save Neutral for true ties", body: "The middle circle is the smallest for a reason. Lean one way whenever you can." },
 ];
 
 export default function HowItWorksPage() {
   return (
-    <main id="main" className="relative flex min-h-dvh flex-col bg-paper text-ink">
+    <>
       <SiteNav />
+      <main id="main" className="flex-1 bg-paper text-ink">
+        <section className="container-page pt-14 pb-16 sm:pt-20 lg:pb-20">
+          <h1 className="t-display max-w-[14ch]">Twenty statements, one watermelon.</h1>
+          <p className="t-lead mt-5 max-w-[46ch] text-ink-2">
+            Exactly what happens between your first tap and your result. Spoiler: the quiz takes less time than reading this page.
+          </p>
+          <PrimaryLink href="/quiz" className="mt-8 w-full sm:w-auto">
+            Take the quiz
+          </PrimaryLink>
+        </section>
 
-      <section className="mx-auto flex w-full max-w-7xl flex-col items-center px-5 py-20 text-center sm:px-8 sm:py-24">
-        <h1 className="font-display text-5xl font-semibold tracking-[-0.02em] text-balance sm:text-7xl">How it works</h1>
-        <p className="mt-5 max-w-[46ch] text-lg leading-relaxed text-pretty text-ink-2">
-          Three steps, a few minutes, and one very specific watermelon at the end.
-        </p>
-      </section>
-
-      {/* The three steps: white cards on the grey band. */}
-      <section aria-label="The three steps" className="w-full border-y border-line bg-paper-2 px-5 py-20 sm:px-8 sm:py-24">
-        <ol className="mx-auto grid max-w-7xl gap-5 md:grid-cols-3 md:gap-6">
-          {STEPS.map((step, i) => (
-            <li
-              key={step.title}
-              className="relative overflow-hidden rounded-card bg-paper p-7 shadow-card ring-1 ring-line sm:p-8"
-            >
-              <span aria-hidden className="absolute inset-x-0 top-0 h-0.75 bg-flesh" />
-              <span
-                aria-hidden
-                className="pointer-events-none absolute top-4 right-6 font-display text-7xl leading-none font-semibold text-ink/5 tabular-nums"
-              >
-                {String(i + 1).padStart(2, "0")}
-              </span>
-
-              <span className="grid h-12 w-12 place-items-center rounded-control bg-blush text-flesh">
-                <step.icon size={26} aria-hidden />
-              </span>
-              <p className="mt-7 text-xs font-semibold tracking-[0.14em] text-flesh-deep uppercase">Step {i + 1}</p>
-              <h2 className="mt-2 font-display text-2xl font-semibold text-ink">{step.title}</h2>
-              <p className="mt-3 leading-relaxed text-pretty text-ink-2">{step.body}</p>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      {/* What is measured. */}
-      <section className="w-full px-5 py-24 sm:px-8 sm:py-28">
-        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-12 lg:gap-8">
-          <div className="lg:col-span-4">
-            <h2 className="font-display text-3xl font-semibold text-ink sm:text-4xl">What the quiz measures</h2>
-            <p className="mt-4 text-lg leading-relaxed text-pretty text-ink-2">
-              Twenty statements in two parts: the first finds your family, the second your type within it.
-            </p>
+        <section aria-labelledby="steps" className="border-t border-line bg-paper-2">
+          <div className="container-page grid gap-10 pt-16 pb-20 lg:grid-cols-[minmax(0,22rem)_1fr] lg:gap-20 lg:pt-24 lg:pb-28">
+            <h2 id="steps" className="t-h2">
+              The short version
+            </h2>
+            <HowSteps />
           </div>
+        </section>
 
-          <ol className="border-t border-line lg:col-span-7 lg:col-start-6">
-            {PARTS.map((part) => (
-              <li key={part.title} className="grid gap-2 border-b border-line py-8 sm:grid-cols-[12rem_1fr] sm:gap-8">
-                <p className="text-sm font-semibold text-flesh-deep sm:pt-1.5">{part.meta}</p>
-                <div>
-                  <h3 className="font-display text-2xl font-semibold text-ink">{part.title}</h3>
-                  <p className="mt-2 leading-relaxed text-pretty text-ink-2">{part.body}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      {/* How to answer: the scale, then tips. */}
-      <section className="w-full border-y border-line bg-paper-2 px-5 py-24 sm:px-8 sm:py-28">
-        <div className="mx-auto max-w-7xl">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="font-display text-3xl font-semibold text-ink sm:text-4xl">How to answer</h2>
-            <p className="mt-4 text-lg leading-relaxed text-pretty text-ink-2">
-              Every statement gets one tap on a seven-point scale, from Strongly agree to Strongly disagree.
-            </p>
+        <section aria-labelledby="measures" className="border-t border-line">
+          <div className="container-page grid gap-10 pt-16 pb-20 lg:grid-cols-[minmax(0,22rem)_1fr] lg:gap-20 lg:pt-24 lg:pb-28">
+            <div>
+              <h2 id="measures" className="t-h2">
+                What the quiz measures
+              </h2>
+              <p className="t-lead mt-4 text-ink-2">Two parts: the first finds your family, the second your type within it.</p>
+            </div>
+            <ol className="divide-y divide-line border-y border-line">
+              {PARTS.map((part) => (
+                <li key={part.title} className="grid gap-2 py-7 sm:grid-cols-[10rem_1fr] sm:gap-8">
+                  <p className="t-label pt-1 text-flesh-deep">{part.meta}</p>
+                  <div>
+                    <h3 className="t-h3">{part.title}</h3>
+                    <p className="mt-2 max-w-[56ch] text-ink-2">{part.body}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
           </div>
+        </section>
 
-          <figure className="mx-auto mt-12 max-w-3xl rounded-panel bg-paper px-5 py-8 shadow-card ring-1 ring-line sm:px-10 sm:py-10">
-            <ul className="flex items-center justify-between gap-1">
-              {SCALE.map((step) => (
-                <li key={step.label} className="grid flex-1 place-items-center">
-                  <span className={`${DISC} ${step.disc}`} />
-                  <span className="sr-only">{step.label}</span>
+        <section aria-labelledby="answer" className="border-t border-line bg-paper-2">
+          <div className="container-page grid gap-12 pt-16 pb-20 lg:grid-cols-2 lg:gap-20 lg:pt-24 lg:pb-28">
+            <div>
+              <h2 id="answer" className="t-h2">
+                How to answer
+              </h2>
+              <p className="t-lead mt-4 max-w-[44ch] text-ink-2">
+                Every statement gets one tap on a seven-point scale, from strongly agree to strongly disagree.
+              </p>
+              <figure className="mt-8 rounded-panel bg-paper px-4 py-7 shadow-card sm:px-8">
+                <ul className="flex items-center justify-between gap-1">
+                  {SCALE.map((step) => (
+                    <li key={step.label} className="grid flex-1 place-items-center">
+                      <span className={`${DISC} ${step.disc}`} />
+                      <span className="sr-only">{step.label}</span>
+                    </li>
+                  ))}
+                </ul>
+                <figcaption aria-hidden className="mt-4 flex justify-between font-display text-sm font-bold sm:text-base">
+                  <span className="text-flesh-deep">Agree</span>
+                  <span className="text-ink-3">Neutral</span>
+                  <span className="text-ink">Disagree</span>
+                </figcaption>
+              </figure>
+            </div>
+            <ul className="space-y-8 lg:pt-2">
+              {TIPS.map((tip) => (
+                <li key={tip.title} className="border-l-2 border-flesh pl-5">
+                  <h3 className="t-h3">{tip.title}</h3>
+                  <p className="mt-2 max-w-[48ch] text-ink-2">{tip.body}</p>
                 </li>
               ))}
             </ul>
-            <figcaption aria-hidden className="mt-5 flex justify-between font-display text-base font-semibold sm:text-lg">
-              <span className="text-flesh-deep">Agree</span>
-              <span className="text-ink-3">Neutral</span>
-              <span className="text-ink">Disagree</span>
-            </figcaption>
-          </figure>
-
-          <ul className="mx-auto mt-14 grid max-w-5xl gap-x-8 gap-y-10 md:grid-cols-3">
-            {TIPS.map((tip) => (
-              <li key={tip.title} className="relative border-t border-line pt-6">
-                <span aria-hidden className="absolute -top-px left-0 h-0.5 w-10 bg-flesh" />
-                <h3 className="font-display text-xl font-semibold text-ink">{tip.title}</h3>
-                <p className="mt-2 leading-relaxed text-pretty text-ink-2">{tip.body}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* What the result page shows. */}
-      <section className="w-full px-5 py-24 sm:px-8 sm:py-28">
-        <div className="mx-auto max-w-7xl">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="font-display text-3xl font-semibold text-ink sm:text-4xl">What you get at the end</h2>
-            <p className="mt-4 text-lg leading-relaxed text-pretty text-ink-2">
-              One result page, three things on it. No email required to see it.
-            </p>
           </div>
+        </section>
 
-          <ul className="mt-14 grid gap-5 md:grid-cols-3 md:gap-6">
-            {RESULT.map((item) => (
-              <li key={item.title} className="rounded-card bg-paper p-7 ring-1 ring-line sm:p-8">
-                <item.icon size={30} className="text-flesh" aria-hidden />
-                <h3 className="mt-6 font-display text-xl font-semibold text-ink">{item.title}</h3>
-                <p className="mt-2 leading-relaxed text-pretty text-ink-2">{item.body}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="w-full border-t border-line bg-paper-2 px-5 py-24 sm:px-8 sm:py-28">
-        <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
-          <h2 className="font-display text-3xl leading-tight font-semibold text-balance text-ink sm:text-5xl">
-            See it for yourself.
-          </h2>
-          <p className="mt-5 text-lg leading-relaxed text-pretty text-ink-2">Twenty statements. No sign-up.</p>
-          <Link
-            href="/quiz"
-            className="mt-10 inline-flex h-14 items-center gap-4 rounded-control bg-ink py-2 pr-2 pl-6 font-display text-lg font-semibold text-paper shadow-card transition-colors duration-300 hover:bg-ink/85 focus-visible:ring-2 focus-visible:ring-flesh focus-visible:ring-offset-4 focus-visible:outline-none"
-          >
-            Take the quiz
-            <span className="grid h-10 w-10 place-items-center rounded-lg bg-flesh text-paper">
-              <ArrowRight size={18} weight="bold" aria-hidden />
-            </span>
-          </Link>
-        </div>
-      </section>
-
+        <section aria-labelledby="end" className="border-t border-line">
+          <div className="container-page grid items-center gap-10 pt-16 pb-20 lg:grid-cols-[1fr_minmax(0,28rem)] lg:gap-20 lg:pt-24 lg:pb-28">
+            <div>
+              <h2 id="end" className="t-h2">
+                What you get at the end
+              </h2>
+              <p className="t-lead mt-4 max-w-[46ch] text-ink-2">
+                Your type and its art, your family, and your five traits drawn over your type&rsquo;s typical shape. Plus how
+                many other people got the same thing. No email needed to see any of it.
+              </p>
+              <PrimaryLink href="/quiz" className="mt-8 w-full sm:w-auto">
+                Take the quiz
+              </PrimaryLink>
+            </div>
+            <ResultPreview />
+          </div>
+        </section>
+      </main>
       <SiteFooter />
-    </main>
+    </>
   );
 }

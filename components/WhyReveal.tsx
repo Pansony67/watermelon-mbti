@@ -7,7 +7,7 @@ const TITLE = "Why does this exist?";
 
 /** [Brackets] mark the phrase that gets the marker highlight. */
 const TEXT =
-  "No grand thesis. No years of research. I just really wanted to know what kind of [watermelon eater] you are. Twenty honest questions about how you actually eat watermelon - that’s the whole idea.";
+  "No grand thesis. No years of research. I just really wanted to know what kind of [watermelon eater] you are. Twenty honest questions about how you actually eat watermelon. That’s the whole idea.";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 const BODY_START = 0.55;
@@ -66,7 +66,7 @@ export default function WhyReveal() {
     <section className="relative flex min-h-[78dvh] items-center overflow-hidden border-b border-line bg-paper-2 px-5 py-24 sm:px-8">
       <SeedField />
       <motion.div initial="hidden" animate="shown" className="relative mx-auto max-w-4xl text-center">
-        <h1 className="font-display text-5xl leading-[1.05] font-semibold tracking-[-0.02em] text-balance text-ink sm:text-7xl">
+        <h1 className="t-display text-ink">
           <span className="sr-only">{TITLE}</span>
           <span aria-hidden>
             {TITLE.split(" ").map((word, i) => (
