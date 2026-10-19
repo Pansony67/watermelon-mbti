@@ -7,6 +7,7 @@ import SiteNav from "@/components/SiteNav";
 
 export const metadata: Metadata = {
   title: "How it works | Melonality",
+  alternates: { canonical: "/how-it-works" },
   description:
     "Twenty statements, two parts: the first eight find your colour family, the last twelve your type within it. Here is exactly how Melonality sorts you.",
 };

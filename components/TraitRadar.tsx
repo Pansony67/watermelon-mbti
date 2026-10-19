@@ -1,10 +1,9 @@
 "use client";
 
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart } from "recharts";
-import { TRAIT_AXES, TRAIT_LABEL, topTrait, type EaterType, type Family, type TraitAxis } from "@/lib/types";
+import { FAMILY_HEX, TRAIT_AXES, TRAIT_LABEL, topTrait, type EaterType, type TraitAxis } from "@/lib/types";
 
-/** The --cine-*-glow and --cine-ink colours from globals.css, as hex: SVG attributes can't rely on CSS variables in every browser. */
-const GLOW: Record<Family, string> = { Green: "#77d9a0", Blue: "#8ab8ff", Yellow: "#f0c250", Purple: "#c0a0ff" };
+/** --cine-ink as hex: SVG attributes can't rely on CSS variables in every browser. */
 const CREAM = "#f4efec";
 
 /**
@@ -15,7 +14,7 @@ const CREAM = "#f4efec";
  */
 export default function TraitRadar({ type, you }: { type: EaterType; you?: Record<TraitAxis, number> }) {
   const data = TRAIT_AXES.map((axis) => ({ axis: TRAIT_LABEL[axis], typical: type.traits[axis], you: you?.[axis] }));
-  const glow = GLOW[type.family];
+  const glow = FAMILY_HEX[type.family].glow;
   const lead = you ?? type.traits;
   const top = topTrait(lead);
   const describe = (scores: Record<TraitAxis, number>) => TRAIT_AXES.map((axis) => `${TRAIT_LABEL[axis]} ${scores[axis]}`).join(", ");

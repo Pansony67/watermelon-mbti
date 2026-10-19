@@ -3,7 +3,11 @@ import Link from "next/link";
 import LegalPage from "@/components/LegalPage";
 import { OPERATOR } from "@/lib/legal";
 
-export const metadata: Metadata = { title: "Terms | Melonality" };
+export const metadata: Metadata = {
+  title: "Terms | Melonality",
+  description: "The rules for using Melonality, a free watermelon personality quiz.",
+  alternates: { canonical: "/terms" },
+};
 
 export default function TermsPage() {
   return (

@@ -8,6 +8,7 @@ import { OPERATOR } from "@/lib/legal";
 
 export const metadata: Metadata = {
   title: "About | Melonality",
+  alternates: { canonical: "/about" },
   description:
     "Why a watermelon personality quiz exists at all, what it is and isn't (zero science, zero data about you), and what it is built with.",
 };

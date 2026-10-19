@@ -15,6 +15,7 @@ import { FAMILIES, FAMILY_INFO, FAMILY_STYLE, TYPES } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: { absolute: "Melonality: What kind of watermelon are you?" },
+  alternates: { canonical: "/" },
   description:
     "A 20-question personality quiz about how you eat watermelon. About three minutes, free, no sign-up, and one of 20 oddly specific results.",
 };

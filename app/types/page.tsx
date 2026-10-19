@@ -8,6 +8,7 @@ import { FAMILIES, FAMILY_STYLE, TYPES, type Family } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "All 20 types | Melonality",
+  alternates: { canonical: "/types" },
   description:
     "Meet all 20 watermelon eaters in four families: heart-led Green, steady Blue, fired-up Yellow and questioning Purple. Tap one to see what it says about you.",
 };

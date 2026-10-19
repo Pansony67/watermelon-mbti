@@ -3,7 +3,11 @@ import Link from "next/link";
 import LegalPage from "@/components/LegalPage";
 import { OPERATOR } from "@/lib/legal";
 
-export const metadata: Metadata = { title: "Privacy | Melonality" };
+export const metadata: Metadata = {
+  title: "Privacy | Melonality",
+  description: "What Melonality saves when you take the quiz, why, and how to delete it.",
+  alternates: { canonical: "/privacy" },
+};
 
 export default function PrivacyPage() {
   return (

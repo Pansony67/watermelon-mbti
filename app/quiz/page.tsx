@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import QuizFlow from "@/components/QuizFlow";
 
 export const metadata: Metadata = {
-  title: "The Test | Melonality",
-  description: "Twenty statements, one watermelon type. Agree or disagree.",
+  title: "Take the quiz | Melonality",
+  description: "Twenty statements about how you eat watermelon. Agree or disagree, about three minutes, no sign-up.",
+  alternates: { canonical: "/quiz" },
 };
 
 export default function QuizPage() {

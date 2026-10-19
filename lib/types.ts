@@ -433,3 +433,11 @@ export const FAMILY_STYLE: Record<Family, { tint: string; ink: string; mark: str
     band: "bg-cine-purple",
   },
 };
+
+/** The --cine-* band and glow colours from globals.css, as hex: for SVG attributes and share images, where CSS variables don't reach. */
+export const FAMILY_HEX: Record<Family, { band: string; glow: string }> = {
+  Green: { band: "#0e2419", glow: "#77d9a0" },
+  Blue: { band: "#0d1a30", glow: "#8ab8ff" },
+  Yellow: { band: "#2a1d07", glow: "#f0c250" },
+  Purple: { band: "#1c1030", glow: "#c0a0ff" },
+};
