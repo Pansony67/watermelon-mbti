@@ -1,24 +1,16 @@
 import type { CSSProperties } from "react";
 import type { Metadata } from "next";
-import { Archivo } from "next/font/google";
-import Link from "next/link";
-import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
+import { PrimaryLink } from "@/components/Button";
 import CineBand from "@/components/CineBand";
 import SiteFooter from "@/components/SiteFooter";
 import SiteNav from "@/components/SiteNav";
 import { FAMILIES, FAMILY_STYLE, TYPES, type Family } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "The Types | Melonality",
-  description: "All 20 watermelon-eater types, grouped into Green, Blue, Yellow and Purple.",
+  title: "All 20 types | Melonality",
+  description:
+    "Meet all 20 watermelon eaters in four families: heart-led Green, steady Blue, fired-up Yellow and questioning Purple. Tap one to see what it says about you.",
 };
-
-/**
- * A sharp grotesque with a width axis for the character select: the giant
- * names and title run slightly expanded, like a game title card. The rest of
- * the site keeps Fredoka and Figtree.
- */
-const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"] });
 
 /** The angle each band's stage light comes from. */
 const LIGHT_AT: Record<Family, string> = { Green: "12% 0%", Blue: "88% 0%", Yellow: "50% 0%", Purple: "50% 100%" };
@@ -31,25 +23,19 @@ const SLANTS = ["[clip-path:polygon(0_4vw,100%_0,100%_100%,0_100%)]", "[clip-pat
 
 export default function TypesPage() {
   return (
-    <main id="main" className="relative flex min-h-dvh flex-col bg-paper text-ink">
+    <>
       <SiteNav />
 
       {/* One dark colour-block composition from here to the footer, in both themes. */}
-      <div className={`bg-cine-base text-cine-ink ${archivo.className}`}>
-        <section className="mx-auto flex w-full max-w-7xl flex-col items-center px-5 pt-20 pb-[calc(4vw+5rem)] text-center sm:px-8 sm:pt-24">
-          <h1 className="text-5xl font-extrabold tracking-[-0.03em] text-balance [font-stretch:115%] sm:text-7xl">The 20 Types</h1>
-          <p className="mt-5 max-w-[48ch] text-lg leading-relaxed text-balance text-cine-ink-2">
-            Four families, five eaters in each. One of them is you.
+      <main id="main" className="flex-1 bg-cine-base text-cine-ink">
+        <section className="container-page flex flex-col items-center pt-16 pb-[calc(4vw+4rem)] text-center sm:pt-24">
+          <h1 className="t-display">The 20 types</h1>
+          <p className="t-lead mt-5 max-w-[40ch] text-cine-ink-2">
+            Four families, five eaters in each. Tap anyone to meet them. One of them is you.
           </p>
-          <Link
-            href="/quiz"
-            className="mt-9 inline-flex h-14 items-center gap-4 rounded-control bg-cine-ink py-2 pr-2 pl-6 text-lg font-semibold text-cine-base transition-colors duration-300 hover:bg-cine-ink/85 focus-visible:ring-2 focus-visible:ring-flesh focus-visible:ring-offset-4 focus-visible:ring-offset-cine-base focus-visible:outline-none"
-          >
-            Take the quiz
-            <span className="grid h-10 w-10 place-items-center rounded-lg bg-flesh text-paper">
-              <ArrowRight size={18} weight="bold" aria-hidden />
-            </span>
-          </Link>
+          <PrimaryLink href="/quiz" className="mt-8 w-full sm:w-auto">
+            Find out which
+          </PrimaryLink>
         </section>
 
         {FAMILIES.map((family, i) => (
@@ -62,9 +48,9 @@ export default function TypesPage() {
             <CineBand family={family} types={TYPES.filter((type) => type.family === family)} intro={i === 0} />
           </section>
         ))}
-      </div>
+      </main>
 
       <SiteFooter />
-    </main>
+    </>
   );
 }

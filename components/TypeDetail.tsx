@@ -1,75 +1,58 @@
 import type { CSSProperties, ReactNode } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { Dialog } from "radix-ui";
+import { ArrowLink, PrimaryLink } from "@/components/Button";
+import { figureWidth } from "@/components/CharacterStage";
 import TraitRadar from "@/components/TraitRadar";
-import type { EaterType, TraitAxis } from "@/lib/types";
-
-/** The coral main call to action on the dark band. */
-export const PRIMARY_CTA =
-  "inline-flex h-14 items-center gap-3 rounded-control bg-flesh px-6 font-display text-lg font-semibold text-cine-base transition-colors duration-300 hover:bg-flesh/85 focus-visible:ring-2 focus-visible:ring-cine-ink focus-visible:ring-offset-4 focus-visible:ring-offset-cine-base focus-visible:outline-none";
+import { FAMILY_INFO, type EaterType } from "@/lib/types";
 
 /**
- * One type in full, for the dialog on /types, the type's own page and the quiz
- * result. Drawn for the family's dark band, which the parent paints. In the
- * dialog, the name and tagline are the dialog's accessible title and
- * description, and a link leads to the full page.
+ * One type as a card, inside the detail dialog (the /types characters and the
+ * landing chips). Drawn for the family's dark band, which the dialog paints.
+ * The name and tagline are the dialog's accessible title and description.
  */
 export default function TypeDetail({
   type,
-  dialog = false,
-  you,
   actions,
-  children,
 }: {
   type: EaterType;
-  dialog?: boolean;
-  /** The player's own scores: the radar sets them against the type's and explains the result. */
-  you?: Record<TraitAxis, number>;
-  /** Replaces the footer's default links. */
+  /** Replaces the default "Take the quiz" plus "Full page" links. */
   actions?: ReactNode;
-  /** More sections after the radar. */
-  children?: ReactNode;
 }) {
-  const Title = dialog ? Dialog.Title : "h1";
-  const Description = dialog ? Dialog.Description : "p";
-  const Heading = dialog ? "h3" : "h2";
-
   return (
     <article
-      className="grid gap-x-12 gap-y-10 text-cine-ink md:grid-cols-2 md:grid-rows-[auto_1fr]"
+      className="grid gap-x-12 gap-y-8 text-cine-ink md:grid-cols-2 md:grid-rows-[auto_1fr]"
       style={{ "--glow": `var(--cine-${type.family.toLowerCase()}-glow)` } as CSSProperties}
     >
       {/* Phones read top to bottom; from md the footer moves up under the tagline so the quiz link is in view. */}
       <header className="text-center md:text-left">
         <div className="relative mx-auto w-fit max-w-full md:mx-0">
-          {/* Floor light, as on /types: the characters are dark photographs. */}
           <span
             aria-hidden
             className="absolute inset-x-[8%] top-[30%] bottom-0 bg-[radial-gradient(closest-side,color-mix(in_srgb,var(--glow)_30%,transparent),transparent)]"
           />
-          {/* Shown whole at one height (below native size), as wide as its own shape: no crop, no mask.
-              Only rendered when on screen, so never lazy. */}
+          {/* Shown whole at one height, as wide as its own shape. Only rendered when open, so never lazy. */}
           <Image
             src={type.image}
-            alt=""
+            alt={type.alt}
             width={type.imageWidth}
             height={type.imageHeight}
-            sizes={`(min-width: 640px) ${Math.round((320 * type.imageWidth) / type.imageHeight)}px, ${Math.round((288 * type.imageWidth) / type.imageHeight)}px`}
+            sizes={`(min-width: 640px) ${figureWidth(type, 320)}px, ${figureWidth(type, 288)}px`}
             loading="eager"
             className="char-rim relative h-72 w-auto max-w-full object-contain sm:h-80"
           />
         </div>
-        <Title className="mt-6 font-display text-4xl leading-tight font-semibold text-balance sm:text-5xl">{type.name}</Title>
-        <p className="mt-2 text-sm font-semibold tracking-[0.14em] text-[color:var(--glow)] uppercase">{type.family} family</p>
-        <Description className="mt-4 text-xl leading-snug text-balance">{type.tagline}</Description>
+        <p className="t-label mt-6 text-[color:var(--glow)]">
+          {type.family} family &middot; {FAMILY_INFO[type.family].trait}
+        </p>
+        <Dialog.Title className="t-h1 mt-2">{type.name}</Dialog.Title>
+        <Dialog.Description className="t-lead mt-3">{type.tagline}</Dialog.Description>
       </header>
 
       <div className="md:col-start-2 md:row-span-2 md:row-start-1">
-        <p className="text-lg leading-relaxed text-pretty text-cine-ink-2">{type.description}</p>
+        <p className="leading-relaxed text-pretty text-cine-ink-2 sm:text-lg">{type.description}</p>
 
-        <Heading className="mt-8 font-display text-xl font-semibold">Signature habits</Heading>
+        <h3 className="t-h3 mt-8">Signature habits</h3>
         <ul className="mt-3 space-y-2.5">
           {type.habits.map((habit) => (
             <li key={habit} className="flex gap-3 leading-snug text-cine-ink-2">
@@ -79,30 +62,21 @@ export default function TypeDetail({
           ))}
         </ul>
 
-        <Heading className="mt-8 font-display text-xl font-semibold">{you ? "Why you got this" : "What drives them"}</Heading>
+        <h3 className="t-h3 mt-8">What drives them</h3>
         <div className="mt-2">
-          <TraitRadar type={type} you={you} />
+          <TraitRadar type={type} />
         </div>
-
-        {children}
       </div>
 
-      <footer className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 md:col-start-1 md:row-start-2 md:self-start md:justify-start">
+      <footer className="flex flex-col items-center gap-2 sm:flex-row sm:gap-6 md:col-start-1 md:row-start-2 md:self-start">
         {actions ?? (
           <>
-            <Link href="/quiz" className={PRIMARY_CTA}>
+            <PrimaryLink href="/quiz" className="w-full sm:w-auto">
               Take the quiz
-              <ArrowRight size={18} weight="bold" aria-hidden />
-            </Link>
-            {dialog && (
-              <Link
-                href={`/types/${type.slug}`}
-                className="inline-flex min-h-11 items-center gap-1.5 text-[15px] font-semibold underline-offset-4 hover:underline"
-              >
-                Full page
-                <ArrowRight size={14} weight="bold" aria-hidden />
-              </Link>
-            )}
+            </PrimaryLink>
+            <ArrowLink href={`/types/${type.slug}`} className="text-cine-ink">
+              Full page
+            </ArrowLink>
           </>
         )}
       </footer>

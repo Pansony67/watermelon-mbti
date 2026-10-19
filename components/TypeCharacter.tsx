@@ -137,7 +137,7 @@ export function TypeDialogPanel({ type, actions }: { type: EaterType; actions?: 
           <X size={20} weight="bold" aria-hidden />
         </Dialog.Close>
         <div className="overflow-y-auto overscroll-contain px-5 pt-16 pb-8 sm:px-10 sm:pt-12 sm:pb-10">
-          <TypeDetail type={type} dialog actions={actions} />
+          <TypeDetail type={type} actions={actions} />
         </div>
       </Dialog.Content>
     </Dialog.Portal>

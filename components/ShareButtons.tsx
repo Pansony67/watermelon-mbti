@@ -11,7 +11,21 @@ const noop = () => () => {};
  * everywhere else. The link goes to the type's page, whose preview card shows
  * the character, so the share looks good in any chat.
  */
-export default function ShareButtons({ slug, name, mine = true, tone = "stage" }: { slug: string; name: string; mine?: boolean; tone?: "stage" | "page" }) {
+export default function ShareButtons({
+  slug,
+  name,
+  mine = true,
+  quiet = false,
+  tone = "stage",
+}: {
+  slug: string;
+  name: string;
+  /** "I got" wording, for the result page. */
+  mine?: boolean;
+  /** Share as a text link, where another button is the page's primary action. */
+  quiet?: boolean;
+  tone?: "stage" | "page";
+}) {
   const url = `${SITE_URL}/types/${slug}`;
   const text = mine
     ? `I got the ${name} on Melonality. What kind of watermelon are you?`
@@ -39,14 +53,14 @@ export default function ShareButtons({ slug, name, mine = true, tone = "stage" }
     }
   };
 
-  const quiet = tone === "stage" ? "text-cine-ink focus-visible:outline-cine-ink" : "text-ink";
+  const linkTone = tone === "stage" ? "text-cine-ink focus-visible:outline-cine-ink" : "text-ink";
   return (
     <div className="flex flex-col items-center gap-1 sm:flex-row sm:gap-5">
-      <button type="button" onClick={share} className="btn-primary w-full cursor-pointer sm:w-auto">
+      <button type="button" onClick={share} className={quiet ? `link-arrow cursor-pointer ${linkTone}` : "btn-primary w-full cursor-pointer sm:w-auto"}>
         <ShareNetwork size={20} weight="bold" aria-hidden />
         {mine ? "Share my result" : "Share this type"}
       </button>
-      <button type="button" onClick={copy} className={`link-arrow cursor-pointer ${quiet}`}>
+      <button type="button" onClick={copy} className={`link-arrow cursor-pointer ${linkTone}`}>
         <LinkSimple size={18} weight="bold" aria-hidden />
         {status === "copied" ? "Link copied" : status === "failed" ? "Copy failed, try again" : "Copy link"}
       </button>

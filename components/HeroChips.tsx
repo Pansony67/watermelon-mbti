@@ -2,9 +2,7 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import {
-  ArrowRight,
   Axe,
   BookOpen,
   Briefcase,
@@ -28,7 +26,7 @@ import {
   type Icon,
 } from "@phosphor-icons/react";
 import { Dialog } from "radix-ui";
-import { PRIMARY_CTA } from "@/components/TypeDetail";
+import { PrimaryLink } from "@/components/Button";
 import { FAMILIES, FAMILY_STYLE, TYPES, type EaterType } from "@/lib/types";
 
 // The card and its chart load in their own chunk after the page is up, keeping the landing bundle light.
@@ -170,10 +168,9 @@ export default function HeroChips() {
   if (!types) return null;
 
   const quiz = (
-    <Link href="/quiz" className={PRIMARY_CTA}>
+    <PrimaryLink href="/quiz" className="w-full sm:w-auto">
       Take the quiz
-      <ArrowRight size={18} weight="bold" aria-hidden />
-    </Link>
+    </PrimaryLink>
   );
 
   return (

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, type RefObject } from "react";
 import { stagger, useAnimate, useInView, useReducedMotion, type DOMKeyframesDefinition } from "motion/react";
 import TypeCharacter from "@/components/TypeCharacter";
-import type { EaterType, Family } from "@/lib/types";
+import { FAMILY_INFO, type EaterType, type Family } from "@/lib/types";
 
 /** The word's clip once revealed: negative insets so the tall glyphs are never cut. */
 const OPEN = "inset(-30% -10% -40% -10%)";
@@ -54,17 +54,24 @@ export default function CineBand({ family, types, intro }: { family: Family; typ
         className={`pointer-events-none absolute inset-x-0 top-[38%] bottom-[-10%] bg-[radial-gradient(50%_55%_at_50%_55%,color-mix(in_srgb,var(--glow)_24%,transparent),transparent_75%)] ${intro ? "cine-intro-glow" : ""}`}
       />
 
-      <h2
-        id={`family-${family}`}
-        className="pointer-events-none text-center text-[19vw] leading-[0.85] font-black tracking-[-0.04em] [font-stretch:118%] text-[color:color-mix(in_srgb,var(--glow)_22%,transparent)] select-none lg:text-[15rem]"
+      {/* The giant word is scenery (too faint to be a heading); the readable heading sits under it. */}
+      <p
+        aria-hidden
+        className="pointer-events-none text-center font-display text-[21vw] leading-[0.82] font-extrabold tracking-[-0.05em] text-[color:color-mix(in_srgb,var(--glow)_22%,transparent)] select-none lg:text-[15rem]"
       >
         <span data-word className={`inline-block ${intro ? "cine-intro-word" : ""}`}>
           {family}
         </span>
-      </h2>
+      </p>
+      <div className="relative mx-auto -mt-1 max-w-[40ch] text-center sm:-mt-3">
+        <h2 id={`family-${family}`} className="t-h3 text-[color:var(--glow)]">
+          {family} family &middot; {FAMILY_INFO[family].trait}
+        </h2>
+        <p className="mt-1 text-[15px] text-cine-ink-2">{FAMILY_INFO[family].line}</p>
+      </div>
 
       {/* Wrapping row of figures at one height, each as wide as itself; a short last row centres. */}
-      <ul className="relative mx-auto mt-6 flex max-w-7xl flex-wrap items-start justify-center gap-x-6 gap-y-10 sm:mt-10 sm:gap-x-10">
+      <ul className="relative mx-auto mt-8 flex max-w-7xl flex-wrap items-start justify-center gap-x-6 gap-y-10 sm:mt-10 sm:gap-x-10">
         {types.map((type, i) => (
           <li
             key={type.slug}
