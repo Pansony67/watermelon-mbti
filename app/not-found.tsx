@@ -1,23 +1,40 @@
-import Link from "next/link";
+import type { Metadata } from "next";
+import { ArrowLink, PrimaryLink } from "@/components/Button";
+import CharacterStage from "@/components/CharacterStage";
 import SiteFooter from "@/components/SiteFooter";
 import SiteNav from "@/components/SiteNav";
+import { TYPES } from "@/lib/types";
+
+export const metadata: Metadata = { title: "Page not found | Melonality" };
+
+/** The Sus-Eater, who was last seen near this page. */
+const SUSPECT = TYPES.find((type) => type.slug === "sus-eater")!;
 
 export default function NotFound() {
   return (
-    <main id="main" className="relative flex min-h-dvh flex-col bg-paper text-ink">
+    <>
       <SiteNav />
-      <section className="relative mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-5 py-24 text-center sm:px-8">
-        <p className="text-xs font-semibold tracking-[0.16em] text-flesh-deep uppercase">404</p>
-        <h1 className="mt-4 font-display text-4xl font-semibold text-balance sm:text-5xl">No slice here.</h1>
-        <p className="mt-4 max-w-md text-ink-2">That page does not exist. The test does.</p>
-        <Link
-          href="/"
-          className="mt-10 inline-flex h-14 items-center rounded-control bg-ink px-8 font-display text-lg font-semibold text-paper transition-colors duration-300 hover:bg-ink/85"
-        >
-          Back to the melon
-        </Link>
-      </section>
+      <main id="main" className="flex-1 bg-paper text-ink">
+        <section className="container-page grid items-center gap-10 py-16 md:grid-cols-[1fr_minmax(0,22rem)] md:gap-16 md:py-24">
+          <div className="text-center md:text-left">
+            <p className="t-label text-flesh-deep">404</p>
+            <h1 className="t-h1 mt-2">This page has been eaten.</h1>
+            <p className="t-lead mx-auto mt-4 max-w-[38ch] text-ink-2 md:mx-0">
+              Nobody saw what happened to it. The Sus-Eater says they were home all night. The quiz, at least, is right where you left it.
+            </p>
+            <div className="mt-8 flex flex-col items-center gap-2 sm:flex-row sm:gap-6 md:justify-start">
+              <PrimaryLink href="/quiz" className="w-full sm:w-auto">
+                Take the quiz
+              </PrimaryLink>
+              <ArrowLink href="/" className="text-ink">
+                Back to the home page
+              </ArrowLink>
+            </div>
+          </div>
+          <CharacterStage type={SUSPECT} imgClass="h-64 sm:h-80" heights={[256, 320]} className="rounded-panel pt-10" />
+        </section>
+      </main>
       <SiteFooter />
-    </main>
+    </>
   );
 }
