@@ -50,7 +50,7 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "Does it cost anything?",
-    a: "No. It is free, with no ads and no trackers.",
+    a: "No. It is free and has no ads.",
   },
 ];
 

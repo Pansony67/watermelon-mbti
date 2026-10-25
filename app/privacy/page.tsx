@@ -61,15 +61,23 @@ export default function PrivacyPage() {
       <h2>Cookies and browser storage</h2>
       <p>
         The site sets no cookies unless you sign in. Then one cookie keeps you signed in: the page&rsquo;s own scripts
-        cannot read it, and it is deleted when you sign out. There are no analytics or advertising trackers. While you
+        cannot read it, and it is deleted when you sign out. There are no advertising trackers. While you
         take the test, your answers are
         kept in your browser&rsquo;s session storage so the results page can read them. That data stays on your device and
         is cleared when you close the tab.
       </p>
 
+      <h2>Visit counts</h2>
+      <p>
+        We count visits with Vercel Web Analytics, to see which pages people read and which sites send them here. It sets
+        no cookies. Each visit records the page, the site that linked you, your rough location (country, region, city),
+        and your browser, operating system and device type. Visitors are told apart by a hash of the request that is
+        thrown away after 24 hours, so a visit cannot be tied to you or followed to other sites. We only see totals.
+      </p>
+
       <h2>Who processes the data</h2>
       <ul>
-        <li>Hosting: Vercel serves the site. Like any web host, it handles the requests your browser makes.</li>
+        <li>Hosting and visit counts: Vercel serves the site and counts visits, as described above.</li>
         <li>Database: Neon stores the saved results and accounts.</li>
         <li>Google, Facebook and LINE: only if you choose to sign in with one of them.</li>
         <li>

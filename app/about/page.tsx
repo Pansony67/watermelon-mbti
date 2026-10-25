@@ -28,7 +28,7 @@ const IS_NOT = [
 const PRINCIPLES: { title: string; body: string }[] = [
   {
     title: "Private by default",
-    body: "Accounts are optional and there are no analytics or ads. Quiz answers are saved anonymously, and you can delete yours from the results page.",
+    body: "Accounts are optional, there are no ads, and visits are counted without cookies. Quiz answers are saved anonymously, and you can delete yours from the results page.",
   },
   {
     title: "Open source",
