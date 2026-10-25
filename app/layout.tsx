@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Figtree } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import MusicPlayer from "@/components/MusicPlayer";
 import { SITE_URL } from "@/lib/site";
 import { THEME_SCRIPT } from "@/lib/theme";
@@ -92,6 +93,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {children}
         {/* Outside the page tree: route changes must not restart playback. */}
         <MusicPlayer />
+        <Analytics />
       </body>
     </html>
   );
