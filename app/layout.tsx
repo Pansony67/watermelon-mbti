@@ -1,10 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Figtree } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { GoogleAnalytics } from "@next/third-parties/google"; // ← NEW
 import MusicPlayer from "@/components/MusicPlayer";
 import { SITE_URL } from "@/lib/site";
 import { THEME_SCRIPT } from "@/lib/theme";
 import "./globals.css";
+
+/* Google Analytics 4: measures visits and clicks from email campaigns (UTM links); described on /privacy. */
+const GA_ID = "G-XXXXXXXXXX"; // ← NEW: paste your Measurement ID here
 
 /* Display: a grotesque with character. Optical size and width axes are used for the giant family words. */
 const bricolage = Bricolage_Grotesque({
@@ -44,8 +48,11 @@ export const metadata: Metadata = {
     type: "website",
   },
   // The image comes from app/twitter-image (and each type's own); the card shows it full width.
-  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION },
-  // Search Console: the token only; Next renders the <meta name="google-site-verification"> tag.
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
   verification: {
     google: "-ieHpQmBVmaZaYHuBgOUw0SAV2CD7P5mnP8YlDWjm1o",
   },
@@ -96,6 +103,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {/* Cookieless page-view counts; described on /privacy. */}
         <Analytics />
       </body>
+      <GoogleAnalytics gaId={GA_ID} /> {/* ← NEW: GA4 */}
     </html>
   );
 }
