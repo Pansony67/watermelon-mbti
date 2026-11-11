@@ -8,7 +8,7 @@ import { THEME_SCRIPT } from "@/lib/theme";
 import "./globals.css";
 
 /* Google Analytics 4: measures visits and clicks from email campaigns (UTM links); described on /privacy. */
-const GA_ID = "G-XXXXXXXXXX"; // ← NEW: paste your Measurement ID here
+const GA_ID = "G-1BMDT3MRCF"; // ← NEW: paste your Measurement ID here
 
 /* Display: a grotesque with character. Optical size and width axes are used for the giant family words. */
 const bricolage = Bricolage_Grotesque({

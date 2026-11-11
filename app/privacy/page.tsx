@@ -5,7 +5,8 @@ import { OPERATOR } from "@/lib/legal";
 
 export const metadata: Metadata = {
   title: "Privacy | Melonality",
-  description: "What Melonality saves when you take the quiz, why, and how to delete it.",
+  description:
+    "What Melonality saves when you take the quiz, why, and how to delete it.",
   alternates: { canonical: "/privacy" },
 };
 
@@ -13,96 +14,190 @@ export default function PrivacyPage() {
   return (
     <LegalPage title="Privacy Policy">
       <p>
-        {OPERATOR.name} is a free personality quiz. This page explains what the site records, why, and what you can do about it.
-        Short version: the quiz needs no account and stores nothing that identifies you. Accounts are optional; if you
-        create one, we keep only what it needs to work.
+        {OPERATOR.name} is a free personality quiz. This page explains what the
+        site records, why, and what you can do about it. Short version: the quiz
+        needs no account and the result you save does not identify you. We use
+        Google Analytics cookies to understand how people find and use the site.
+        Accounts and our mailing list are optional; if you join either, we keep
+        only what it needs to work.
       </p>
 
       <h2>What we collect</h2>
-      <p>When you finish the test we store three things, none of which identify you:</p>
+      <p>
+        When you finish the test we store three things, none of which identify
+        you:
+      </p>
       <ul>
         <li>Your twenty answers on the 1 to 7 scale.</li>
-        <li>The colour family, type and five trait scores the answers produced.</li>
+        <li>
+          The colour family, type and five trait scores the answers produced.
+        </li>
         <li>The time the result was saved.</li>
       </ul>
       <p>
-        We do not ask for or store your name, email address, IP address, device identifiers, or location with a result.
-        Nothing links a saved result to you, to your browser, or to your account, even when you are signed in.
+        We do not ask for or store your name, email address, IP address, device
+        identifiers, or location with a result. Nothing links a saved result to
+        you, to your browser, or to your account, even when you are signed in.
       </p>
 
       <h2>Accounts (optional)</h2>
-      <p>You can use everything on the site as a Guest. If you create an account, we store:</p>
+      <p>
+        You can use everything on the site as a Guest. If you create an account,
+        we store:
+      </p>
       <ul>
         <li>Your name and email address.</li>
         <li>
-          A one-way hash of your password (scrypt), never the password itself. We cannot see or recover your password.
+          A one-way hash of your password (scrypt), never the password itself.
+          We cannot see or recover your password.
         </li>
         <li>
-          If you sign in with Google, Facebook or LINE instead: the name, email address and profile picture that service
-          shares with us. No password is stored.
+          If you sign in with Google, Facebook or LINE instead: the name, email
+          address and profile picture that service shares with us. No password
+          is stored.
         </li>
         <li>
-          While you are signed in: a session record with your IP address and browser name, so you stay signed in. It
-          expires after 7 days, or when you sign out.
+          While you are signed in: a session record with your IP address and
+          browser name, so you stay signed in. It expires after 7 days, or when
+          you sign out.
         </li>
       </ul>
       <p>
-        To stop password guessing, sign-in and sign-up attempts are counted per IP address for a short time, and too many
-        attempts are blocked for a minute. Saved test results are counted the same way, under a one-way hash of the
-        address rather than the address itself, so no single connection can flood the stats.
+        To stop password guessing, sign-in and sign-up attempts are counted per
+        IP address for a short time, and too many attempts are blocked for a
+        minute. Saved test results are counted the same way, under a one-way
+        hash of the address rather than the address itself, so no single
+        connection can flood the stats.
+      </p>
+
+      <h2>Mailing list (optional)</h2>
+      <p>
+        If you sign up for the {OPERATOR.name} mailing list through our sign-up
+        form, we store:
+      </p>
+      <ul>
+        <li>Your first name and email address.</li>
+        <li>
+          Your answer to &ldquo;Have you taken the quiz yet?&rdquo;, so we can
+          send you the email that fits.
+        </li>
+        <li>Your consent: when you agreed and confirmed your sign-up.</li>
+      </ul>
+      <p>
+        We use this only to send you up to two short emails about the quiz. The
+        list is kept in Brevo, our email service. Our emails record whether they
+        were opened and which links were clicked, so we can see which version
+        works better; links to this site carry labels (UTM tags) that Google
+        Analytics counts. Every email has an unsubscribe link, and you can also
+        ask us to delete your details at any time. We delete the whole list when
+        this email project ends, and no later than 31 December 2026. Your
+        mailing-list details are never linked to your saved test result.
       </p>
 
       <h2>Why</h2>
       <p>
-        To show you your result, and to compute the aggregate figures on the site, such as how many people have taken the
-        test and what share of players got each type.
+        To show you your result, to compute the aggregate figures on the site,
+        such as how many people have taken the test and what share of players
+        got each type, to understand which pages and links work, and to send
+        emails to people who asked for them.
       </p>
 
       <h2>Cookies and browser storage</h2>
       <p>
-        The site sets no cookies unless you sign in. Then one cookie keeps you signed in: the page&rsquo;s own scripts
-        cannot read it, and it is deleted when you sign out. There are no advertising trackers. While you
-        take the test, your answers are
-        kept in your browser&rsquo;s session storage so the results page can read them. That data stays on your device and
-        is cleared when you close the tab.
+        Google Analytics sets cookies (named <code>_ga</code> and{" "}
+        <code>_ga_&hellip;</code>) to tell visits apart and measure how the site
+        is used; see &ldquo;Google Analytics&rdquo; below. If you sign in, one
+        more cookie keeps you signed in: the page&rsquo;s own scripts cannot
+        read it, and it is deleted when you sign out. There are no advertising
+        trackers. While you take the test, your answers are kept in your
+        browser&rsquo;s session storage so the results page can read them. That
+        data stays on your device and is cleared when you close the tab.
       </p>
 
       <h2>Visit counts</h2>
       <p>
-        We count visits with Vercel Web Analytics, to see which pages people read and which sites send them here. It sets
-        no cookies. Each visit records the page, the site that linked you, your rough location (country, region, city),
-        and your browser, operating system and device type. Visitors are told apart by a hash of the request that is
-        thrown away after 24 hours, so a visit cannot be tied to you or followed to other sites. We only see totals.
+        We count visits with Vercel Web Analytics, to see which pages people
+        read and which sites send them here. It sets no cookies. Each visit
+        records the page, the site that linked you, your rough location
+        (country, region, city), and your browser, operating system and device
+        type. Visitors are told apart by a hash of the request that is thrown
+        away after 24 hours, so a visit cannot be tied to you or followed to
+        other sites. We only see totals.
+      </p>
+
+      <h2>Google Analytics</h2>
+      <p>
+        We also use Google Analytics 4 to see how people move through the site
+        and which links bring them here, for example from our emails. It records
+        the pages you view, the link or campaign that brought you, your rough
+        location, and your browser and device type, and uses cookies to
+        recognise a returning browser. It does not tell us your name or email
+        address, and we do not use it for advertising. We keep this data for 2
+        months, the shortest setting Google Analytics offers. You can block
+        these cookies in your browser settings or use Google&rsquo;s{" "}
+        <a
+          href="https://tools.google.com/dlpage/gaoptout"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          opt-out add-on
+        </a>
+        ; the quiz works the same either way.
       </p>
 
       <h2>Who processes the data</h2>
       <ul>
-        <li>Hosting and visit counts: Vercel serves the site and counts visits, as described above.</li>
-        <li>Database: Neon stores the saved results and accounts.</li>
-        <li>Google, Facebook and LINE: only if you choose to sign in with one of them.</li>
         <li>
-          Have I Been Pwned: when you choose a password, the first five characters of its SHA-1 hash are sent to check it
-          against known data breaches. The password itself never leaves our server.
+          Hosting and visit counts: Vercel serves the site and counts visits, as
+          described above.
+        </li>
+        <li>Database: Neon stores the saved results and accounts.</li>
+        <li>
+          Google Analytics: measures how the site is used, as described above.
+        </li>
+        <li>
+          Brevo: stores the mailing list and sends our emails, only if you sign
+          up.
+        </li>
+        <li>
+          Google, Facebook and LINE: only if you choose to sign in with one of
+          them.
+        </li>
+        <li>
+          Have I Been Pwned: when you choose a password, the first five
+          characters of its SHA-1 hash are sent to check it against known data
+          breaches. The password itself never leaves our server.
         </li>
       </ul>
       <p>No data is sold or shared with anyone else.</p>
 
       <h2>Deleting your result</h2>
       <p>
-        Because results are anonymous, we cannot look one up for you afterwards. The results page has a &ldquo;Delete my
-        response&rdquo; button that removes the row your test created, for as long as you keep that tab open.
+        Because results are anonymous, we cannot look one up for you afterwards.
+        The results page has a &ldquo;Delete my response&rdquo; button that
+        removes the row your test created, for as long as you keep that tab
+        open.
       </p>
 
       <h2>Deleting your account</h2>
       <p>
-        Signed in, open the menu under your name and choose &ldquo;Delete account&rdquo;. Your account, its sessions and
-        any linked Google, Facebook or LINE sign-in are removed at once.
+        Signed in, open the menu under your name and choose &ldquo;Delete
+        account&rdquo;. Your account, its sessions and any linked Google,
+        Facebook or LINE sign-in are removed at once.
+      </p>
+
+      <h2>Leaving the mailing list</h2>
+      <p>
+        Click &ldquo;Unsubscribe&rdquo; in any of our emails and you will get no
+        more. To have your details deleted straight away, contact us using the
+        details below.
       </p>
 
       <h2>Children</h2>
       <p>
-        The site is not directed at children under 13. The quiz collects no personal information, so no parental consent
-        is required to take it. Accounts are for people aged 13 and over.
+        The site is not directed at children under 13. Taking the quiz requires
+        no personal information, so no parental consent is required to take it.
+        Accounts and the mailing list are for people aged 13 and over.
       </p>
 
       <h2>Changes</h2>
@@ -112,7 +207,10 @@ export default function PrivacyPage() {
         <>
           <h2>Contact</h2>
           <p>
-            Questions about this policy: <a href={`mailto:${OPERATOR.contactEmail}`}>{OPERATOR.contactEmail}</a>
+            Questions about this policy:{" "}
+            <a href={`mailto:${OPERATOR.contactEmail}`}>
+              {OPERATOR.contactEmail}
+            </a>
           </p>
         </>
       )}
